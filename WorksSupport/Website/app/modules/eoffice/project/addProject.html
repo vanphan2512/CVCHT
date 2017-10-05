@@ -1,0 +1,31 @@
+<page>
+    <page-header>
+        {{i18n.eoffice.addProject.title}}
+    </page-header>
+    <page-content>
+        <form-default>
+            <div style="margin-top: 20px;">
+                <form-text-input [placeHolderText]=i18n.eoffice.addProject.inputName [labelText]=i18n.eoffice.addProject.name [validation]="['eoffice.addProject.validation.nameIsRequire','eoffice.addProject.validation.keyAlreadyExisted']"
+                    [(model)]=model.WorksSupportProjectName>
+                </form-text-input>
+                
+                <form-textarea [placeHolderText]=i18n.eoffice.addProject.inputDesc [labelText]=i18n.eoffice.addProject.desc [(model)]=model.Description>
+                </form-textarea>
+
+                <form-text-input [placeHolderText]=i18n.eoffice.addProject.inputWorksSupportTypeId [labelText]=i18n.eoffice.addProject.inputWorksSupportTypeId
+                    [(model)]=model.worksSupportTypeId>
+                </form-text-input>
+
+                <form-text-input [placeHolderText]=i18n.eoffice.addProject.inputOrderIndex [labelText]=i18n.eoffice.addProject.orderIndex
+                    [validation]="['eoffice.addProject.validation.orderIndexIsRequire','eoffice.addProject.validation.orderIndexAlreadyExisted']"
+                    [(model)]=model.OrderIndex>
+                </form-text-input>
+
+                <form-footer>
+                    <button id="save" (click)="onSaveClicked($event)" type="button" class="btn btn-primary">{{i18n.common.form.save}}</button>
+                    <button id="cancel" (click)="onCancelClicked($event)" type="button" class="btn btn-default">{{i18n.common.form.cancel}}</button>
+                </form-footer>
+            </div>
+        </form-default>
+    </page-content>
+</page>

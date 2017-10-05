@@ -1,0 +1,3 @@
+<p *ngIf="readOnly===true">{{model}}</p>
+<input *ngIf="readOnly===false" name="{{name}}" id="{{id}}" placeholder="{{placeHolderText}}" (change)="onValueChanged($event)"
+    [validation]="validation" type="text" [(ngModel)]=model class="form-control col-md-7 col-xs-12" />

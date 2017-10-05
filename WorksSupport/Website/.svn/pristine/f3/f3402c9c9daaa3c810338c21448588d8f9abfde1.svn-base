@@ -1,0 +1,6 @@
+<form-text-input 
+    [placeHolderText]="" 
+    [labelText]=labelText
+    [model]=model
+    [readOnly]=true>
+</form-text-input>

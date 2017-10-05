@@ -1,0 +1,44 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var StatusModel;
+    return {
+        setters:[],
+        execute: function() {
+            StatusModel = (function () {
+                function StatusModel(resourceHelper) {
+                    this.options = {};
+                    this.eventKey = "status_ondatasource_changed";
+                    this.actions = [];
+                    this.options = {
+                        columns: [
+                            { field: "WorksSupportStatusId", title: resourceHelper.resolve("configurations.status.grid.index"), type: "id", index: 0 },
+                            { field: "OrderIndex", title: resourceHelper.resolve("configurations.status.grid.index"), type: "rownumber", index: 1, className: "text-center", width: "10%" },
+                            { field: "WorksSupportStatusName", title: resourceHelper.resolve("configurations.status.grid.name"), type: "text", index: 2 },
+                            { field: "Description", title: resourceHelper.resolve("configurations.status.grid.description"), type: "text", index: 3 },
+                            { field: "IsInitStatus", title: resourceHelper.resolve("configurations.status.grid.isInitStatus"), type: "checkbox", index: 4, className: "text-center", width: "10%" },
+                            { field: "IsCompleteStatus", title: resourceHelper.resolve("configurations.status.grid.isCompleteStatus"), type: "checkbox", index: 5, className: "text-center", width: "10%" },
+                            { field: "IconUrl", title: resourceHelper.resolve("configurations.status.grid.iconUrl"), type: "icon", index: 6, content: "<a class=\"modalIcon\" href=\"#\" data-toggle=\"modal\" data-target=\"#myIconModal\"><i class='fa fa-edit' aria-hidden=\"true\"></i></a>", className: "text-center" },
+                            { field: "IsSystem", title: resourceHelper.resolve("configurations.status.grid.isSystem"), type: "checkbox", index: 7, width: "5%", className: "text-center" },
+                            { field: "IsActived", title: resourceHelper.resolve("configurations.status.grid.isActive"), type: "toggle", index: 8, width: "5%", className: "text-center" },
+                        ],
+                        data: [],
+                        enableEdit: true,
+                        enableDelete: false,
+                        ajaxUrl: "http://nc.erp.workssupport.com/api/v1/status/save"
+                    };
+                }
+                StatusModel.prototype.addPageAction = function (action) {
+                    this.actions.push(action);
+                };
+                StatusModel.prototype.importStatus = function (items) {
+                    var eventManager = window.ioc.resolve("IEventManager");
+                    eventManager.publish(this.eventKey, items);
+                };
+                return StatusModel;
+            }());
+            exports_1("StatusModel", StatusModel);
+        }
+    }
+});
+//# sourceMappingURL=statusModel.js.map

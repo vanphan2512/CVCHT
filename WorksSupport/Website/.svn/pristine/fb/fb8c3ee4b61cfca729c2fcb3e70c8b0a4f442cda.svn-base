@@ -1,0 +1,18 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function loadModuleConfig(moduleBasePath) {
+        var configPath = moduleBasePath + "/config/module";
+    }
+    var moduleHelper;
+    return {
+        setters: [],
+        execute: function () {
+            moduleHelper = {
+                loadModuleConfig: loadModuleConfig
+            };
+            exports_1("default", moduleHelper);
+        }
+    };
+});
+//# sourceMappingURL=moduleHelper.js.map

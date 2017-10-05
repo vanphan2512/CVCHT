@@ -1,0 +1,119 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "../../../common/directive", "../../../common/services/cacheService", "../../../common/directives/common/errorMessage", "../../../common/enum"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, router_1, ui_1, directive_1, directive_2, cacheService_1, cacheService_2, errorMessage_1, enum_1;
+    var WorkDetail;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+                directive_2 = directive_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            },
+            function (errorMessage_1_1) {
+                errorMessage_1 = errorMessage_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }],
+        execute: function() {
+            WorkDetail = (function (_super) {
+                __extends(WorkDetail, _super);
+                function WorkDetail(router, routeParams) {
+                    _super.call(this);
+                    this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    this.IscanViewWork = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPPORT_VIEW) === "true" ? true : false;
+                    this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    this.roleValue = enum_1.RoleValue.Admin;
+                    this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+                    var self = this;
+                    var $ = window.jQuery;
+                    self.Router = router;
+                }
+                WorkDetail.prototype.ngOnInit = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $('#myTab a').click(function (e) {
+                        $(this).tab('show');
+                        e.stopPropagation();
+                    });
+                    // With JQuery
+                    $("#ex6").slider();
+                    $("#ex6").on("slide", function (slideEvt) {
+                        $("#ex6SliderVal").text(slideEvt.value);
+                    });
+                };
+                WorkDetail.prototype.ngAfterViewInit = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    $("#searchButtonPopup").hover(function () {
+                        $(this).addClass('active');
+                    });
+                    $("#searchButtonPopup").focusout(function () {
+                        $(this).removeClass('active');
+                    });
+                    $('.btn-group-menu button').on('click', function (e) {
+                        var targeted_popup_class = $(this).attr('data-popup-open');
+                        $(".btn-group-menu ul").fadeIn(350);
+                        $("#modalPopupDetai").addClass('bg-popup');
+                        $("#modalPopupDetai").css("display", "block");
+                        e.preventDefault();
+                    });
+                    $('.btn-group-menu .popup-close').on('click', function (e) {
+                        $(".btn-group-menu ul").fadeOut(350);
+                        $("#modalPopupDetai").removeClass('bg-popup');
+                        $("#modalPopupDetai").css("display", "none");
+                        e.preventDefault();
+                    });
+                };
+                WorkDetail.prototype.redirectToWork = function () {
+                    // if (this.IscanViewWork) {
+                    //     this.Router.navigate([route.work.works.name, { projectId: this.CurrentProjectId, worksGroupId: this.CurrentWorkGroupId }]);
+                    // }
+                };
+                __decorate([
+                    core_1.ViewChild(directive_1.Grid),
+                    core_1.ViewChild(errorMessage_1.ErrorMessage), 
+                    __metadata('design:type', directive_1.Grid)
+                ], WorkDetail.prototype, "gridComponent", void 0);
+                WorkDetail = __decorate([
+                    core_1.Component({
+                        templateUrl: "app/modules/eoffice/workdetail/workdetail.html",
+                        directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page, directive_2.Form, directive_2.FormTextInput, directive_2.FormFooter, directive_2.FormTextArea, errorMessage_1.ErrorMessage]
+                    }), 
+                    __metadata('design:paramtypes', [router_1.Router, router_1.RouteParams])
+                ], WorkDetail);
+                return WorkDetail;
+            }(ui_1.BasePage));
+            exports_1("WorkDetail", WorkDetail);
+        }
+    }
+});
+//# sourceMappingURL=workDetail.js.map

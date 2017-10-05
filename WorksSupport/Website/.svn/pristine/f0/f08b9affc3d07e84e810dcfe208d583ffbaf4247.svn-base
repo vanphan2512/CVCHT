@@ -1,0 +1,67 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var MenuItem, Module, Route, ProfileDisplayMode;
+    return {
+        setters:[],
+        execute: function() {
+            MenuItem = (function () {
+                function MenuItem(text, url, cssClass) {
+                    var subItems = [];
+                    for (var _i = 3; _i < arguments.length; _i++) {
+                        subItems[_i - 3] = arguments[_i];
+                    }
+                    this.text = "";
+                    this.url = "";
+                    this.class = "";
+                    this.items = new Array();
+                    this.text = text;
+                    this.url = url;
+                    this.class = cssClass;
+                    this.items = subItems.length > 0 ? subItems : new Array();
+                }
+                return MenuItem;
+            }());
+            exports_1("MenuItem", MenuItem);
+            Module = (function () {
+                function Module(path, nameKey) {
+                    this.menus = [];
+                    this.routes = [];
+                    this.path = path;
+                    this.nameKey = nameKey;
+                    this.menus = new Array();
+                    this.routes = [];
+                }
+                Module.prototype.addRoutes = function (routes) {
+                    if (!routes.length && routes.length <= 0) {
+                        this.routes.push(routes);
+                        return;
+                    }
+                    for (var index = 0; index < routes.length; index++) {
+                        var route = routes[index];
+                        this.routes.push(route);
+                    }
+                };
+                return Module;
+            }());
+            exports_1("Module", Module);
+            Route = (function () {
+                function Route(path, name, component, isDefault) {
+                    if (isDefault === void 0) { isDefault = false; }
+                    this.path = path;
+                    this.name = name;
+                    this.component = component;
+                    this.useAsDefault = isDefault;
+                }
+                return Route;
+            }());
+            exports_1("Route", Route);
+            (function (ProfileDisplayMode) {
+                ProfileDisplayMode[ProfileDisplayMode["AvatarAndName"] = 0] = "AvatarAndName";
+                ProfileDisplayMode[ProfileDisplayMode["Quick"] = 1] = "Quick";
+            })(ProfileDisplayMode || (ProfileDisplayMode = {}));
+            exports_1("ProfileDisplayMode", ProfileDisplayMode);
+        }
+    }
+});
+//# sourceMappingURL=layout.js.map

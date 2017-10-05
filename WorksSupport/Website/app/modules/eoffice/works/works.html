@@ -1,0 +1,581 @@
+<div class="main-content">
+    <h2>
+        {{i18n.eoffice.works.title}}
+    </h2>
+    <div class="main-tab-content">
+        <div class="nav-control">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="main-buttons">
+                        <button type="button" class="btn-eof blue-bg m-right-10" id="addNewWorks" (click)="onAddNewWorksClick($event)">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn-eof red-bg m-right-10" id="btnDeletePopup" (click)="onShowPopupDelete($event)" data-toggle="modal"
+                            data-target="#modal">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                        <div class="main-search" id="searchButton">
+                            <div class="input-group">
+                                <input type="text" id="worksName" name="worksName" class="form-control" placeholder="Nhập từ khóa tìm kiếm" aria-describedby="basic-addon2">
+                                <div class="input-group-addon" id="searchAddon" (click)="SearchByKey($event)">
+                                    <button type="button">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="tab-filter">
+                        <div>
+                            <div class="custom-select"><i class="fa fa-filter" aria-hidden="true"></i> Lọc theo:
+                                <select class="form-control" (change)="onStatusChange($event)">
+                                    <option value="0">Chưa xóa</option>
+                                    <option value="1">Đã xóa</option>
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table-hover" id="dataTableWork" style="width:100%">
+                    <thead>
+                        <th valign="middle" style="width:40px"><input type="checkbox"></th>
+                        <th valign="middle" style="width:400px">Tên công việc<a href="#" class="right gray"><i class="fa fa-sort" aria-hidden="true"></i></a></th>
+                        <th valign="middle" style="text-align:left;min-width:200px;">Người tạo<a href="#" class="right gray"><i class="fa fa-sort" aria-hidden="true"></i></a></th>
+                        <th valign="middle" style="max-width:400px;">Ngày tạo</th>
+                        <th valign="middle" style="width:50px">Trạng thái</th>
+                        <th valign="middle" style="width:80px">Tiến độ</th>
+                        <th> </th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let works of listWorks let i = index">
+                            <!--<td valign="middle" align="center"><input type="checkbox" name="worksupport" ng-model="selectedAll" ng-click="checkAll()" id="{{works.WorksSupportId}}"></td>-->
+                            <td><input type="checkbox" value="{{works.WorksSupportId}}" (click)="checkWorkId(works.WorksSupportId, works.WorksSupportName)"
+                                    class="chkIsDeleted" #nameID id="{{works.WorksSupportId}}"></td>
+                            <td valign="middle" align="center">{{works.WorksSupportName}}</td>
+                            <td valign="middle" align="center" style="text-align:left;">{{works.CreatedUser}}
+                            </td>
+                            <td valign="middle" align="center" style="text-align:left;">{{works.CreateDate}}</td>
+                            <td valign="middle" align="center">{{works.WorksSupportStatusName}}</td>
+                            <td valign="middle" align="center">{{works.Currentprogress}}</td>
+                            <td valign="middle" align="center">
+                                <!--<button type="button" data-name="" class="btn btn-primary" id="btnXL"  data-toggle="tooltip"><i class="fa fa-search"></i> Xử lý</button>-->
+                                <!--<button type="button" class="btn btn-secondary btnXL" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+  Popover on left
+</button>-->
+                                <div class="dropdown" style="float:right;">
+                                    <button id="btnXL" (click)="onXuLyClick(works.WorksSupportId)" type="button" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        Xử lý<span class="caret"></span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
+                                        <div class="col-md-9 col-sm-9 col-xs-12" id="NextWorksSupportStepId">
+                                            <select class="form-control nextstep" [(ngModel)]=NextWorksSupportStepId (ngModelChange)="onStepClick(NextWorksSupportStepId)">
+                                                    <option value="-1">--Chọn bước xử lý--</option>  
+                                                    <option class="nextstep" *ngFor="let obj of lstWorksFlow" value="{{obj.NextWorksSupportStepId}}">{{obj.WorksSupportStepName}}</option>  
+                                            </select>
+                                        </div>
+                                        <div class="col-md-9 col-sm-9 col-xs-12" id="MemberUserName">
+                                            <select class="form-control" [(ngModel)]=MemberUserName>  
+                                                                    <option value="-1">--Tên người xử lý tiếp theo--</option>  
+                                                                    <option *ngFor="let obj of lstProcessUser"  
+                                                                            value="{{obj.MemberUserName}}">  
+                                                                            {{obj.MemberUserName}} 
+                                                                    </option>  
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group infoDesc">
+                                            <form-textarea [placeHolderText]=i18n.eoffice.workflow.note [(model)]=Note>
+                                            </form-textarea>
+                                        </div>
+                                        <button id="save" (click)="onAddProcessUser_NextStep($event)" type="button" class="btn btn-eoffice green-bg"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{i18n.common.form.save}}</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!--popup Deleted-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div *ngIf='selectedValue?.length > 0'>
+                <h2 class="modal-title text-center">
+                    Bạn có chắc chắn muốn xóa:
+
+                </h2>
+            </div>
+            <div *ngIf='selectedValue?.length == 0'>
+                <h2 class="modal-title text-center">
+                    Vui lòng chọn dữ liệu để xóa:
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <ul class="list-lg" >
+                    <li *ngFor="let member of selectedValue">{{member.name}}</li>
+                </ul>
+            </div>
+            <div *ngIf='selectedValue?.length > 0'>
+                <div class="text-center">
+                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Đóng lại</button>
+                    <button type="button" class="btn btn-eoffice red-bg" (click)="onDeleteWorks($event)"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                </div>
+            </div>
+            <div *ngIf='selectedValue?.length == 0'>
+                <div class="text-center">
+                    <button type="button" data-toggle="popover" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Đóng lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--show popup add works-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalAdd">
+    <div class="modal-dialog modal-lg popupTab" role="document" id="popupWorks">
+
+        <div class="modal-content">
+            <div *ngIf='selectedValue?.length == 0' class="titleWorks">
+                <h2 class="modal-title">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> {{i18n.eoffice.addWorks.title}}
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body" class="contentPopup">
+                <div>
+                    <ul class="nav nav-tabs" role="tablist" id="myTabs">
+                        <li role="presentation" class="active"><a href="#tabAddWorks" aria-controls="tabAddWorks" role="tab" data-toggle="tab">{{i18n.eoffice.addWorks.tabTitleAdd}}</a></li>
+                        <!--<li role="presentation"><a href="#member" aria-controls="member" role="tab" data-toggle="tab">{{i18n.eoffice.addWorks.tabTitleMember}}</a></li>-->
+                        <li role="presentation"><a href="#tabWork" aria-controls="tabWork"  role="tab" data-toggle="tab">{{i18n.eoffice.addWorks.tabTitleWork}}</a></li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div role="tabpanel" class="tab-pane active" id="tabAddWorks">
+                            <form-default>
+                                <div class="frmAddInfo">
+                                    <error-message></error-message>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <label id="cusNameWorks">{{i18n.eoffice.addWorks.name}}</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <form-text-input name="WorksSupportName" id="WorksSupportName" [placeHolderText]=i18n.eoffice.addWorks.inputName [(model)]=WorksSupportName>
+                                                </form-text-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--<div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.project}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="WorksSupportProjectId">
+                                                        <form-text-input [placeHolderText]=i18n.eoffice.addWorks.inputWorksSupportProjectId [(model)]=WorksSupportProjectId>
+                                                        </form-text-input>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.group}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="WorksSupportGroupId">
+                                                        <form-text-input [placeHolderText]=i18n.eoffice.addWorks.inputWorksSupportTypeId [(model)]=WorksSupportGroupId>
+                                                        </form-text-input>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>-->
+                                    <!--<div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.createUser}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="User">
+                                                        <form-text-input [placeHolderText]=i18n.eoffice.addWorks.createUser [(model)]=User>
+                                                        </form-text-input>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.createDate}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="CreateDate">
+                                                        <form-datepicker id="txtdates" (click)="setPicker1($event)" [(model)]=CreateDate [dateFormat]="'MMMM DD YYYY'"></form-datepicker>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>-->
+                                    <!--<div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.typeWork}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="PeriodId">
+                                                        <select class="form-control" [(ngModel)]=PeriodId #selVal (change)="changeDateByIndex(selVal.value)">  
+
+                                                                    <option value="-1">--Chọn loại công việc--</option>  
+                                                                    <option *ngFor="let obj of lstWorksTypePeriod"  
+                                                                            value={{obj.PeriodId}}>  
+                                                                            {{obj.PeriodName}}
+                                                                    </option>  
+                                                             </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.dateExpected}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="ExpectedCompletedDate">
+                                                        <form-datepicker id="txtExpecDates" (click)="setPicker1($event)" [(model)]=ExpectedCompletedDate1 [dateFormat]="'MMMM DD YYYY'"></form-datepicker>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                    <div class="form-group">
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                                    <label>{{i18n.eoffice.addWorks.inputWorksSupportPriorityId}}</label>
+                                                </div>
+                                                <div class="col-md-9 col-sm-9 col-xs-12" id="WorksSupportPriorityId">
+                                                    <select class="form-control" [(ngModel)]=WorksSupportPriorityId>  
+                                                                    <option value="-1">--Chọn độ ưu tiên--</option>  
+                                                                    <option *ngFor="let obj of lstWorksType"  
+                                                                            value={{obj.WorksSupportPriorityId}}>  
+                                                                            {{obj.WorksSupportPriorityName}} 
+                                                                    </option>  
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                              <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                                        <label>{{i18n.eoffice.addWorks.dateExpected}}</label>
+                                                    </div>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12" id="ExpectedCompletedDate">
+                                                        <form-datepicker id="txtExpecDates" (click)="setPicker1($event)" [(model)]=ExpectedCompletedDate></form-datepicker>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+
+                                    <div class="form-group infoDesc">
+                                        <div class="row">
+                                            <label>{{i18n.eoffice.addWorks.desc}}</label>
+                                            <form-textarea [placeHolderText]=i18n.eoffice.addWorks.inputDesc [(model)]=Content>
+                                            </form-textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group infoDesc">
+                                        <div class="row">
+                                            <label>{{i18n.eoffice.addWorks.file}}</label>
+                                            <form-textarea [placeHolderText]=i18n.eoffice.addWorks.inputDesc [(model)]=Description>
+                                            </form-textarea>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="form-group text-right btnActioninfo">
+                                    <button id="save" (click)="onAddWorks($event)" type="button" class="btn btn-eoffice green-bg"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{i18n.common.form.save}}</button>
+                                    <button id="cancel" (click)="onCancelAdd($event)" type="button" class="btn btn-eoffice white-bg "><i class="fa fa-times" aria-hidden="true"></i> {{i18n.common.form.cancel}}</button>
+                                </div>
+                            </form-default>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="member">
+                            <div class="row memberManage">
+                                <h3>Quản lí</h3>
+                                <div class="">
+                                    <button type="button" id="addNewMemberManage" (click)="onAddNewMemberManage($event)" class="btn-eof m-right-10"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    <div class="abc">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row worksMember">
+                                <h3>Thành viên</h3>
+                                <div class="">
+                                    <button type="button" id="addNewMemberManage" (click)="addNewMemberManage($event)" class="btn-eof m-right-10"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane " id="tabWork">
+                            <div class="row memberManage">
+                                <div class="">
+                                    <button type="button"  class="btn-eof m-right-10" data-toggle="modal" data-target="#modalWorksInvole"
+                                        id="addWorksInvole" (click)="onAddWorksInvoleClick($event)">
+                                        <i class="fa fa-plus" aria-hidden="true" ></i>
+                                    </button>
+                                </div>
+                                <div class="cusworks">
+                                    <div class="col-md-3">
+                                        <p>Công việc cần hỗ trợ</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <hr/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <table class="table-hover" id="dataTableWork" style="width:100%">
+                                            <thead>
+                                                <th valign="middle" style="width:400px">Tên công việc<a href="#" class="right gray"><i class="fa fa-sort" aria-hidden="true"></i></a></th>
+                                                <th valign="middle" style="text-align:left;min-width:200px;">Ngày bắt đầu<a href="#" class="right gray"><i class="fa fa-sort" aria-hidden="true"></i></a></th>
+                                                <th valign="middle" style="max-width:400px;">Ngày kết thúc</th>
+                                                <th valign="middle" style="width:50px">Tiến độ</th>
+                                                <th valign="middle" style="width:80px"></th>
+                                            </thead>
+                                            <tbody>   
+                                                <tr *ngFor="let works of lstAllWorks " >
+                                                    <td valign="middle" align="center" id ="txtName">{{works.WorksName}}</td>
+                                                    <td valign="middle" align="center" style="text-align:left;">{{works.StartDate}}
+                                                    </td>
+                                                    <td valign="middle" align="center" style="text-align:left;">{{works.EndDate}}</td>
+                                                    <td valig0n="middle" align="center">{{works.CurrentProgress}}</td>
+                                                    <td valign="middle" align="center" (click)="onShowPopupDelete_WorksInvole(works.WorksId, works.WorksName)" data-toggle="modal"
+                            data-target="#modal"><i class="fa fa-times-circle-o" aria-hidden="true"></i></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalMember">
+        <div class="modal-dialog modal-lg" role="document" id="popupGetAllMember">aaa</div>
+    </div>-->
+</div>
+
+<!--Show popup add member works-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalMember">
+
+    <div class="modal-dialog modal-lg" role="document" id="popupGetAllMember">
+        <div class="modal-content">
+            <div class="modalHeader titleAddMemberProject">
+                <h2 class="modal-title">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> {{i18n.eoffice.addMemberProject.title}}
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <div class="searchBar">
+                    <div class="row topBar">
+                        <div class="col-md-3 colFilter">
+                            <div id="cboDepartment">
+                                <select id="selDepartment" class="form-control WorksSupportDepartment" [(ngModel)]=WorksSupportDepartmentId>  
+                                        <option value="-1">--Chọn phòng ban--</option>  
+                                        <option *ngFor="let obj of lstDepartment"
+                                                value={{obj.DepartmentId}}>  
+                                                {{obj.DepartmentName}}
+                                        </option>                                         
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <form-text-input id="txtKeyNameUser" name="btnBaseUser" [placeHolderText]=i18n.eoffice.addMemberProject.inputNameSearch [(model)]=txtKeyNameUser>
+                            </form-text-input>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="btnSearchUser" type="button" (click)="SearchUserByKey($event)">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" id="chkalluser" onclick="SelectUser($event)"> {{i18n.eoffice.addMemberProject.inputCheckAllUser}}
+                        </div>
+
+                    </div>
+                    <div class="listWorksInvole">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4" *ngFor="let obj of lstMember">
+                                <div class="thumbnail">
+                                    <img src="http://eofficecnd.nc.com/album/{{obj.DefaultPictureURL}}" alt="aaa" class="img-thumbnail" />
+                                    <div class="caption">
+                                        <h3>{{obj.FullName}}</h3>
+                                        <p>Phòng ban: {{obj.DepartmentName}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--show pupup add works invole -->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalWorksInvole">
+    <div class="modal-dialog modal-lg" role="document" >
+        <div class="modal-content">
+            <div class="modalHeader titleAddMemberProject">
+                <h2 class="modal-title">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> {{i18n.eoffice.addMemberProject.title}}
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <div class="searchBar">
+                    <div class="row topBar">
+                        <div class="col-md-3 colFilter">
+                            <div id="cboDepartment">
+                                <select id="selProjectInvole" class="form-control Works" [(ngModel)]=ProjectIds>  
+                                        <option value="">--Chọn dự án--</option>  
+                                        <option *ngFor="let obj of lstWorksInvole"
+                                                value={{obj.ProjectId}}>  
+                                                {{obj.ProjectName}}
+                                        </option>  
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" id="txtKeyName" class="form-control" placeholder="Từ khóa">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" id="btnsearch"
+                                        aria-expanded="false">
+                                         <span data-value="-1" id="names">Tìm theo</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" id="worksInvole">
+                                        <div class="dropdownWorkInvole" data-value="1">Tên công viêc</div>
+                                        <div class="dropdownWorkInvole" data-value="2">Người thực hiện</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <form-datepicker id="txtstartDate" (onclick)="setPicker1($event)" [(model)]=startDate></form-datepicker>
+                        </div>
+                        <div class="col-md-3">
+                            <form-datepicker id="txtendDate" (onclick)="setPicker1($event)" [(model)]=endDate></form-datepicker>
+                        </div>
+                        <div class="input-group-addon" id="searchWorksInvole" (click)="onSearchWorkInvoleChange($event)">
+                            <button type="button">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="listMemberProject">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table-hover" id="dataTableWork" style="width:100%">
+                                    <thead>
+                                        <th valign="middle" style="width:40px"><input type="checkbox"  id="ckCheckAll"></th>
+                                        <th valign="middle" style="width:400px">Tên công việc<a href="#" class="right gray"><i class="fa fa-sort" aria-hidden="true"></i></a></th>
+                                        <th valign="middle" style="text-align:left;min-width:200px;">Dự án<a href="#" class="right gray"><i class="fa fa-sort" aria-hidden="true"></i></a></th>
+                                        <th valign="middle" style="max-width:400px;">Ngày bắt đầu</th>
+                                        <th valign="middle" style="width:50px">Ngày kết thúc</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let works of listWorksInvole let i = index">
+                                            <!--<td valign="middle" align="center"><input type="checkbox" name="worksupport" ng-model="selectedAll" ng-click="checkAll()" id="{{works.WorksSupportId}}"></td>-->
+                                            <!--<td><input type="checkbox" value="{{works.WorksId}}" (click)="checkWorkInvoleId(works.WorksId, works.WorksName)"
+                                                    class="chkIsWorksInvole" #nameID id="{{works.WorksId}}">
+                                            </td>-->
+                                            <td><input type="checkbox" name="ids[]" value="{{works.WorksId}}" (click)="checkWorkInvoleId(works.WorksId, works.WorksName)"
+                                                  ng-model="checkbox" ng-true-value="1" ng-false-value="0" class="chkIsWorksInvole" #nameID id="{{works.WorksId}}">
+                                            </td>
+                                            <td valign="middle" align="center">{{works.WorksName}}</td>
+                                            <td valign="middle" align="center" style="text-align:left;">{{works.ProjectName}}
+                                            </td>
+                                            <td valign="middle" align="center" style="text-align:left;">{{works.StartDate}}</td>
+                                            <td valign="middle" align="center">{{works.EndDate}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i>Bỏ qua</button>
+                                    <button type="button" class="btn btn-eoffice red-bg" (click)="onAddWorksInvole($event)" (keyup)=0><i class="fa fa-floppy-o" aria-hidden="true"></i>Thêm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end show pupup add works invole -->
+
+<!--popup Deleted-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal_WIn">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div *ngIf='selectedValue?.length > 0'>
+                <h2 class="modal-title text-center">
+                    Bạn có chắc chắn muốn xóa:
+
+                </h2>
+            </div>
+            <div *ngIf='selectedValue?.length == 0'>
+                <h2 class="modal-title text-center">
+                    Vui lòng chọn dữ liệu để xóa:
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <ul class="list-lg">
+                    <li *ngFor="let works of selectedValue">{{works.name}}</li>
+                </ul>
+            </div>
+            <div *ngIf='selectedValue?.length > 0'>
+                <div class="text-center">
+                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Đóng lại</button>
+                    <button type="button" class="btn btn-eoffice red-bg" (click)="onDeleteWorksInvole($event)"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                </div>
+            </div>
+            <div *ngIf='selectedValue?.length == 0'>
+                <div class="text-center">
+                    <button type="button" data-toggle="popover" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Đóng lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    debugger;
+    $(document).ready(function () {
+        // $(".btnXL").popover()
+
+    })
+
+</script>
