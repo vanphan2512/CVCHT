@@ -1,0 +1,87 @@
+System.register(["angular2/core", "angular2/router", "../../../../models/layout", "../../../../services/authService", "../../../../helpers/configHelper", "../../../../event", "../../../../models/ui"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, router_1, layout_1, authService_1, configHelper_1, event_1, ui_1, UserQuickProfileInfo;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (layout_1_1) {
+                layout_1 = layout_1_1;
+            },
+            function (authService_1_1) {
+                authService_1 = authService_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            }
+        ],
+        execute: function () {
+            UserQuickProfileInfo = (function (_super) {
+                __extends(UserQuickProfileInfo, _super);
+                function UserQuickProfileInfo(router) {
+                    var _this = _super.call(this) || this;
+                    _this.userProfile = null;
+                    _this.ProfileDisplayMode = layout_1.ProfileDisplayMode;
+                    _this.router = router;
+                    _this.displayMode = layout_1.ProfileDisplayMode.Quick;
+                    _this.authService = authService_1.default;
+                    _this.userProfile = _this.authService.getUserProfile();
+                    return _this;
+                }
+                UserQuickProfileInfo.prototype.onLogOutClicked = function () {
+                    var self = this;
+                    self.authService.removeAuth();
+                    sessionStorage.clear();
+                    self.eventManager.publish(event_1.AuthenticatedEvent.AuthenticationChanged, false);
+                    // window.location.reload();
+                    self.router.navigate([configHelper_1.default.getAppConfig().loginUrl]);
+                    return true;
+                };
+                return UserQuickProfileInfo;
+            }(ui_1.BaseControl));
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Number)
+            ], UserQuickProfileInfo.prototype, "displayMode", void 0);
+            UserQuickProfileInfo = __decorate([
+                core_1.Component({
+                    selector: "user-quick-profile-info",
+                    templateUrl: "app/common/layouts/default/directives/users/quickProfileInfo.html"
+                }),
+                __metadata("design:paramtypes", [router_1.Router])
+            ], UserQuickProfileInfo);
+            exports_1("UserQuickProfileInfo", UserQuickProfileInfo);
+        }
+    };
+});
+//# sourceMappingURL=quickProfileInfo.js.map
