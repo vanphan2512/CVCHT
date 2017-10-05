@@ -1,0 +1,73 @@
+System.register(["angular2/core", "../../../../event"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, event_1;
+    var ErrorMessage;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+            }],
+        execute: function() {
+            ErrorMessage = (function () {
+                function ErrorMessage() {
+                    var _this = this;
+                    this.errors = [];
+                    this.pattern = "*";
+                    this.onErrorEvent = new core_1.EventEmitter();
+                    var eventManager = window.ioc.resolve("IEventManager");
+                    eventManager.subscribe(event_1.CommonEvent.ValidationFail, function (validation) { _this.onError(validation); });
+                }
+                ErrorMessage.prototype.ResetError = function () {
+                    var self = this;
+                    var errors = [];
+                    self.errors = errors;
+                };
+                ErrorMessage.prototype.onError = function (validation) {
+                    var self = this;
+                    var resourceHelper = window.ioc.resolve("IResource");
+                    var errors = [];
+                    if (validation.errors.length > 0) {
+                        validation.errors.forEach(function (error) {
+                            //if (!regexHelper.isMatch(self.pattern, error.key)) { return; }
+                            console.log(String.format("pattern {0}, value: {1}, error: {2}", self.pattern, error.key, error.msg));
+                            errors.push(error);
+                        });
+                    }
+                    self.errors = errors;
+                    self.onErrorEvent.emit(errors);
+                };
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', String)
+                ], ErrorMessage.prototype, "pattern", void 0);
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', Object)
+                ], ErrorMessage.prototype, "onErrorEvent", void 0);
+                ErrorMessage = __decorate([
+                    core_1.Component({
+                        selector: "error-message",
+                        templateUrl: "./app/common/layouts/default/directives/common/errorMessage.html"
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], ErrorMessage);
+                return ErrorMessage;
+            }());
+            exports_1("ErrorMessage", ErrorMessage);
+        }
+    }
+});
+//# sourceMappingURL=errorMessage.js.map

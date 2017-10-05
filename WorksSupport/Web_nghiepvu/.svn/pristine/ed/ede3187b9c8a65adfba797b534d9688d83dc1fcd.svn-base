@@ -1,0 +1,36 @@
+System.register(["../../event", "./baseComponent"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __moduleName = context_1 && context_1.id;
+    var event_1, baseComponent_1, BasePage;
+    return {
+        setters: [
+            function (event_1_1) {
+                event_1 = event_1_1;
+            },
+            function (baseComponent_1_1) {
+                baseComponent_1 = baseComponent_1_1;
+            }
+        ],
+        execute: function () {
+            BasePage = (function (_super) {
+                __extends(BasePage, _super);
+                function BasePage() {
+                    return _super.call(this, null, event_1.ComponentType.Page) || this;
+                }
+                return BasePage;
+            }(baseComponent_1.BaseComponent));
+            exports_1("BasePage", BasePage);
+        }
+    };
+});
+//# sourceMappingURL=basePage.js.map

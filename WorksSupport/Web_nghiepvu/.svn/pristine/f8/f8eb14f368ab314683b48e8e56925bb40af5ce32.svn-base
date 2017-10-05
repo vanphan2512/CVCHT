@@ -1,0 +1,24 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var AddPriorityModel;
+    return {
+        setters: [],
+        execute: function () {
+            AddPriorityModel = (function () {
+                function AddPriorityModel() {
+                    this.worksSupportPriorityId = String.empty;
+                    this.worksSupportPriorityName = String.empty;
+                    this.iconUrl = String.empty;
+                    this.description = String.empty;
+                    this.orderIndex = String.empty;
+                    this.isActive = String.empty;
+                    this.isSystem = String.empty;
+                }
+                return AddPriorityModel;
+            }());
+            exports_1("AddPriorityModel", AddPriorityModel);
+        }
+    };
+});
+//# sourceMappingURL=addPriorityModel.js.map

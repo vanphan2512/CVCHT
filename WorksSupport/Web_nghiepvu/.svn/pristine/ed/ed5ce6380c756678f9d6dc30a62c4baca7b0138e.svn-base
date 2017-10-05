@@ -1,0 +1,186 @@
+System.register(["angular2/core", "../../../models/ui", "../../../helpers/guidHelper", "../../../helpers/httpHelper", "../../../helpers/jsonHelper", "../../../helpers/configHelper"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, ui_1, guidHelper_1, httpHelper_1, jsonHelper_1, configHelper_1, FormFilesUpload;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (guidHelper_1_1) {
+                guidHelper_1 = guidHelper_1_1;
+            },
+            function (httpHelper_1_1) {
+                httpHelper_1 = httpHelper_1_1;
+            },
+            function (jsonHelper_1_1) {
+                jsonHelper_1 = jsonHelper_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }
+        ],
+        execute: function () {
+            FormFilesUpload = (function (_super) {
+                __extends(FormFilesUpload, _super);
+                function FormFilesUpload() {
+                    var _this = _super.call(this) || this;
+                    _this.id = guidHelper_1.default.create();
+                    _this.files = [];
+                    _this.filesChanged = new core_1.EventEmitter();
+                    _this.onFileUploaded = new core_1.EventEmitter();
+                    _this.onFileRemoved = new core_1.EventEmitter();
+                    _this.dropzone = {};
+                    return _this;
+                }
+                FormFilesUpload.prototype.onReady = function () {
+                    var _this = this;
+                    var self = this;
+                    var $ = window.jQuery;
+                    $(String.format("#{0}_form", this.id)).dropzone({
+                        init: function () {
+                            self.dropzone = this;
+                            this.on("removedfile", function (file) {
+                                var jsonResponse = jsonHelper_1.default.parse(file.xhr.responseText);
+                                var ev = {
+                                    fileName: jsonResponse.Data.FileName,
+                                    fileSize: jsonResponse.Data.Size,
+                                    filePath: jsonResponse.Data.FilePath,
+                                    fileId: jsonResponse.Data.FileId
+                                };
+                                self.onFileRemoved.emit(ev);
+                            });
+                            this.on("addedfile", function (file) {
+                                if (this.files.length) {
+                                    var _i, _len;
+                                    for (_i = 0, _len = this.files.length; _i < _len - 1; _i++) {
+                                        if (this.files[_i].name === file.name && this.files[_i].size === file.size && this.files[_i].lastModifiedDate.toString() === file.lastModifiedDate.toString()) {
+                                            this.removeFile(file);
+                                        }
+                                    }
+                                }
+                            });
+                        },
+                        autoProcessQueue: true,
+                        uploadMultiple: true,
+                        url: String.format("{0}v2/files", configHelper_1.default.getAppConfig().api.baseUrl),
+                        success: function (response) { return _this.fileUploadResponse(response); },
+                        maxFilesize: 10,
+                        addRemoveLinks: true,
+                        acceptedFiles: ".pdf,.ppt,.pptx,.rar,.zip,.xls,.xlsx,.doc,.docx,.png,.jpg",
+                        dictDefaultMessage: "Kéo thả file vào đây để tải lên",
+                        dictFileTooBig: "Chỉ chấp nhận file tối đa 10 MB",
+                        dictInvalidFileType: "Chỉ chấp nhận file đính kèm(*.pdf .ppt .pptx .rar .zip .xls .xlsx .doc .docx .png .jpg)",
+                        dictRemoveFile: "Xóa file",
+                        dictCancelUpload: "Hủy",
+                        dictRemoveFileConfirmation: "Bạn có chắc chắn muốn xóa?",
+                        dictCancelUploadConfirmation: "Bạn muốn hũy upload file này?"
+                    });
+                };
+                FormFilesUpload.prototype.isErrorResponse = function (response) {
+                    var jsonResponse = jsonHelper_1.default.parse(response.xhr.responseText);
+                    return httpHelper_1.default.isSuccessStatusCode(response.xhr.status) && httpHelper_1.default.isSuccessStatusCode(jsonResponse.status);
+                };
+                FormFilesUpload.prototype.handleErrorUpload = function (response) {
+                    var ev = {
+                        type: response.type,
+                        fileName: response.name,
+                        fileSize: response.size
+                    };
+                    if (httpHelper_1.default.isSuccessStatusCode(response.xhr.status)) {
+                        ev.uploadStatus = {
+                            status: response.xhr.status,
+                            file: String.empty,
+                            errors: [httpHelper_1.default.resolve(response.xhr.status)]
+                        };
+                        this.onFileUploaded.emit(ev);
+                        return;
+                    }
+                    var jsonResponse = jsonHelper_1.default.parse(response.xhr.responseText);
+                    ev.uploadStatus = {
+                        status: jsonResponse.status,
+                        file: String.empty,
+                        errors: jsonResponse.errors
+                    };
+                    this.onFileUploaded.emit(ev);
+                };
+                FormFilesUpload.prototype.handleSuccessUpload = function (response) {
+                    var self = this;
+                    var jsonResponse = jsonHelper_1.default.parse(response.xhr.responseText);
+                    var ev = {
+                        fileName: jsonResponse.Data.FileName,
+                        fileSize: jsonResponse.Data.Size,
+                        filePath: jsonResponse.Data.FilePath,
+                        fileId: jsonResponse.Data.FileId
+                    };
+                    this.filesChanged.emit(this.files);
+                    this.onFileUploaded.emit(ev);
+                    self.dropzone.emit("uploadprogress", response);
+                };
+                FormFilesUpload.prototype.fileUploadResponse = function (response) {
+                    if (this.isErrorResponse(response)) {
+                        this.handleErrorUpload(response);
+                        return;
+                    }
+                    this.handleSuccessUpload(response);
+                };
+                FormFilesUpload.prototype.reset = function () {
+                    var self = this;
+                    self.dropzone.removeAllFiles();
+                };
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", Array)
+                ], FormFilesUpload.prototype, "files", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], FormFilesUpload.prototype, "filesChanged", void 0);
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", String)
+                ], FormFilesUpload.prototype, "description", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], FormFilesUpload.prototype, "onFileUploaded", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], FormFilesUpload.prototype, "onFileRemoved", void 0);
+                FormFilesUpload = __decorate([
+                    core_1.Component({
+                        selector: "form-filesUpload",
+                        templateUrl: "app/common/directives/form/upload/filesUpload.html"
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], FormFilesUpload);
+                return FormFilesUpload;
+            }(ui_1.BaseControl));
+            exports_1("FormFilesUpload", FormFilesUpload);
+        }
+    };
+});
+//# sourceMappingURL=filesUpload.js.map

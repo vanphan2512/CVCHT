@@ -1,0 +1,776 @@
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDelete">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div>
+                <h2 class="modal-title text-center">
+                    Bạn có chắc chắn muốn xóa?
+                </h2>
+            </div>
+            <div class="modal-body">
+                <ul class="list-lg">
+                    <li>{{selectDeleteInvoleName}}</li>
+                </ul>
+            </div>
+            <div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-eoffice red-bg" (click)="onDeleteWorksInvole()"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> {{i18n.common.form.cancelDel}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalEdit">
+    <div class="modal-dialog modal-lg popupTab" role="document">
+        <div class="modal-content">
+            <!--<form (ngSubmit)="onEditWorks($event)">-->
+            <div class="titleProject">
+                <h2 class="modal-title">
+                    <i class="fa fa-pencil-square" aria-hidden="true"></i> Cập nhật công việc cần hỗ trợ
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body tab-scroll" style="padding: 20px;">
+                <ul class="nav nav-tabs tabs-page" role="tablist">
+                    <li role="presentation" class="active"><a href="#tab-works-info-edit" aria-controls="tab-works-info-edit" role="tab" data-toggle="tab">Thông tin</a></li>
+                </ul>
+                <div class="tab-content tabs-page">
+                    <div role="tabpanel" class="tab-pane active" id="tab-works-info-edit">
+                        <div class="fg-table">
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Tên công việc: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <input (keyup)="validationPopupWork('name')" type="text" class="form-control" required [(ngModel)]="WorksSupportName" />
+                                    <span class="alert-danger" *ngIf="ErrorWorksSupportName?.length >0">
+                                                      {{ErrorWorksSupportName}}
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Độ ưu tiên:</label>
+                                </div>
+                                <div class="dpColum">
+                                    <select (change)="validationPopupWork('sel')" class="form-control" required [(ngModel)]="selectedPriority">
+                                                        <option value="" disabled selected hidden>--Chọn độ ưu tiên--</option>
+                                                       <option id="{{priority.WorksSupportPriorityId}}" *ngFor="let priority of listPriority" [value]="priority.WorksSupportPriorityId">
+                                                    {{priority.WorksSupportPriorityName}}
+                                                    </option>
+                                                    </select>
+                                    <span class="alert-danger" *ngIf="ErrorSelPrioriry?.length >0">
+                                                      {{ErrorSelPrioriry}}
+                                                </span>
+                                </div>
+                                <div class="dpColum lbl-width text-right">
+                                    <label>Ngày dự kiến hoàn thành: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <form-datepicker #dateRangePickerEdit minDate={{minDate}} id="txtExpecDates" [disabled]="isAdmin===false && detailPermisstion?.IsCanEditEpectedCompletedDate===false"
+                                        [(model)]=ExpectedCompletedDate></form-datepicker>
+                                </div>
+                            </div>
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Nội dung: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <textarea (keyup)="validationPopupWork('content')" type="text" rows="7" [disabled]="isAdmin === false && detailPermisstion?.IsCanEditContent===false"
+                                        class="form-control txtDesc" required [(ngModel)]="Content"></textarea>
+                                    <span class="alert-danger" *ngIf="ErrorContent?.length >0">
+                                                      {{ErrorContent}}
+                                       </span>
+                                </div>
+                            </div>
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Đính kèm: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <form-filesUpload #WorkUpload *ngIf="isAdmin || detailPermisstion?.IsCanAddAttachment" (onFileUploaded)="onFileUploaded($event)"
+                                        (onFileRemoved)="onFileRemoved($event)"></form-filesUpload>
+                                    <div class="frmAddFile" *ngIf="workDetail?.ListWorksSupportAttachment!==null && workDetail?.ListWorksSupportAttachment.length>0">
+                                        <div class="itemFileDefaul" *ngFor="let file of workDetail?.ListWorksSupportAttachment">
+                                            <div class="btn-add-file  iconFileUpload" (click)="onDownload(file.FileId)">
+                                                <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                <span class="txtNameFile">{{file.FileName}}</span>
+                                            </div>
+                                            <a class="btn btn-delete" *ngIf="isAdmin || detailPermisstion?.IsCanAddAttachment" (click)="onDeleteUploadedFile(file.AttachmentId)">
+                                                                            <i aria-hidden="true" class="fa fa-times-circle-o"></i>
+                                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group text-right btnActioninfo">
+                    <button (click)="onEditWorks($event)" class="btn btn-eoffice green-bg" id="save" type="submit"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                    <button class="btn btn-eoffice white-bg " id="cancel" type="button" data-dismiss="modal"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                </div>
+            </div>
+            <!--</form>-->
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDeleteSolution">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div>
+                <h2 class="modal-title text-center">
+                    Bạn có chắc chắn muốn xóa giải pháp?
+                </h2>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-eoffice red-bg" (click)="onDeleteSolution()"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> {{i18n.common.form.cancelDel}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDeleteWork">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div>
+                <h2 class="modal-title text-center">
+                    Bạn có chắc chắn muốn xóa công việc?
+                </h2>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-eoffice red-bg" (click)="onDeleteWorks()"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> {{i18n.common.form.cancelDel}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalPopupDetai" style="z-index: 1040; display: none;">
+</div>
+<div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal-history-update">
+    <div class="modal-dialog modal-lg modal-lg" role="document">
+        <div class="modal-content">
+            <h2 class="modal-title"><i class="fa fa-history" aria-hidden="true"></i> Lịch sử cập nhật tiến độ</h2>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body tab-scroll">
+                <div class="lstDetailGroup content-progress-update">
+                    <table class="table-hover" id="dataTable" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th valign="middle" width="40%">Trạng thái</th>
+                                <th valign="middle" width="20%">Tiến độ</th>
+                                <th valign="middle" width="20%">Người cập nhật</th>
+                                <th valign="middle" width="20%">Ngày cập</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="workDetail?.ListWorksSupportProgressHistory===null || workDetail?.ListWorksSupportProgressHistory.length===0">
+                                <td colspan="4" class="text-center">
+                                    Không có lịch sử cập nhật tiến độ
+                                </td>
+                            </tr>
+                            <tr *ngFor="let process of workDetail?.ListWorksSupportProgressHistory">
+                                <td valign="middle" align="left"><span style="color: #0288d1;font-size: 14px;">{{process.WorksSupportStatusName}}</span></td>
+                                <td valign="middle" align="center">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="process.ProgressValue" aria-valuemin="0" aria-valuemax="100"
+                                            [ngStyle]="{'width': process.ProgressValue + '%'}"><span *ngIf="process.ProgressValue>0">{{process.ProgressValue}}%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td valign="middle" align="center">{{process.FullName}}</td>
+                                <td valign="middle" align="center">{{stringAsDate(process.ProcessDate)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div style="text-align:right">
+                    <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Bỏ qua</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-create" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal-add-works-related">
+    <div class="modal-dialog modal-lg popupTab" role="document">
+        <div class="modal-content">
+            <div class="titleProject">
+                <h2 class="modal-title">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm công việc liên quan
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body tab-scroll" style="padding: 20px;">
+                <div class="row row-short">
+
+                    <div class="col-lg-2 col-xs-12">
+                        <select class="form-control" [(ngModel)]="selectedProjectInvoleID">
+                                            <option value=""  selected >--Chọn dự án--</option>
+                                                       <option id="{{project.ProjectId}}" *ngFor="let project of lstProjectInvole" [value]="project.ProjectId">
+                                            {{project.ProjectName}}</option>
+                                                    </select>
+                    </div>
+                    <div class="col-lg-4 col-xs-12 frm-by-name-works">
+                        <div class="input-group" style="width: 100%">
+                            <input type="text" class="input-group form-control" [(ngModel)]="searchInvoleKeyword" placeholder="Tìm kiếm..." style="width: 65%">
+                            <select class="form-control" style="width: 35%" [(ngModel)]="searchTypeProjectInvole">
+                                                       <option value="1">Tên công việc</option>
+                                                       <option value="2">Người thực hiện</option>
+                                                    </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row row-short">
+                            <div class="col-lg-4 col-xs-12  dtmformdate">
+                                <div class="input-group">
+                                    <form-datepicker #dataPickerFrom id="txtInvoleFromDates" placeholder="Từ ngày..." [(model)]=txtInvoleFromDates></form-datepicker>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-xs-12 dtmtodate">
+                                <div class="input-group">
+                                    <form-datepicker #dataPickerTo id="txtInvoleToDates" placeholder="Đến ngày..." [(model)]=txtInvoleToDates></form-datepicker>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-xs-12 btn-search-works-related">
+                                <button type="button" class="btn btn btn-primary" (click)="SearchInvole()"> <i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="lstDetailGroup table-works-related">
+                    <table class="table-hover" id="dataTable" style="width:100%">
+                        <thead>
+                            <th valign="middle" width="5%">
+                                <input type="checkbox" class="custom-checkbox" id="checkAll" name="all" [checked]="isAllChecked()" (change)="checkAll($event)"
+                                />
+                                <label for="checkAll"></label>
+                            </th>
+                            <th valign="middle" width="35%" align="left">Tên công việc</th>
+                            <th valign="middle" width="20%">Dự án</th>
+                            <th valign="middle" width="20%">Ngày bắt đầu</th>
+                            <th valign="middle" width="20%">Ngày kết thúc</th>
+
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="listInvole==null || listInvole.length===0">
+                                <td colspan="5" class="text-center">
+                                    Không có công việc liên quan
+                                </td>
+                            </tr>
+                            <tr *ngFor="let works of listInvole">
+                                <td valign="middle" align="center">
+                                    <input type="checkbox" class="custom-checkbox" id="{{works.WorksId}}" [(ngModel)]="works.state" [disabled]="disableCheckBoxInvolve(works.WorksId)">
+                                    <label [attr.for]="works.WorksId"></label>
+                                </td>
+                                <td valign="middle" align="left">{{works.WorksName}}</td>
+                                <td valign="middle">{{works.ProjectName}}</td>
+                                <td valign="middle">{{stringAsDate(works.StartDate)}}</td>
+                                <td valign="middle">{{stringAsDate(works.EndDate)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group text-right btnActioninfo">
+                    <button class="btn btn-eoffice green-bg" id="save" type="button" (click)="onSaveWorkInvole()"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                    <button class="btn btn-eoffice white-bg " id="cancel" type="button" data-dismiss="modal"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal-add-solution">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"> 
+                <div class="titleProject">
+                    <h2 class="modal-title">
+                        <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm giải pháp
+                    </h2>
+                </div>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                <div class="modal-body tab-scroll" style="padding: 20px;">
+                    <div>
+                        <div class="fg-table">
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Giải Pháp: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <textarea (keyup)="validateSolutionPopup(true)" type="text" class="form-control" required placeholder="Nội dung..." rows="8" [(ngModel)]="solutionContent"></textarea>
+                                    <span class="alert-danger" *ngIf="errorSolutionContent?.length >0">
+                                                      {{errorSolutionContent}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Tập tin: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <form-filesUpload #SolutionUpload (onFileUploaded)="onFileUploadedSolution($event)" (onFileRemoved)="onFileRemovedSolution($event)"></form-filesUpload>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group text-right btnActioninfo">
+                        <button (click)="onAddSolution()" class="btn btn-eoffice green-bg" id="submit" type="submit"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                        <button class="btn btn-eoffice white-bg " id="cancel" data-dismiss="modal" type="button"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal-edit-solution">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">            
+                <div class="titleProject">
+                    <h2 class="modal-title">
+                        <i class="fa fa-pencil-square" aria-hidden="true"></i> Chỉnh sửa giải pháp
+                    </h2>
+                </div>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                <div class="modal-body tab-scroll" style="padding: 20px;">
+                    <div>
+                        <div class="fg-table">
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Giải Pháp: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <textarea (keyup)="validateSolutionPopup(false)" type="text" class="form-control txtDesc" required placeholder="Nội dung..." rows="8" [(ngModel)]="solutionEditContent"></textarea>
+                                    <span class="alert-danger" *ngIf="errorSolutionContent?.length >0">
+                                                      {{errorSolutionContent}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="dptable">
+                                <div class="dpColum lbl-width">
+                                    <label>Tập tin: </label>
+                                </div>
+                                <div class="dpColum">
+                                    <form-filesUpload #SolutionEditUpload (onFileUploaded)="onFileUploadedEditSolution($event)" (onFileRemoved)="onFileRemovedEditSolution($event)"></form-filesUpload>
+                                    <div class="frmAddFile" *ngIf="workDetail?.ListWorksSupportSolutionAttachment!==null && workDetail?.ListWorksSupportSolutionAttachment.length>0">
+                                        <div class="itemFileDefaul" *ngFor="let file of workDetail?.ListWorksSupportSolutionAttachment">
+                                            <div class="btn-add-file  iconFileUpload" (click)="onDownloadSolution(file.FileId)">
+                                                <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                <span class="txtNameFile">{{file.FileName}}</span>
+                                            </div>
+                                            <a class="btn btn-delete" (click)="onDeleteSolutionAttach(file.AttachmentId)">
+                                                                            <i aria-hidden="true" class="fa fa-times-circle-o"></i>
+                                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group text-right btnActioninfo">
+                        <button (click)="onEditSolution()" class="btn btn-eoffice green-bg" id="submit" type="submit"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                        <button class="btn btn-eoffice white-bg " id="cancel" data-dismiss="modal" type="button"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                    </div>
+                </div>            
+        </div>
+    </div>
+</div>
+<div class="main-content">
+    <h2 class="works-title"><i class="fa fa-angle-double-left" aria-hidden="true" (click)="backtoWorkGroup()"></i> {{workDetail?.WorksSupportName}}
+        <span [ngStyle]="{'border': '1px solid '+workDetail?.WorkSupportStatusColor, 'color':workDetail?.WorkSupportStatusColor}">{{workDetail?.WorkSupportStatusName}}</span></h2>
+    <div class="main-tab-content">
+        <div class="nav-control">
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <div class="main-buttons">
+                        <div class="col-lg-10"></div>
+                        <div class="col-lg-2 btn-group-top">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle btn btn-eoffice-handling blue-bg" *ngIf="isAdmin || detailPermisstion?.IsCanProcessWorkFlow" href="#"
+                                    data-toggle="dropdown" (click)="onXuLyClick()" id="processDropDown"><i class="fa fa-edit"></i> Xử lý <i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                <div class="dropdown-menu dropdown-menu-handling" style="padding: 15px; padding-bottom: 10px;">
+                                    <form >
+                                        <select (change)="clearValidateProcessStep()" class="form-control" required [(ngModel)]="selectedStepID" (ngModelChange)="getStepUser()">
+                                                        <option value="">---Chọn bước xử lý---</option>
+                                                       <option id="{{step.NextWorksSupportStepId}}" *ngFor="let step of listWorksFlow" [value]="step.NextWorksSupportStepId">
+                                            {{step.WorksSupportStepName}}</option>
+                                                    </select>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-user" aria-hidden="true"></i></span>
+                                            <select #SelectedUserProcess class="form-control" (change)="validateProcessStep(mustChooseNextStepUser, SelectedUserProcess.value)" [required]="mustChooseNextStepUser" [(ngModel)]="selectedUser" [disabled]="selectedStepID===''">
+                                                       <option value="">---Chọn người xử lý---</option>
+                                                            <option id="{{user.FullName}}" *ngFor="let user of listUser" [value]="user.UserName">
+                                            {{user.FullName}}</option>
+                                                    </select>
+                                        </div>
+                                        <div class="input-group" style="margin-top:-10px; font-size:12.5px;">
+                                                        <span class="alert-danger" *ngIf="ErrorStepUser?.length >0">
+                                                        {{ErrorStepUser}}
+                                                        </span>
+                                                    </div>
+                                        <div class="input-group">
+                                            <textarea class="form-control" placeholder="Ghi chú..." [disabled]="selectedStepID===''" [(ngModel)]="Note"></textarea>
+                                        </div>
+                                        <button type="button" (click)="onProcessClicked()" class="btn blue-bg" [disabled]="selectedStepID===''">Xử lý</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="btn-group-menu" [hidden]="isAdmin===false && workPermisstion?.IsCanEditWorkssupport===false && detailPermisstion?.IsCanEditSolutionContent===false && detailPermisstion?.IsCanEditSolutionContent===false && workPermisstion?.IsCanDeleteWorkssupport===false">
+                                <button type="button" class="btn-eof white-bg" data-toggle="modal" data-target="#modal">
+                                                    <i class="fa fa-bars" aria-hidden="true"></i>
+                                                </button>
+                                <ul class="">
+                                    <li>
+                                        <button type="button" class="btn-eof white-bg popup-close" data-toggle="modal" data-target="#modal">
+                                                            X
+                                                        </button>
+                                    </li>
+                                    <li *ngIf="isAdmin || workPermisstion?.IsCanEditWorkssupport">
+                                        <label>Chỉnh sửa</label>
+                                        <button type="button" class="btn-eof yellow-bg" (click)="onEditWorksClick()">
+                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                        </button>
+                                    </li>
+                                    <li *ngIf="isAdmin || detailPermisstion?.IsCanEditSolutionContent">
+                                        <label>Thêm giải pháp</label>
+                                        <button type="button" class="btn-eof blue-bg" (click)="onAddSolutionOpenModal()">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                                        </button>
+                                    </li>
+                                    <li *ngIf="(isAdmin || detailPermisstion?.IsCanEditSolutionContent) && workDetail?.SolutionContent!==null && workDetail?.SolutionContent!==''">
+                                        <label>Xóa giải pháp</label>
+                                        <button type="button" class="btn-eof red-bg" (click)="closeFunctionModal()" data-toggle="modal" data-target="#modalDeleteSolution">
+                                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                        </button>
+                                    </li>
+                                    <li *ngIf="isAdmin || workPermisstion?.IsCanDeleteWorkssupport">
+                                        <label>Xóa công việc</label>
+                                        <button type="button" class="btn-eof red-bg" (click)="closeFunctionModal()" data-toggle="modal" data-target="#modalDeleteWork">
+                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                    </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main-content-detail">
+                    <div class="col-lg-3 content-left">
+                        <div class="priorities-left">
+                            <span class="priorities-title" [ngStyle]="{'border': '1px solid '+workDetail?.WorkSupportPriorityColor, 'color':workDetail?.WorkSupportPriorityColor}">Độ ưu tiên: <span>{{workDetail?.WorkSupportPriorityName}}</span></span>
+                            <ul>
+                                <li><i class="fa fa-calendar" aria-hidden="true"></i> Ngày tạo: <span class="font-weight-normal">{{stringAsDate(workDetail?.CreatedDate)}}</span></li>
+                                <li><i class="fa fa-calendar" aria-hidden="true"></i> Ngày dự kiến: <span class="font-weight-normal">{{workDetail?.ExpectedCompletedDate === null ? '-' : stringAsDate(workDetail?.ExpectedCompletedDate)}}</span></li>
+                                <li><i class="fa fa-user-plus" aria-hidden="true"></i> Người yêu cầu: <span class="font-weight-normal txt-blug">{{workDetail?.CreatedUser}}</span></li>
+                            </ul>
+                        </div>
+                        <div class="title-left">
+                            <h2>Trạng thái</h2>
+                            <input disabled type="text" class="form-control" placeholder="{{workDetail?.WorkSupportStatusName}}" />
+
+                        </div>
+                        <div class="title-left text-right">
+                            <h2>Tiến độ
+                                <span class="right btn-progress-history">
+                                                    <button class="gray" href="#" data-toggle="modal" data-target="#modal-history-update">
+                                                        <i class="fa fa-history" aria-hidden="true"></i > Lịch sử cập nhật
+                                                    </button> 
+                                                </span>
+                            </h2>
+                            <div class="status-progress">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="workDetail?.Currentprogress" aria-valuemin="0" aria-valuemax="100"
+                                        [ngStyle]="{'width': workDetail?.Currentprogress + '%'}"><span *ngIf="workDetail?.Currentprogress>0">{{workDetail?.Currentprogress}}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="quality-detail text-right" *ngIf="(isAdmin || detailPermisstion?.IsCanEditQuality) && workDetail?.IsCompleteStatus">
+                            <h2>Đánh giá chất lượng
+                                <span class="btn-quanlities">
+                                    <button (click)="onChangeEditQuality()"><i aria-hidden="true" class="fa fa-pencil"></i></button>
+                                </span>
+                            </h2>
+                            <form (ngSubmit)="onQuality()">
+                                <select class="form-control" [(ngModel)]="selectedQuantity" required [disabled]="!isEditQualityMode">
+                                                <option value="">---Chọn chất lượng---</option>
+                                                <option [value]="quantity.WorksSupportQualityId" *ngFor="let quantity of listQuantity">{{quantity.WorksSupportQualityName}}</option>
+                                            </select>
+                                <textarea rows="4" [disabled]="!isEditQualityMode" required type="text" class="form-control" placeholder="Nội dung" [(ngModel)]="QualityNote"></textarea>
+                                <button type="submit" class="btn btn-eoffice blue-bg" [disabled]="isEditQualityMode===false || selectedQuantity==='' || QualityNote===''">Đánh giá</button>
+                            </form>
+                        </div> -->
+
+                        <div class="quality-detail text-right" *ngIf="workDetail?.IsCompleteStatus">
+                            <h2>Đánh giá chất lượng
+                                <span class="btn-quanlities" *ngIf="isAdmin || detailPermisstion?.IsCanEditQuality">
+                                    <button (click)="onChangeEditQuality()"><i aria-hidden="true" class="fa fa-pencil"></i></button>
+                                </span>
+                            </h2>
+                            <form>
+                                <select class="form-control" [(ngModel)]="selectedQuantity" required [disabled]="!isEditQualityMode">
+                                                <option value="">---Chọn chất lượng---</option>
+                                                <option [value]="quantity.WorksSupportQualityId" *ngFor="let quantity of listQuantity">{{quantity.WorksSupportQualityName}}</option>
+                                            </select>
+                                <div class="input-group" style="margin-top:-10px; font-size:12.5px;">
+                                                        <span class="alert-danger" *ngIf="selectQuantityError?.lenght>0">
+                                                        {{selectQuantityError}}
+                                                        </span>
+                                </div>
+                                <textarea rows="4" [disabled]="!isEditQualityMode" required type="text" class="form-control" placeholder="Nội dung" [(ngModel)]="QualityNote"></textarea>
+                                <div class="input-group" style="margin-top:-10px; font-size:12.5px;">
+                                                        <span class="alert-danger" *ngIf="quantityNoteError?.lenght>0">
+                                                        {{quantityNoteError}}
+                                                        </span>
+                                </div>
+                                <button type="button" (click)="onQuality()" *ngIf="isAdmin || detailPermisstion?.IsCanEditQuality" class="btn btn-eoffice blue-bg" [disabled]="isEditQualityMode===false || selectedQuantity==='' || QualityNote===''">Đánh giá</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 content-right">
+                        <div class="work-group">
+                            <ul class="nav nav-tabs tabs-page" role="tablist">
+                                <li role="presentation" class="active"><a href="#tab-works-detail" aria-controls="tab-works-detail" role="tab" data-toggle="tab">Chi tiết công việc cần hổ trợ</a></li>
+                                <li role="presentation"><a href="#tab-work-related" aria-controls="tab-work-related" role="tab" data-toggle="tab">Công việc liên quan</a></li>
+                                <li role="presentation"><a href="#tab-history" aria-controls="tab-history" role="tab" data-toggle="tab">Lịch sử xử lý</a></li>
+                            </ul>
+                            <div class="tab-content tabs-page">
+                                <div role="tabpanel" class="tab-pane active" id="tab-works-detail">
+                                    <div class="fg-table">
+                                        <div class="dptable">
+                                            <div class="dpColum">
+                                                <div class="content-detail">
+                                                    <h3>{{workDetail?.WorksSupportName}}</h3>
+                                                    <div class="content-scroll">
+                                                        <p style="white-space: pre-wrap;" [innerHtml]="workDetail?.Content">
+
+                                                        </p>
+                                                    </div>
+                                                    <div class="list-file" *ngIf="workDetail?.ListWorksSupportAttachment!==null && workDetail?.ListWorksSupportAttachment.length>0">
+                                                        <h3>Tập tin đính kèm</h3>
+                                                        <div class="itemFileDefaul" *ngFor="let file of workDetail?.ListWorksSupportAttachment">
+                                                            <div class="btn-add-file  iconFileUpload" (click)="onDownload(file.FileId)">
+                                                                <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                                <span class="txtNameFile">{{file.FileName}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="dpColum" *ngIf="workDetail?.SolutionContent!==null">
+                                                <div class="content-detail-left">
+                                                    <div class="panel">
+                                                        <div class="panel-heading">
+                                                            <label>Giải pháp</label>
+                                                            <button type="button" *ngIf="isAdmin || detailPermisstion?.IsCanEditSolutionContent" class="btn-eof white-bg" (click)="onEditSolutionOpen()">
+                                                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                                </button>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <div class="solution-item">
+                                                                <div class="nav-control nav-inside">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-7">
+                                                                            <div class="main-filter">
+                                                                                <div class="avatar-user">
+                                                                                    <img src="{{workDetail?.SolutionUserPictureUrl===null ? 'app/resources/images/no-avatar.gif' : ('http://eofficecnd.nc.com/album/'+workDetail?.SolutionUserPictureUrl)}}"
+                                                                                        alt="{{workDetail?.SolutionUser}}">
+                                                                                </div>
+                                                                                <label>{{workDetail?.SolutionUser}}: </label>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="col-xs-5 white-bg text-right ">
+                                                                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                                                            <label>{{stringAsDate(workDetail?.SolutionDate)}}</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="detail-left-main">
+                                                                    <p>
+                                                                        {{workDetail?.SolutionContent}}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-footer" *ngIf="workDetail?.ListWorksSupportSolutionAttachment!==null && workDetail?.ListWorksSupportSolutionAttachment.length>0">
+                                                            <div class="itemFileDefaul" *ngFor="let file of workDetail?.ListWorksSupportSolutionAttachment" (click)="onDownloadSolution(file.FileId)">
+                                                                <div class="btn-add-file iconFileUpload">
+                                                                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                                </div>
+                                                                <span class="txtNameFile">{{file.FileName}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane tab-work" id="tab-work-related">
+                                    <button data-toggle="modal" type="button" class="btn-eof blue-bg" (click)="onAddWorksInvoleClick()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    <div class="lstDetailGroup content-scroll-tab">
+                                        <table class="table-hover" id="dataTable-work-related" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th valign="middle" width="40%">Tên công việc</th>
+                                                    <th valign="middle" width="17%">Ngày bắt đầu</th>
+                                                    <th valign="middle" width="17%">Ngày kết thúc</th>
+                                                    <th valign="middle" width="21%">Tiến độ</th>
+                                                    <th valign="middle" width="5%">&nbsp;</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngIf="workDetail?.ListWorksInvole==null || workDetail?.ListWorksInvole.length===0">
+                                                    <td colspan="5" class="text-center">
+                                                        Không có công việc liên quan
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let invole of workDetail?.ListWorksInvole">
+                                                    <td valign="middle" align="left"><span style="color: #0288d1;font-size: 14px;">{{invole.WorksName}}</span></td>
+                                                    <td valign="middle" align="center">{{stringAsDate(invole.StartDate)}}</td>
+                                                    <td valign="middle" align="center">{{invole.EndDate === null ? '-' : stringAsDate(invole.EndDate)}}</td>
+                                                    <td valign="middle" align="center">
+                                                        <div class="progress">
+                                                            <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="invole.CurrentProcess" aria-valuemin="0" aria-valuemax="100"
+                                                                [ngStyle]="{'width': invole.CurrentProcess + '%'}"><span *ngIf="invole.CurrentProcess>0">{{invole.CurrentProcess}}%</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td valign="middle" align="center" width="5%"><button (click)="confirmDeleteInvole(invole.WorksId,invole.WorksName)"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane tab-work " id="tab-history">
+
+                                    <div class="lstDetailGroup content-scroll-tab">
+                                        <table class="table-hover" id="dataTable" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th valign="middle" width="30%">Bước xử lý</th>
+                                                    <th valign="middle" width="20%">Ghi chú</th>
+                                                    <th valign="middle" width="10%">Trạng thái</th>
+                                                    <th valign="middle" width="20%">Người xử lý</th>
+                                                    <th valign="middle" width="20%">Ngày xử lý</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngIf="workDetail?.ListWorksSupportWorkFlow===null || workDetail?.ListWorksSupportWorkFlow.length===0">
+                                                    <td colspan="5" class="text-center">
+                                                        Không có lịch sử xử lý
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let workFlow of workDetail?.ListWorksSupportWorkFlow">
+                                                    <td valign="middle" align="left"><span style="color: #0288d1;font-size: 14px;">{{workFlow.WorksSupportStepName}}</span></td>
+                                                    <td valign="middle" align="center">{{workFlow.Note}}</td>
+                                                    <td valign="middle" align="center">{{workFlow.WorkSupportStatusName}}</td>
+                                                    <td valign="middle" align="center">{{workFlow.ProcessUser}}</td>
+                                                    <td valign="middle" align="center">{{stringAsDate(workFlow.ProcessDate)}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <form (ngSubmit)="onComment()">
+                                <h3>Bình luận</h3>
+                                <div class="item" *ngIf="isAdmin || detailPermisstion?.IsCanComment">
+                                    <div class="nav-control nav-inside">
+                                        <div class="row">
+                                            <div class="main-filter">
+                                                <div class="avatar-user">
+                                                    <img src="{{userProfile?.strDefaultPictureURL==='' ? 'app/resources/images/no-avatar.gif' : ('http://eofficecnd.nc.com/album/'+userProfile?.strDefaultPictureURL)}}"
+                                                        alt="{{userProfile?.strFullName}}">
+                                                </div>
+                                                <label>{{userProfile?.strFullName}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" type="text" placeholder="Nhập nội dung bình luận..." [(ngModel)]="comment"></textarea>
+                                    <form-filesUpload #CommentUpload id="commentAttachment" class="collapse" (onFileUploaded)="onFileUploadedComment($event)"
+                                        (onFileRemoved)="onFileRemovedComment($event)"></form-filesUpload>
+                                </div>
+                                <div class="form-group text-right" *ngIf="isAdmin || detailPermisstion?.IsCanComment">
+                                    <button class="btn btn-eoffice green-bg" (click)="addAttachFileComment()" type="button"><i class="fa fa-chain-broken" aria-hidden="true"></i> Tệp đính kèm</button>
+                                    <button class="btn btn-eoffice blue-bg" [disabled]="comment===''" id="save" type="submit">Gửi</button>
+                                </div>
+                            </form>
+                            <div class="list-item">
+                                <div class="panel" *ngFor="let comment of workDetail?.ListWorksSupportComment">
+                                    <div class="panel-heading">
+                                        <div class="nav-control nav-inside">
+                                            <div class="row">
+                                                <div class="col-xs-8">
+                                                    <div class="main-filter">
+                                                        <div class="avatar-user">
+                                                            <img src="{{comment.DefaultPictureUrl === null ? 'app/resources/images/no-avatar.gif' : ('http://eofficecnd.nc.com/album/' + comment.DefaultPictureUrl)}}"
+                                                                alt="{{comment.FullName}}">
+                                                        </div>
+
+                                                    </div>
+                                                    <label>{{comment.FullName}}</label>
+                                                </div>
+                                                <div class="col-xs-4 text-right"><i class="fa fa-clock-o" aria-hidden="true"></i> {{stringAsDate(comment.CommentDate)}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        {{comment.CommentContent}}
+                                    </div>
+                                    <div class="panel-footer" *ngIf="comment.ListCommentAttachment!==null && comment.ListCommentAttachment.length>0">
+                                        <ul>
+                                            <li *ngFor="let file of comment.ListCommentAttachment" (click)="onDownloadFileComment(file.FileId)"><i class="fa fa-file-text-o" aria-hidden="true"></i> {{file.FileName}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Show popup erorr  -->
+<div class="modal fade model-erorr" role="dialog" id="modalErorr" data-backdrop="static">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center">Thông Báo</h2>
+                <button type="button"   class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            </div>
+            <!-- loi ngay thang nam-->
+            <div class="modal-body" style="font-size:13px;">
+                <p>Ngày tìm kiếm không hợp lệ!!</p>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button"   class="btn btn-default centering text-center" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Đóng</button>
+            </div>
+        </div>
+
+    </div>
+</div>

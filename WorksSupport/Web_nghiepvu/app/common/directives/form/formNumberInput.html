@@ -1,0 +1,3 @@
+<p *ngIf="readOnly===true">{{model}}</p>
+<input *ngIf="readOnly===false" placeholder="{{placeHolderText}}" (change)="onValueChanged($event)" [validation]="validation"
+    type="number" min="{{min}}" max="{{max}}" step="1" [(ngModel)]=model class="form-control col-md-7 col-xs-12" />

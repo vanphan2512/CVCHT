@@ -1,0 +1,211 @@
+System.register(["angular2/core", "../../models/ui", "./gridModel", "../../../common/services/cacheService"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, ui_1, gridModel_1, cacheService_1, cacheService_2, Grid;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (gridModel_1_1) {
+                gridModel_1 = gridModel_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            }
+        ],
+        execute: function () {
+            Grid = (function (_super) {
+                __extends(Grid, _super);
+                function Grid() {
+                    var _this = _super.call(this) || this;
+                    _this.isCanEdit = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                    _this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    _this.eventKey = String.empty;
+                    _this.options = {};
+                    _this.onItemEditClicked = new core_1.EventEmitter();
+                    _this.onItemDeleteClicked = new core_1.EventEmitter();
+                    _this.onToggleSelectChanged = new core_1.EventEmitter();
+                    _this.onIconSelectChanged = new core_1.EventEmitter();
+                    return _this;
+                }
+                Grid.prototype.onInit = function () {
+                    var self = this;
+                    self.model = new gridModel_1.GridModel(self.options);
+                    if (!String.isNullOrWhiteSpace(self.eventKey)) {
+                        self.registerEvent(self.eventKey, function (data) { self.onDataSourceChanged(data); });
+                    }
+                };
+                Grid.prototype.onDataSourceChanged = function (items) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    self.grid.clear();
+                    if (items.length > 0) {
+                        self.grid.rows.add(items).draw();
+                        $(".pagination").css("display", "inline-block");
+                        $(".dataTables_length select").removeAttr('disabled');
+                    }
+                    else {
+                        self.grid.rows.add(items).draw();
+                        $(".pagination").css("display", "none");
+                        $(".dataTables_length select").attr('disabled', 'disabled');
+                    }
+                };
+                Grid.prototype.onReady = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    $(document).ready(function () {
+                        /*let editor = new $.fn.dataTable.Editor({
+                            ajax: self.model.getAjaxUrl(),
+                            table: "#" + self.model.id,
+                            idSrc: self.model.getIDSrc(),
+                            fields: self.model.getFieldEditor()
+                        });*/
+                        self.grid = $("#" + self.model.id).DataTable({
+                            // dom: "Bfrtip",
+                            data: self.model.data,
+                            responsive: true,
+                            columnDefs: self.model.getColumns(),
+                            select: {
+                                style: "multi",
+                                selector: "td:first-child",
+                                info: false
+                            },
+                            searching: false,
+                            language: {
+                                "lengthMenu": "Hiển thị _MENU_ dòng",
+                                "zeroRecords": "Không có kết quả",
+                                "info": "",
+                                select: {
+                                    rows: {
+                                        _: "",
+                                    }
+                                }
+                            },
+                            //rowReorder: {
+                            //    dataSrc: self.model.getOrderIndexSrc(),
+                            //    selector: "td:nth-last-child(2)",
+                            //    editor: editor
+                            //},
+                            lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "Tất cả"]],
+                            dom: "<'top'i>rt<'bottom'flp><'clear'>",
+                            order: [[1, "asc"]],
+                            buttons: []
+                        });
+                        /*editor.on("preSubmit", function (event: any, data: any, action: any) {
+                            console.log(JSON.stringify(data.data));
+                            data.id = Object.keys(data.data)[0];
+                            let html: string = "";
+                            for (let i = 0; i < Object.keys(data.data[data.id]).length; i++) {
+                                let key = Object.keys(data.data[data.id])[i];
+                                let value = data.data[data.id][key];
+                                html += "data." + key + " = '" + value + "';\n";
+                            }
+                            eval(html);
+                            data.User = cacheService.get(CACHE_CONSTANT.strUserName);
+                            data.data = JSON.stringify(data.data);
+                            delete data.action;
+                        });
+                        editor.on("submitError", function (event: any, data: any, action: any, json: any) {
+                            console.log("Cập nhật lỗi");
+                        });*/
+                        self.bindEvents();
+                    });
+                };
+                Grid.prototype.bindEvents = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#" + self.model.id + " tbody").on("click", "#editGridItem", function () {
+                        var data = self.grid.row($(this).parents("tr")).data();
+                        self.onItemEditClicked.emit({ item: data, gtid: self.grid });
+                    });
+                    $("#" + self.model.id + " tbody").on("click", ".grid-delete-item", function () {
+                        var data = self.grid.row($(this).parents("tr")).data();
+                        self.onItemDeleteClicked.emit({ item: data, gtid: self.grid });
+                    });
+                    $("#" + self.model.id + " tbody").on("click", ".toggle-active", function () {
+                        this.isCanEdit = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                        if (this.isCanEdit) {
+                            var data = self.grid.row($(this).parents("tr")).data();
+                            self.onToggleSelectChanged.emit({ item: data, gtid: self.grid });
+                        }
+                    });
+                    /*$("#" + self.model.id + " tbody").on("click", ".modalIcon", function () {
+                        this.isCanEdit = cacheService.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                        if (this.isCanEdit) {
+                            this.iconRowSelect = self.grid.row($(this).parents("tr")).data();
+                            localStorage.removeItem("rowSelected");
+                            localStorage.setItem("rowSelected", JSON.stringify(this.iconRowSelect));
+                        }
+                    });
+                    $("#myIconModalGird li").on("click", function () {
+                        this.isCanEdit = cacheService.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                        if (this.isCanEdit) {
+                            let icon = $(this).find("i").attr("class");
+                            let data = JSON.parse(localStorage.getItem("rowSelected"));
+                            self.onIconSelectChanged.emit({ item: data, icon: icon, gtid: self.grid });
+                            $("#myIconModalGird").modal("hide");
+                        }
+                    });*/
+                };
+                return Grid;
+            }(ui_1.BaseControl));
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", String)
+            ], Grid.prototype, "eventKey", void 0);
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Object)
+            ], Grid.prototype, "options", void 0);
+            __decorate([
+                core_1.Output(),
+                __metadata("design:type", Object)
+            ], Grid.prototype, "onItemEditClicked", void 0);
+            __decorate([
+                core_1.Output(),
+                __metadata("design:type", Object)
+            ], Grid.prototype, "onItemDeleteClicked", void 0);
+            __decorate([
+                core_1.Output(),
+                __metadata("design:type", Object)
+            ], Grid.prototype, "onToggleSelectChanged", void 0);
+            __decorate([
+                core_1.Output(),
+                __metadata("design:type", Object)
+            ], Grid.prototype, "onIconSelectChanged", void 0);
+            Grid = __decorate([
+                core_1.Component({
+                    selector: "grid",
+                    templateUrl: "app/common/directives/grid/grid.html"
+                }),
+                __metadata("design:paramtypes", [])
+            ], Grid);
+            exports_1("Grid", Grid);
+        }
+    };
+});
+//# sourceMappingURL=grid.js.map

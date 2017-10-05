@@ -1,0 +1,33 @@
+import { IModule } from "../common/models/layout";
+import registration from "../modules/registration/_share/config/module";
+// import configuration from "../modules/configurations/_share/config/module";
+import eoffice from "../modules/eoffice/_share/config/module";
+import { FormsModule } from "@angular/forms";
+import { Languages } from "../common/enum";
+
+let modules: Array<IModule> = [
+    registration,
+    // configuration,
+    eoffice
+];
+export default {
+    app: {
+        name: "Công Việc Hỗ Trợ"
+    },
+    ioc: "./config/ioc",
+    modules: modules,
+    loginUrl: "/Login",
+    defaultUrl: "/Priorities",
+    businessUrl:"/Projects",
+    localization: {
+        lang: Languages.VN
+    },
+    auth: {
+        token: "authtoken"
+    },
+    api: {
+        baseUrl: "http://nc.erp.workssupport.com/api/",
+        downloadUrl: "http://nc.erp.workssupport.com/DownloadFile/"
+    },
+    localeUrl: "/app/resources/locales/"
+};

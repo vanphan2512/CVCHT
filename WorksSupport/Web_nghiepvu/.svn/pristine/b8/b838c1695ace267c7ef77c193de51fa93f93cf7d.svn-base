@@ -1,0 +1,245 @@
+import { Component, ViewChild } from "angular2/core";
+import { Router } from "angular2/router";
+import { BasePage } from "../../../common/models/ui";
+import route from "../_share/config/route";
+import { FormMode } from "../../../common/enum";
+import { ValidationException } from "../../../common/models/exception";
+import { FormDatePicker, FormFilesUpload } from "../../../common/directive";
+import cacheService from "../../../common/services/cacheService";
+import { CACHE_CONSTANT } from "../../../common/services/cacheService";
+import configHelper from "../../../common/helpers/configHelper";
+@Component({
+    templateUrl: "app/modules/eoffice/report/report.html",
+    directives: [FormDatePicker, FormFilesUpload]
+})
+export class Report extends BasePage {
+    constructor(router: Router) {
+        super();
+    }
+    ngOnInit() {
+        let $ = window.jQuery;
+        $.fn.extend({
+            treeview: function () {
+                return this.each(function () {
+                    var tree = $(this);
+                    tree.addClass('treeview-tree');
+                    tree.find('li').each(function () {
+                        var stick = $(this);
+                    });
+                    tree.find('li').has("ul").each(function () {
+                        var branch = $(this);
+                        branch.prepend("<i class='tree-indicator fa fa-caret-right'></i>");
+                        branch.addClass('tree-branch');
+                        branch.on('click', function (e: any) {
+                            if (this == e.target) {
+                                var icon = $(this).children('i:first');
+                                icon.toggleClass("tree-indicator fa fa-caret-down fa fa-caret-right");
+                                $(this).children().children().toggle();
+                            }
+                        })
+                        branch.children().children().toggle();
+                        branch.children('.tree-indicator, button, a').click(function (e: any) {
+                            branch.click();
+                            e.preventDefault();
+                        });
+                    });
+                });
+            }
+        });
+
+        $('.treeview').each(function () {
+            var tree = $(this);
+            tree.treeview();
+        });
+        Highcharts.chart('container', {
+            title: {
+                text: 'Trạng thái công việc cần hổ trợ.',
+                verticalAlign: "bottom",
+                useHTML: true,
+                style: {
+                    color: "#4c5c68",
+                    fontSize: "14px",
+                },
+            },
+            credits: {
+                enabled: false,
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.point.name.toLowerCase() +
+                        ':</b>' + this.y;
+                }
+            },
+
+            chart: {
+                type: 'pie',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                marginBottom: 60
+
+            },
+            series: [{
+                // name: '',
+                // useHTML: true,
+                // keys: ['name', 'y', 'selected', 'sliced'],
+                data: [
+                    ['Đã tiếp nhận', 200],
+                    ['khởi tạo', 50]
+                ],
+
+
+                showInLegend: true
+            }],
+            plotOptions: {
+                useHTML: true,
+                series: {
+                    useHTML: true,
+                    enabled: false,
+                    // click item
+                    allowPointSelect: false,
+
+                    dataLabels: {
+                        useHTML: true,
+                        format: '{point.percentage:.1f} %',
+                        color: '#fff',
+                        enabled: true,
+                        distance: -50,
+                        connectorWidth: 1,
+                        borderRadius: 5,
+                        // backgroundColor: 'rgba(252, 255, 197, 0.7)',
+                        borderWidth: 0,
+                        borderColor: '#AAA',
+                        y: -6,
+                        x: 0,
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    },
+
+                }
+            },
+
+            navigation: {
+                buttonOptions: {
+                    enabled: false,
+                    align: 'right'
+                }
+            },
+            legend: {
+                useHTML: true,
+                enabled: true,
+                align: 'left',
+                verticalAlign: 'top',
+                layout: 'vertical',
+                x: 0,
+                y: 100,
+                lineHeight: '18px',
+                itemStyle: {
+                    color: "#23527c",
+                    fontSize: '13px',
+                    fontWeight: '500',
+
+                },
+                itemHoverStyle: {
+                    useHTML: true,
+                    color: '#FF0000'
+                }
+            },
+
+        });
+        Highcharts.chart('containerColumn', {
+                                        chart: {
+                                            type: 'column',
+                                            marginTop: 50,
+                                            marginBottom: 60
+                                        },
+                                        legend: {
+                                            useHTML: true,
+                                            enabled: true,
+                                            align: 'left',
+                                            verticalAlign: 'top',
+                                            lineHeight: '18px',
+                                            x: 20,
+                                            y: -10,
+                                            itemStyle: {
+                                                lineHeight: '14px',
+                                                color: "#23527c",
+                                                fontSize: '13px',
+                                                fontWeight: '500',
+
+                                            },
+                                            itemHoverStyle: {
+                                                color: '#FF0000'
+                                            }
+                                        },
+                                        tooltip: {
+                                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                                            footerFormat: '</table>',
+                                            shared: true,
+                                            useHTML: true
+                                        },
+                                        plotOptions: {
+                                            column: {
+                                                pointPadding: 0.2,
+                                                borderWidth: 0,
+                                                dataLabels: {
+                                                    enabled: true,
+                                                    color: '#FFFFFF',
+                                                    align: 'center',
+                                                    format: '{y}', // one decimal
+                                                    y: 30, // 10 pixels down from the top
+                                                    style: {
+                                                        fontSize: '10px',
+                                                        // fontFamily: 'Verdana, sans-serif'
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        credits: {
+                                            enabled: false,
+                                        },
+                                        navigation: {
+                                                buttonOptions: {
+                                                    enabled: false,
+                                                    align: 'right'
+                                                }
+                                            },
+                                        title: {
+                                            text: 'Tình trạng công việc cần hổ trợ.',
+                                            verticalAlign: "bottom",
+                                            useHTML: true,
+                                            style: {
+                                                color: "#4c5c68",
+                                                fontSize: "14px", 
+                                            },
+                                        },
+                                        xAxis: {
+                                            categories: ["01/2016", "02/2016", "03/2016999", "04/2016", "05/2016", "06/2016", "07/2016999", "08/2016", "09/2016"],
+                                            crosshair: true
+                                        },
+                                        yAxis: {
+                                            min: 0,
+                                            allowDecimals: false,
+                                            title: {
+                                                text: 'Công việc'
+                                            }
+                                        },
+                                        series: [{
+                                            name: 'Hoàn thành',
+                                            data: [49, 71, 16, 29, 44, 76, 35, 48, 64]
+
+                                        }, {
+                                            name: 'Vị phạm',
+                                            data: [36, 78, 85, 34, 60, 85, 50, 10, 12]
+
+                                        }, {
+                                            name: 'Trể hạn',
+                                            data: [48, 38, 39, 41, 47, 48, 59, 59, 52]
+
+                                        }]
+                                    });
+    }
+}

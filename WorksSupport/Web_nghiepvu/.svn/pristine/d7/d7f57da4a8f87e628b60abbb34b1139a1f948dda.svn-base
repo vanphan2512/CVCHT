@@ -1,0 +1,94 @@
+System.register(["../../../../common/helpers/configHelper"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var configHelper_1;
+    var worksGroupService;
+    // get work group by projectId
+    function getWorksGroups(projectId) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}{2}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/GetworksGroupByProjectId/", projectId);
+        return connector.get(url);
+    }
+    // get work group by groupid
+    function getWorksGroupsByGroupId(groupid) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}v2/worksgroup/groupId?worksGroupId={1}", configHelper_1.default.getAppConfig().api.baseUrl, groupid);
+        return connector.get(url);
+    }
+    function remove(id, user) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}/{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/Del");
+        return connector.post(url, { id: id, user: user });
+    }
+    function create(role) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/insertBy");
+        return connector.post(url, role);
+    }
+    function edit(role) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/updateWorkGroup");
+        return connector.post(url, role);
+    }
+    function getRoleByProjectId(id) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}{2}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/memberroles/GetRole/", id);
+        return connector.get(url);
+    }
+    function getAllProjectByMemberId(memberId) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}{2}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/getProjectsIsActive/", memberId);
+        return connector.get(url);
+    }
+    function getGroupMember(role) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/GetMembers");
+        return connector.post(url, role);
+    }
+    function deleteGroupMember(role) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/DeleteMember");
+        return connector.post(url, role);
+    }
+    function getAllMemberByProjectId(projectId) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}{2}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/GetAllMemberByProjectId/", projectId);
+        return connector.get(url);
+    }
+    // lay thanh vien cua nhom cong viec khi edit du an
+    function getWorksGroupMember(id) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}v2/worksgroup/getMemberByGroupId/{1}", configHelper_1.default.getAppConfig().api.baseUrl, id);
+        return connector.get(url);
+    }
+    // get work group by projectId
+    function getWorksGroupRole(projectId, workTypeId, userName) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}{2}/{3}/{4}", configHelper_1.default.getAppConfig().api.baseUrl, "v2/worksgroup/GetworksGroupRole/", projectId, workTypeId, userName);
+        return connector.get(url);
+    }
+    return {
+        setters:[
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }],
+        execute: function() {
+            worksGroupService = {
+                getWorksGroups: getWorksGroups,
+                delete: remove,
+                create: create,
+                edit: edit,
+                getAllProjectByMemberId: getAllProjectByMemberId,
+                getRoleByProjectId: getRoleByProjectId,
+                getGroupMember: getGroupMember,
+                deleteGroupMember: deleteGroupMember,
+                getAllMemberByProjectId: getAllMemberByProjectId,
+                getWorksGroupsByGroupId: getWorksGroupsByGroupId,
+                getWorksGroupMember: getWorksGroupMember,
+                getWorksGroupRole: getWorksGroupRole
+            };
+            exports_1("default",worksGroupService);
+        }
+    }
+});
+//# sourceMappingURL=WorksGroupService.js.map

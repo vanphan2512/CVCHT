@@ -1,0 +1,154 @@
+System.register(["../../../common/services/cacheService"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var cacheService_1, cacheService_2, GridModel;
+    return {
+        setters: [
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            }
+        ],
+        execute: function () {
+            GridModel = (function () {
+                function GridModel(options) {
+                    this.id = String.format("_grid{0}", GridModel.NumberOfInstance);
+                    this.data = [];
+                    this.options = null;
+                    GridModel.NumberOfInstance++;
+                    this.data = options.data;
+                    this.options = options;
+                }
+                GridModel.prototype.getAjaxUrl = function () {
+                    var ajaxUrl = String.empty;
+                    if (String.isNullOrWhiteSpace(this.options.ajaxUrl)) {
+                        return ajaxUrl;
+                    }
+                    else {
+                        ajaxUrl = this.options.ajaxUrl;
+                        return ajaxUrl;
+                    }
+                };
+                GridModel.prototype.getIDSrc = function () {
+                    var idSrc = String.empty;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return idSrc;
+                    }
+                    else {
+                        this.options.columns.forEach(function (column, index) {
+                            if (column.type === "id") {
+                                idSrc = column.field;
+                            }
+                        });
+                        return idSrc;
+                    }
+                };
+                GridModel.prototype.getOrderIndexSrc = function () {
+                    var idSrc = String.empty;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return idSrc;
+                    }
+                    else {
+                        this.options.columns.forEach(function (column, index) {
+                            if (column.type === "rownumber") {
+                                idSrc = column.field;
+                            }
+                        });
+                        return idSrc;
+                    }
+                };
+                GridModel.prototype.getFieldEditor = function () {
+                    var fields = [];
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return fields;
+                    }
+                    else {
+                        this.options.columns.forEach(function (column, index) {
+                            switch (column.type) {
+                                case "rownumber": {
+                                    fields.push({ "name": column.field });
+                                    break;
+                                }
+                                default:
+                                    {
+                                        break;
+                                    }
+                            }
+                        });
+                        return fields;
+                    }
+                };
+                GridModel.prototype.getColumns = function () {
+                    var columns = [];
+                    var data;
+                    var type;
+                    var row;
+                    var meta;
+                    var isCanEdit = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                    var isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return columns;
+                    }
+                    if (isCanDelete) {
+                        columns.push({ "targets": 0, "checkboxes": { "selectRow": true }, "orderable": true });
+                    }
+                    this.options.columns.forEach(function (column, index) {
+                        switch (column.type) {
+                            case "rownumber": {
+                                columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "className": "reorder text-center", "width": !!column.width ? column.width : null, "visible": column.visible === "false" ? false : true, "orderable": column.sort === "false" ? false : true });
+                                break;
+                            }
+                            case "checkbox": {
+                                columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": function (data, type, row) { if (type === "display") {
+                                        return "<input type='checkbox' " + (data ? " checked" : "") + " disabled class='editor-active custom-checkbox " + column.field + "'><label></label>";
+                                    } return data; }, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible === "false" ? false : true, "orderable": column.sort === "false" ? false : true });
+                                break;
+                            }
+                            case "icon": {
+                                columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": function (data, type, full, meta) { return "<i class=' fa-lg " + data + "' aria-hidden='true'></i>"; }, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible === "false" ? false : true, "orderable": column.sort === "false" ? false : true });
+                                break;
+                            }
+                            case "toggle": {
+                                columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": function (data, type, full, meta) { return "<span style='display:none;'>" + data + "</span><span class='ios-tog'><input disabled class='toggle-active' id='" + column.field + "-" + (meta.row + meta.settings._iDisplayStart + 1) + "' " + (data ? " checked" : "") + " type='checkbox'><label for='" + column.field + "-" + (meta.row + meta.settings._iDisplayStart + 1) + "'><i></i></label></span>"; }, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible === "false" ? false : true, "orderable": column.sort === "false" ? false : true });
+                                break;
+                            }
+                            default:
+                                {
+                                    columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": !!column.render ? column.render : null, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible === "false" ? false : true, "orderable": column.sort === "false" ? false : true });
+                                    break;
+                                }
+                        }
+                    });
+                    var actionContent = this.getActions();
+                    if (!String.isNullOrWhiteSpace(actionContent)) {
+                        if (isCanEdit) {
+                            if (!isCanDelete) {
+                                columns.push({ width: "67px", orderable: false, data: null, title: "Chỉnh sửa", targets: (columns.length), defaultContent: actionContent, "className": "text-center btnEdit" });
+                            }
+                            else {
+                                columns.push({ width: "67px", orderable: false, data: null, title: "Chỉnh sửa", targets: (columns.length - 1), defaultContent: actionContent, "className": "text-center btnEdit" });
+                            }
+                        }
+                    }
+                    return columns;
+                };
+                /* Resolve static text to i18n later */
+                GridModel.prototype.getActions = function () {
+                    var html = String.empty;
+                    if (this.options.enableEdit === true) {
+                        html += "<a type=button class=\"btnEditTd\" id=\"editGridItem\"><i class=\" fa fa-edit fa-lg \" aria-hidden=true></i></a>";
+                    }
+                    /*if (this.options.enableDelete === true) {
+                        html += "<input type=button class=\"btn btn-danger grid-delete-item\" id=\"deleteGridItem\" value=\"Delete\"/>";
+                    }*/
+                    return html;
+                };
+                return GridModel;
+            }());
+            GridModel.NumberOfInstance = 0;
+            exports_1("GridModel", GridModel);
+        }
+    };
+});
+//# sourceMappingURL=gridModel.js.map

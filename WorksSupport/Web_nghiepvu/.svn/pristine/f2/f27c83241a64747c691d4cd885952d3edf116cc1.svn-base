@@ -1,0 +1,71 @@
+System.register(["./cacheService", "../storages/sessionStorage"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function isAuthorized(routeInstruction) {
+        var profile = getUserProfile();
+        return isAuthenticated(profile);
+    }
+    function removeAuth() {
+        sessionStorage_1.default.remove(cacheService_1.CACHE_CONSTANT.USER_PROFILE);
+        sessionStorage_1.default.remove(cacheService_1.CACHE_CONSTANT.TOKEN);
+    }
+    function isAuthenticated(profile) {
+        return !!profile;
+    }
+    function setAuth(auth) {
+        sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.USER_PROFILE, auth.profile);
+        sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.TOKEN, auth.profile.strTokenString);
+        sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.strUserName, auth.profile.strUserName);
+        var listFunction = auth.lsUserFunction;
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_VIEW"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_VIEW, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_VIEW, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_ADD"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_EDIT"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_DELETE"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_AUTHORIZE_VIEW"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_VIEW, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_VIEW, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_AUTHORIZE_EDIT"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_EDIT, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_EDIT, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTPROJECT_ADD"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTPROJECT_ADD, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTPROJECT_ADD, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTPROJECT_DEL"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTPROJECT_DEL, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTPROJECT_DEL, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTPROJECT_EDIT"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTPROJECT_EDIT, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPORTPROJECT_EDIT, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_VIEW"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_VIEW, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_VIEW, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_ADD"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_ADD, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_ADD, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_EDIT"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_EDIT, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_EDIT, "true");
+        listFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_DELETE"; }) === -1 ? sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_DELETE, "false") : sessionStorage_1.default.set(cacheService_1.CACHE_CONSTANT.EO_WORKSSUPPORT_DELETE, "true");
+    }
+    function getAuth() {
+        var auth = {
+            profile: sessionStorage_1.default.get(cacheService_1.CACHE_CONSTANT.USER_PROFILE),
+            token: sessionStorage_1.default.get(cacheService_1.CACHE_CONSTANT.TOKEN)
+        };
+        return auth;
+    }
+    function getUserProfile() {
+        if (!sessionStorage_1.default.exist(cacheService_1.CACHE_CONSTANT.USER_PROFILE)) {
+            return null;
+        }
+        var userProfile = sessionStorage_1.default.get(cacheService_1.CACHE_CONSTANT.USER_PROFILE);
+        return userProfile;
+    }
+    var cacheService_1, sessionStorage_1, authService;
+    return {
+        setters: [
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+            },
+            function (sessionStorage_1_1) {
+                sessionStorage_1 = sessionStorage_1_1;
+            }
+        ],
+        execute: function () {
+            authService = {
+                getUserProfile: getUserProfile,
+                setAuth: setAuth,
+                getAuth: getAuth,
+                removeAuth: removeAuth,
+                isAuthenticated: isAuthenticated,
+                isAuthorized: isAuthorized
+            };
+            exports_1("default", authService);
+        }
+    };
+});
+//# sourceMappingURL=authService.js.map

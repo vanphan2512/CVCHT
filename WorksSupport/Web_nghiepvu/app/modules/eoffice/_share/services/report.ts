@@ -1,0 +1,122 @@
+import configHelper from "../../../../common/helpers/configHelper";
+import { Promise } from "../../../../common/models/promise";
+let reportsService = {
+    getProject: getProject,
+    getWorkGroupByProjectId: getWorkGroupByProjectId,
+    getReport:getReport,
+    getReportByStatus:getReportByStatus,
+    getWorkGroupByStatus:getWorkGroupByStatus,
+    getWorkStatusByWorkGroupId:getWorkStatusByWorkGroupId,
+    getWorkStateByStateType:getWorkStateByStateType,
+    loadWorkGroupsByState:loadWorkGroupsByState,
+    getWorkDetailByStateType:getWorkDetailByStateType,
+    getWorkGroupByGroupType:getWorkGroupByGroupType,
+    getWorkDetailByGroupType:getWorkDetailByGroupType,
+    GetLineChartByDay:GetLineChartByDay,
+    GetLineChartByWeek:GetLineChartByWeek,
+    GetLineChartByMonth:GetLineChartByMonth,
+    GetLineChartByYear:GetLineChartByYear
+};
+export default reportsService;
+
+function getProject(user: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}{2}", configHelper.getAppConfig().api.baseUrl, "v2/Report/LoadProject/",user);
+    return connector.get(url);
+}
+function getWorkGroupByProjectId(projectID: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}{2}", configHelper.getAppConfig().api.baseUrl, "v2/Report/GetWorkGroupByProjectId/",projectID);
+    return connector.get(url);
+}
+function getReport(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetReport"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function getReportByStatus(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/getReportByStatus"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function getWorkGroupByStatus(projectId:string,workGroup: string, fromDate: Date,toDate: Date, statusId: string): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetWorkGroupByStatus"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate,StatusId: statusId});
+}
+function getWorkStatusByWorkGroupId(projectId:string,workGroup: string, fromDate: Date,toDate: Date, statusId: string): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetWorkStatusByWorkGroupId"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate,StatusId: statusId});
+}
+function getWorkStateByStateType(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetWorkStateByStateType"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function loadWorkGroupsByState(projectId:string,workGroup: string, fromDate: Date,toDate: Date, type: string): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/LoadWorkGroupsByState"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate,type: type});
+}
+function getWorkDetailByStateType(projectId:string,workGroup: string, fromDate: Date,toDate: Date, type: string): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetWorkDetailByStateType"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate,type: type});
+}
+function getWorkGroupByGroupType(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetWorkGroupByGroupType"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function getWorkDetailByGroupType(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetWorkDetailByGroupType"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function GetLineChartByDay(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetLineChartByDay"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function GetLineChartByWeek(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetLineChartByWeek"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function GetLineChartByMonth(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetLineChartByMonth"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}
+function GetLineChartByYear(projectId:string,workGroup: string, fromDate: Date,toDate: Date): Promise {
+    let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}{1}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/Report/GetLineChartByYear"); 
+    return connector.post(url,{ProjectId:projectId,WorkGroupId:workGroup,FromDate:fromDate,ToDate:toDate});
+}

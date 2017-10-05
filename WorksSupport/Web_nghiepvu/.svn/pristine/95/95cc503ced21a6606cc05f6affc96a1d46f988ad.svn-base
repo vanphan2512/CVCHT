@@ -1,0 +1,29 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var route;
+    return {
+        setters:[],
+        execute: function() {
+            route = {
+                // Loại Dự Án route
+                project: {
+                    projects: { name: "Projects", path: "/danh-sach-du-an" },
+                    addProject: { name: "AddProject", path: "/them-moi-loai-du-an" }
+                },
+                worksgroup: {
+                    worksgroups: { name: "WorksGroups", path: "/nhom-cong-viec/:projectId" },
+                    addworksgroup: { name: "AddWorksGroup", path: "/them-nhom-cong-viec" }
+                },
+                work: {
+                    works: { name: "Works", path: "/cong-viec/:projectId/:worksGroupId" },
+                },
+                workdetail: {
+                    workdetail: { name: "WorkDetail", path: "/chi-tiet-cong-viec" },
+                }
+            };
+            exports_1("default",route);
+        }
+    }
+});
+//# sourceMappingURL=route.js.map

@@ -1,0 +1,89 @@
+System.register(["angular2/core", "./userLoginModel", "angular2/router", "../_share/services/userService", "../../../common/helpers/configHelper", "../../../common/services/authService", "../../../common/event", "../../../common/models/ui", "../../../common/directive"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, userLoginModel_1, router_1, userService_1, configHelper_1, authService_1, event_1, ui_1, directive_1, UserLogin;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (userLoginModel_1_1) {
+                userLoginModel_1 = userLoginModel_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (userService_1_1) {
+                userService_1 = userService_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (authService_1_1) {
+                authService_1 = authService_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+            }
+        ],
+        execute: function () {
+            UserLogin = (function (_super) {
+                __extends(UserLogin, _super);
+                function UserLogin(router) {
+                    var _this = _super.call(this) || this;
+                    _this.model = new userLoginModel_1.UserLoginModel();
+                    _this.router = router;
+                    return _this;
+                }
+                UserLogin.prototype.onSignInClicked = function (event) {
+                    var self = this;
+                    if (!this.model.isValid()) {
+                        return;
+                    }
+                    userService_1.default.signin(this.model).then(function (token) {
+                        authService_1.default.setAuth(token);
+                        self.eventManager.publish(event_1.AuthenticatedEvent.AuthenticationChanged, true);
+                        self.router.navigate([configHelper_1.default.getAppConfig().defaultUrl]);
+                    });
+                    return false;
+                };
+                return UserLogin;
+            }(ui_1.BasePage));
+            UserLogin = __decorate([
+                core_1.Component({
+                    selector: "user-login",
+                    templateUrl: "app/modules/registration/users/userLogin.html",
+                    directives: [directive_1.ValidationDirective]
+                }),
+                __metadata("design:paramtypes", [router_1.Router])
+            ], UserLogin);
+            exports_1("UserLogin", UserLogin);
+        }
+    };
+});
+//# sourceMappingURL=userLogin.js.map

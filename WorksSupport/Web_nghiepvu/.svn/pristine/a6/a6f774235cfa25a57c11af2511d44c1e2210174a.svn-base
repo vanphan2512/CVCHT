@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Loading ...</title>
+    <link href="app/resources/themes/nc/css/bootstrap.min.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/bootstrap-tagsinput.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/style-global.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/style-global-dev.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/vendors/color-picker-slider/bootstrap.colorpickersliders.min.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <default-layout></default-layout>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- remove-->
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.js"></script>
+    <!--start libary of customer-->
+    <script src="app/resources/themes/nc/vendors/select2/dist/js/select2.full.min.js"></script>
+
+    <!--end libary of customer-->
+    <!--<script src="app/resources/themes/nc/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>-->
+    <!--<script src="app/resources/themes/nc/vendors/bootstrap/dist/js/bootstrap-select.js"></script>-->
+    <script src="systemjs.conf.js"></script>
+    <script src="app/resources/themes/nc/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/nprogress/nprogress.js"></script>
+    <script src="app/resources/themes/nc/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="app/resources/themes/nc/js/moment/moment.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/dropzone/dist/min/dropzone.min.js"></script>
+    <link href="app/resources/themes/nc/vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+    <script src="app/resources/themes/nc/js/workssupport.js"></script>
+    <script src="app/resources/jsextension.js"></script>
+    <script src="app/resources/themes/nc/js/datepicker/daterangepicker.js"></script>
+    <script src="app/resources/themes/nc/vendors/dev/tinycolor.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/color-picker-slider/bootstrap.colorpickersliders.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/bootstrap/dist/js/bootstrap-tagsinput.min.js"></script>
+    <script>
+        angular = {};
+        System.config({
+            packages: {
+                app: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            }
+        });
+        System.import("app/main").catch(function (error) { console.log(error); });
+    </script>
+
+</body>
+
+</html>

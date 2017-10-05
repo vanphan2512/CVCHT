@@ -1,0 +1,19 @@
+
+<page>
+    <page-header>
+        {{i18n.configurations.quality.title}}
+    </page-header>
+    <page-content>
+        <form-default>
+            <form-text-input
+                [(model)]=model.WorksSupportQualityName>
+            </form-text-input>
+            <form-textarea [(model)]=model.Description>
+            </form-textarea>
+            <form-footer>
+                <button id="save" (click)="onSaveClicked($event)" type="button" class="btn btn-primary">{{i18n.common.form.save}}</button>
+                <button id="cancel" (click)="onCancelClicked($event)" type="button" class="btn btn-default">{{i18n.common.form.cancel}}</button>
+            </form-footer>
+        </form-default>
+    </page-content>
+</page>

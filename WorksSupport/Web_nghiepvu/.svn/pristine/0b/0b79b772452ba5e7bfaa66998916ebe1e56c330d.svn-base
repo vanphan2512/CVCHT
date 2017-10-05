@@ -1,0 +1,54 @@
+System.register(["../storages/sessionStorage"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function remove(key) {
+        sessionStorage_1.default.remove(key);
+    }
+    function exist(key) {
+        return sessionStorage_1.default.exist(key);
+    }
+    function get(key) {
+        return sessionStorage_1.default.get(key);
+    }
+    function set(key, data) {
+        return sessionStorage_1.default.set(key, data);
+    }
+    var sessionStorage_1, CACHE_CONSTANT, cacheService;
+    return {
+        setters: [
+            function (sessionStorage_1_1) {
+                sessionStorage_1 = sessionStorage_1_1;
+            }
+        ],
+        execute: function () {
+            exports_1("CACHE_CONSTANT", CACHE_CONSTANT = {
+                USER_PROFILE: "user_profile",
+                TOKEN: "token",
+                EO_WORKSSUPORTGROUP_VIEW: "EO_WORKSSUPORTGROUP_VIEW",
+                EO_WORKSSUPORTGROUP_ADD: "EO_WORKSSUPORTGROUP_ADD",
+                EO_WORKSSUPORTGROUP_EDIT: "EO_WORKSSUPORTGROUP_EDIT",
+                EO_WORKSSUPORTGROUP_DELETE: "EO_WORKSSUPORTGROUP_DELETE",
+                EO_WORKSSUPORTWORKS_VIEW: "EO_WORKSSUPPORT_VIEW",
+                EO_WORKSSUPPORT_AUTHORIZE_VIEW: "EO_WORKSSUPPORT_AUTHORIZE_VIEW",
+                EO_WORKSSUPPORT_AUTHORIZE_EDIT: "EO_WORKSSUPPORT_AUTHORIZE_EDIT",
+                EO_WORKSSUPORTPROJECT_VIEW: "EO_WORKSSUPORTPROJECT_VIEW",
+                EO_WORKSSUPORTPROJECT_ADD: "EO_WORKSSUPORTPROJECT_ADD",
+                EO_WORKSSUPORTPROJECT_DELETE: "EO_WORKSSUPORTPROJECT_DELETE",
+                EO_WORKSSUPORTPROJECT_EDIT: "EO_WORKSSUPORTPROJECT_EDIT",
+                EO_WORKSSUPPORT_VIEW: "EO_WORKSSUPPORT_VIEW",
+                EO_WORKSSUPPORT_ADD: "EO_WORKSSUPPORT_ADD",
+                EO_WORKSSUPPORT_EDIT: "EO_WORKSSUPPORT_EDIT",
+                EO_WORKSSUPPORT_DELETE: "EO_WORKSSUPPORT_DELETE",
+                strUserName: "strUserName"
+            });
+            cacheService = {
+                get: get,
+                exist: exist,
+                set: set,
+                remove: remove
+            };
+            exports_1("default", cacheService);
+        }
+    };
+});
+//# sourceMappingURL=cacheService.js.map

@@ -1,0 +1,12 @@
+export class AddSolutionModel {
+    public WorksSupportId: string = "";
+    public User: string = "";
+    public SolutionContent: string = "";
+    public ListSolutionAttachment: string = "";
+    constructor(WorksSupportId: string, User: string, SolutionContent: string, ListSolutionAttachment: string) {
+        this.WorksSupportId = WorksSupportId;
+        this.User = User;
+        this.SolutionContent = SolutionContent;
+        this.ListSolutionAttachment = ListSolutionAttachment;
+    }
+}

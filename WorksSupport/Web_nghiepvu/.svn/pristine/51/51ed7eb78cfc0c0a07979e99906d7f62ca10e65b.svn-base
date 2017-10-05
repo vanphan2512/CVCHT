@@ -1,0 +1,15 @@
+<ul class="nav navbar-nav navbar-right">
+<li class="dropdown " *ngIf="!!userProfile && displayMode === ProfileDisplayMode.AvatarAndName">
+  <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+    <span class="avatar-user-small" id="top-avatar-user">
+     <img *ngIf="userProfile.strDefaultPictureURL !== '' " src="http://eofficecnd.nc.com/album/{{userProfile.strDefaultPictureURL}}" />
+     <img *ngIf="userProfile.strDefaultPictureURL === '' " src="app\resources\themes\nc\images\avatar.png" />    
+    </span>
+      {{userProfile.strFullName}} 
+    <span class="caret"></span>   
+    </a>
+  <ul class="dropdown-menu">
+    <li><a (click)="onLogOutClicked();"><i class="fa fa-power-off" aria-hidden="true"></i>Thoát</a></li>
+  </ul>
+</li>
+ </ul>

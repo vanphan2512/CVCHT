@@ -1,0 +1,27 @@
+System.register(["../../../../common/helpers/configHelper"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function signin(signinModel) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = getAPISigninUrl();
+        return connector.post(url, signinModel);
+    }
+    function getAPISigninUrl() {
+        return configHelper_1.default.getAppConfig().api.baseUrl + "v2/account/signin";
+    }
+    var configHelper_1, userService;
+    return {
+        setters: [
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }
+        ],
+        execute: function () {
+            userService = {
+                signin: signin
+            };
+            exports_1("default", userService);
+        }
+    };
+});
+//# sourceMappingURL=userService.js.map

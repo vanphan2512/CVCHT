@@ -1,0 +1,393 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./statusModel", "./updateModel", "./deleteModel", "../_share/services/statusService", "../../../common/directive", "../../../common/services/cacheService", "../../../common/models/exception", "../../../common/layouts/default/directives/common/errorMessage", "../../../common/enum"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, router_1, ui_1, statusModel_1, updateModel_1, deleteModel_1, statusService_1, directive_1, directive_2, cacheService_1, cacheService_2, exception_1, errorMessage_1, enum_1, Status;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (statusModel_1_1) {
+                statusModel_1 = statusModel_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (deleteModel_1_1) {
+                deleteModel_1 = deleteModel_1_1;
+            },
+            function (statusService_1_1) {
+                statusService_1 = statusService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+                directive_2 = directive_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            },
+            function (errorMessage_1_1) {
+                errorMessage_1 = errorMessage_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }
+        ],
+        execute: function () {
+            Status = (function (_super) {
+                __extends(Status, _super);
+                function Status(router) {
+                    var _this = _super.call(this) || this;
+                    _this.WorksSupportStatusName = String.empty;
+                    _this.IsCompleteStatus = false;
+                    _this.IsCloseStatus = false;
+                    _this.IsInitStatus = false;
+                    _this.Description = String.empty;
+                    _this.OrderIndex = 1;
+                    _this.IsDeleted = 0;
+                    _this.IsActived = false;
+                    _this.IsSystem = false;
+                    _this.IconUrl = String.empty;
+                    _this.User = String.empty;
+                    _this.actions = [];
+                    _this.selectedValue = [];
+                    _this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    _this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    _this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    _this.roleValue = enum_1.RoleValue.Admin;
+                    _this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === _this.roleValue ? true : false;
+                    _this.isAddPopup = false;
+                    var self = _this;
+                    self.router = router;
+                    self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                    self.loadStatus();
+                    return _this;
+                }
+                Status.prototype.ngOnInit = function () {
+                    this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+                };
+                // show popup add
+                Status.prototype.onShowPopupAdd = function (event) {
+                    this.model.description = String.empty;
+                    this.model.worksSupportStatusName = String.empty;
+                    this.IsInitStatus = false;
+                    this.IsActived = true;
+                    this.IsCompleteStatus = false;
+                    this.IsCloseStatus = false;
+                    this.IsSystem = false;
+                    this.IconUrl = String.empty;
+                    this.IconUrl = String.empty;
+                    this.errorMess.errors = [];
+                    this.clearValidate(true);
+                    this.isAddPopup = true;
+                };
+                // add status 
+                Status.prototype.onAddStatus = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.model.IconUrl = self.IconUrl;
+                    if (this.isValid(true)) {
+                        this.model.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                        this.model.IsInitStatus = (this.IsInitStatus === true ? 1 : 0);
+                        this.model.IsActived = (this.IsActived === true ? 1 : 0);
+                        this.model.IsCompleteStatus = (this.IsCompleteStatus === true ? 1 : 0);
+                        this.model.IsCloseStatus = (this.IsCloseStatus === true ? 1 : 0);
+                        this.model.IsSystem = (this.IsSystem === true ? 1 : 0);
+                        this.model.OrderIndex = -1;
+                        statusService_1.default.create(this.model).then(function () {
+                            $("#modalUpdate").modal("hide");
+                            $(".modal-backdrop").modal("hide");
+                            self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                            self.loadStatus();
+                        });
+                    }
+                    this.IconUrl = String.empty;
+                    this.model.IconUrl = String.empty;
+                    this.IconUrl = String.empty;
+                    setTimeout(function () {
+                        self.validateOnServer();
+                    }, 500);
+                };
+                // select icon on popup add
+                Status.prototype.onIconSelectedAdd = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.IconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                // cancel add
+                Status.prototype.onCancelAdd = function (event) {
+                    var $ = window.jQuery;
+                    $("#modalUpdate").modal("hide");
+                    $(".modal-backdrop").modal("hide");
+                };
+                // show popup Delete Priority
+                Status.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows(".selected").data();
+                    for (var i = 0; i < grid.length; i++) {
+                        this.selectedValue.push({ id: grid[i]["WorksSupportStatusId"], name: grid[i]["WorksSupportStatusName"] });
+                        lstId.push(grid[i]["WorksSupportStatusId"]);
+                    }
+                    var User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    this.objDelete = new deleteModel_1.DeleteModel(lstId.toString(), User);
+                };
+                Status.prototype.onDeleteStatus = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    statusService_1.default.delete(this.objDelete).then(function (event) {
+                        $("#modalDelete").modal("hide");
+                        $(".modal-backdrop").modal("hide");
+                        self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                        self.loadStatus();
+                    });
+                };
+                Status.prototype.loadStatus = function () {
+                    var self = this;
+                    statusService_1.default.getStatus().then(function (items) {
+                        self.model.importStatus(items);
+                    });
+                };
+                // Get data by status : 1/0
+                Status.prototype.onStatusChange = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var currentIsDelete = event.currentTarget.value;
+                    var isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var isCanEdit = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                    var statusName = $("#statusName").val();
+                    // get data of dropdownlist.
+                    statusService_1.default.getStatusBy(statusName, currentIsDelete, 0, 1000).then(function (items) {
+                        self.model.importStatus(items);
+                    });
+                    // check status is delete to show delete button.
+                    if (currentIsDelete === "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                        if (isCanDelete) {
+                            self.gridComponent.grid.column(0).visible(false);
+                        }
+                        if (isCanEdit) {
+                            var num = self.gridComponent.grid.column.length - 1;
+                            self.gridComponent.grid.column(num).visible(false);
+                        }
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                        if (isCanDelete) {
+                            self.gridComponent.grid.column(0).visible(true);
+                        }
+                        if (isCanEdit) {
+                            var num = self.gridComponent.grid.column.length - 1;
+                            self.gridComponent.grid.column(num).visible(true);
+                        }
+                    }
+                };
+                // Search data by name
+                Status.prototype.SearchByKey = function (event) {
+                    var $ = window.jQuery;
+                    var statusName = $("#statusName").val();
+                    var currentIsDelete = $(".custom-select .form-control").val();
+                    var self = this;
+                    statusService_1.default.getStatusBy(statusName, currentIsDelete, 0, 1000).then(function (items) {
+                        self.model.importStatus(items);
+                    });
+                };
+                Status.prototype.onToggleSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateStatusModel();
+                    model.import(event.item);
+                    statusService_1.default.update(model).then(function (event) {
+                        self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                        self.loadStatus();
+                    });
+                };
+                // show popup update
+                Status.prototype.onShowPopupEdit = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    this.clearValidate(false);
+                    this.errorMess.errors = [];
+                    this.isAddPopup = false;
+                    $("div").remove(".alert");
+                    statusService_1.default.get(event.item.WorksSupportStatusId).then(function (item) {
+                        self.Id = item.WorksSupportStatusId;
+                        self.model.worksSupportStatusName = item.WorksSupportStatusName;
+                        self.IconUrl = item.IconUrl;
+                        self.IsInitStatus = item.IsInitStatus;
+                        self.IsCompleteStatus = item.IsCompleteStatus;
+                        self.IsCloseStatus = item.IsCloseStatus;
+                        self.model.description = item.Description;
+                        self.model.orderIndex = item.OrderIndex;
+                        self.IsActived = item.IsActived;
+                        self.IsSystem = item.IsSystem;
+                        $("#modalUpdate").modal("toggle");
+                    });
+                };
+                Status.prototype.onEditStatus = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.model.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    this.model.IsInitStatus = (this.IsInitStatus === true ? 1 : 0);
+                    this.model.IsActived = (this.IsActived === true ? 1 : 0);
+                    this.model.IsCompleteStatus = (this.IsCompleteStatus === true ? 1 : 0);
+                    this.model.IsCloseStatus = (this.IsCloseStatus === true ? 1 : 0);
+                    this.model.IsSystem = (this.IsSystem === true ? 1 : 0);
+                    this.model.Id = this.Id;
+                    this.model.IconUrl = this.IconUrl;
+                    self.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    if (this.isValid(false)) {
+                        statusService_1.default.update(this.model).then(function () {
+                            $("#modalUpdate").modal("hide");
+                            $(".modal-backdrop").modal("hide");
+                            self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                            self.loadStatus();
+                        });
+                    }
+                    self.IconUrl = String.empty;
+                    this.model.IconUrl = String.empty;
+                    setTimeout(function () {
+                        self.validateOnServer();
+                    }, 500);
+                };
+                Status.prototype.onCancelEdit = function (event) {
+                    var $ = window.jQuery;
+                    $("#modalUpdate").modal("hide");
+                    $(".modal-backdrop").modal("hide");
+                };
+                Status.prototype.isValid = function (isAdd) {
+                    var $ = window.jQuery;
+                    var validationErrors = new exception_1.ValidationException();
+                    var lenName = (this.model.worksSupportStatusName === null || this.model.worksSupportStatusName === undefined ? 0 : this.model.worksSupportStatusName.length);
+                    var lenDesc = (this.model.description === null || this.model.description === undefined ? 0 : this.model.description.length);
+                    var orderIndex = this.model.orderIndex;
+                    this.clearValidate(isAdd);
+                    if (!isAdd) {
+                        if (orderIndex <= 0 || orderIndex % 1 != 0 || orderIndex > 999) {
+                            validationErrors.add("OrderIndex", [], "NCS-000003: Thứ tự trạng thái không hợp lệ!");
+                            $("#OrderIndex").addClass("has-error");
+                        }
+                    }
+                    if (lenName == 0) {
+                        validationErrors.add("WorksSupportStatusName", [], "NCS-000004: Tên trạng thái là bắt buộc!");
+                        $("#WorksSupportStatusName").addClass("has-error");
+                    }
+                    if (lenName > 200) {
+                        validationErrors.add("WorksSupportStatusName", [], "NCS-000005: Tên trạng thái không được vượt quá 200 kí tự!");
+                        $("#WorksSupportStatusName").addClass("has-error");
+                    }
+                    if (lenDesc > 2000) {
+                        validationErrors.add("Description", [], "NCS-000006: Mô tả không được vượt quá 2000 kí tự!");
+                        $("#Description").addClass("has-error");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                // clear validation of Edit popup
+                Status.prototype.clearValidate = function (isAdd) {
+                    var $ = window.jQuery;
+                    if (!isAdd) {
+                        $("#OrderIndex").removeClass("has-error");
+                    }
+                    $("#WorksSupportStatusName").removeClass("has-error");
+                    $("#Description").removeClass("has-error");
+                };
+                // clear validation when key down is pressed
+                Status.prototype.clearValidateInput = function (id) {
+                    var $ = window.jQuery;
+                    $("#" + id).removeClass("has-error");
+                    var arrErr = this.errorMess.errors;
+                    var index;
+                    for (var i = 0; i < arrErr.length; i++) {
+                        if (arrErr[i].key === id) {
+                            arrErr.splice(i, 1);
+                        }
+                    }
+                    this.errorMess.errors = arrErr;
+                };
+                Status.prototype.onIconSelectedEdit = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.IconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                // check validate items of status
+                Status.prototype.checkStatusItem = function () {
+                    var self = this;
+                    self.IsCompleteStatus = false;
+                    self.IsCloseStatus = false;
+                    self.IsInitStatus = false;
+                };
+                Status.prototype.validateOnServer = function () {
+                    var $ = window.jQuery;
+                    var arrErr = this.errorMess.errors;
+                    for (var i = 0; i < arrErr.length; i++) {
+                        var key = arrErr[i].key;
+                        if (key === "WorksSupportStatusName") {
+                            $("#WorksSupportStatusName").addClass("has-error");
+                        }
+                        if (key === "OrderIndex") {
+                            $("#OrderIndex").addClass("has-error");
+                        }
+                    }
+                };
+                return Status;
+            }(ui_1.BasePage));
+            __decorate([
+                core_1.ViewChild(directive_1.Grid),
+                __metadata("design:type", directive_1.Grid)
+            ], Status.prototype, "gridComponent", void 0);
+            __decorate([
+                core_1.ViewChild(errorMessage_1.ErrorMessage),
+                __metadata("design:type", errorMessage_1.ErrorMessage)
+            ], Status.prototype, "errorMess", void 0);
+            Status = __decorate([
+                core_1.Component({
+                    templateUrl: "app/modules/configurations/status/status.html",
+                    directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page, directive_2.Form, directive_2.FormTextInput, directive_2.FormFooter, directive_2.FormTextArea, directive_2.FormStatusToggle, directive_2.FormNumberInput, errorMessage_1.ErrorMessage]
+                }),
+                __metadata("design:paramtypes", [router_1.Router])
+            ], Status);
+            exports_1("Status", Status);
+        }
+    };
+});
+//# sourceMappingURL=status.js.map

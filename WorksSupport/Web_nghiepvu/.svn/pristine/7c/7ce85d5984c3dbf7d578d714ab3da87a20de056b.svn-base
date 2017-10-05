@@ -1,0 +1,54 @@
+System.register(["../../../../common/models/layout", "../../project/projects", "../../project/addProject", "../../worksgroup/worksgroups", "../../works/works", "../../workdetail/workDetail", "../../../../common/enum", "./route"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var layout_1, projects_1, addProject_1, worksgroups_1, works_1, workDetail_1, enum_1, route_1;
+    var module;
+    function createModule() {
+        var module = new layout_1.Module("app/modules/eoffice", "eoffice");
+        module.addRoutes([
+            // Add project route
+            { path: route_1.default.project.projects.path, name: route_1.default.project.projects.name, component: projects_1.Projects, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.project.addProject.path, name: route_1.default.project.addProject.name, component: addProject_1.AddProject, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // add worksgroup route
+            { path: route_1.default.worksgroup.worksgroups.path, name: route_1.default.worksgroup.worksgroups.name, component: worksgroups_1.WorksGroups, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.worksgroup.addworksgroup.path, name: route_1.default.worksgroup.addworksgroup.name, component: worksgroups_1.WorksGroups, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // add works route
+            { path: route_1.default.work.works.path, name: route_1.default.work.works.name, component: works_1.Works, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // add workdetail
+            { path: route_1.default.workdetail.workdetail.path, name: route_1.default.workdetail.workdetail.name, component: workDetail_1.WorkDetail, data: { authentication: enum_1.AuthenticationMode.Require } }
+        ]);
+        return module;
+    }
+    return {
+        setters:[
+            function (layout_1_1) {
+                layout_1 = layout_1_1;
+            },
+            function (projects_1_1) {
+                projects_1 = projects_1_1;
+            },
+            function (addProject_1_1) {
+                addProject_1 = addProject_1_1;
+            },
+            function (worksgroups_1_1) {
+                worksgroups_1 = worksgroups_1_1;
+            },
+            function (works_1_1) {
+                works_1 = works_1_1;
+            },
+            function (workDetail_1_1) {
+                workDetail_1 = workDetail_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            }],
+        execute: function() {
+            module = createModule();
+            exports_1("default",module);
+        }
+    }
+});
+//# sourceMappingURL=module.js.map

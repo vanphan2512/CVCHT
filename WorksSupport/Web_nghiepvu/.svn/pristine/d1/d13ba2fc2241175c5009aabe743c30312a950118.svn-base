@@ -1,0 +1,81 @@
+System.register(["angular2/core", "angular2/http", "angular2/router", "./directives/all", "../../models/layout", "../../../common/layouts/default/directives/common/errorMessage", "../../models/ui"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, http_1, router_1, all_1, layout_1, errorMessage_1, ui_1, DefaultAuthenticatedLayout;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (all_1_1) {
+                all_1 = all_1_1;
+            },
+            function (layout_1_1) {
+                layout_1 = layout_1_1;
+            },
+            function (errorMessage_1_1) {
+                errorMessage_1 = errorMessage_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            }
+        ],
+        execute: function () {
+            DefaultAuthenticatedLayout = (function (_super) {
+                __extends(DefaultAuthenticatedLayout, _super);
+                function DefaultAuthenticatedLayout(http, router) {
+                    var _this = _super.call(this, http) || this;
+                    _this.ProfileDisplayMode = layout_1.ProfileDisplayMode;
+                    _this.router = router;
+                    return _this;
+                }
+                DefaultAuthenticatedLayout.prototype.onReady = function () {
+                    _super.prototype.onReady.call(this);
+                };
+                return DefaultAuthenticatedLayout;
+            }(ui_1.BaseApplication));
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Boolean)
+            ], DefaultAuthenticatedLayout.prototype, "isAuthenticated", void 0);
+            DefaultAuthenticatedLayout = __decorate([
+                core_1.Component({
+                    selector: "default-authenticated-layout",
+                    templateUrl: "app/common/layouts/default/authenticatedLayout.html",
+                    directives: [
+                        router_1.ROUTER_DIRECTIVES, all_1.PageFooter, all_1.UserQuickProfileInfo,
+                        all_1.MenuItem, all_1.MenuSidebar, errorMessage_1.ErrorMessage
+                    ]
+                }),
+                __metadata("design:paramtypes", [http_1.Http, router_1.Router])
+            ], DefaultAuthenticatedLayout);
+            exports_1("DefaultAuthenticatedLayout", DefaultAuthenticatedLayout);
+        }
+    };
+});
+//# sourceMappingURL=authenticatedLayout.js.map

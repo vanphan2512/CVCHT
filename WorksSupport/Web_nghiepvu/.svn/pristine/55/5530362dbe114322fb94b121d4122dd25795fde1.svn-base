@@ -1,0 +1,350 @@
+<div class="main-content">
+    <h2>Báo cáo CVCHT</h2>
+    <div class="main-tab-content">
+        <div class="row row-reset row-short">
+            <div class="col-lg-2 col-xs-12">
+                <select class="form-control" [(ngModel)]="selectedProject" (ngModelChange)="getWorkGroup()">
+                                                        <option value="" selected>--Chọn dự án--</option>
+                                                       <option id="{{project.WorksSupportProjectId}}" *ngFor="let project of listProject" [value]="project.WorksSupportProjectId">
+                                                    {{project.WorksSupportProjectName}}
+                                                    </option>
+                                                    </select>
+            </div>
+            <div class="col-lg-2 col-xs-12 frm-by-name-works">
+                <select class="form-control" [(ngModel)]="selectedWorkGroups">
+                                                        <option value="" selected>--Chọn nhóm công việc--</option>
+                                                       <option id="{{work.WorksSupportGroupId}}" *ngFor="let work of listWorkGroups" [value]="work.WorksSupportGroupId">
+                                                    {{work.WorksSupportGroupName}}
+                                                    </option>
+                                                    </select>
+            </div>
+            <div class="col-lg-8">
+                <div class="row row-short">
+                    <div class="col-lg-3 col-xs-12  dtmformdate">
+                        <div class="input-group">
+                            <form-datepicker #dataPickerFrom id="txtFromDates" placeholder="Từ ngày..." [(model)]=txtFromDates></form-datepicker>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-xs-12 dtmtodate">
+                        <div class="input-group">
+                            <form-datepicker #dataPickerTo id="txtToDates" placeholder="Từ ngày..." [(model)]=txtToDates></form-datepicker>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-xs-12 btn-search-works-related">
+                        <button type="button" class="btn btn btn-primary" (click)="search()" style="margin-right: 10px;"> <i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm</button>
+                        <button type="button" class="btn btn-primary btn-export" (click)="exportExcel()"> <i class="fa fa-file-excel-o" aria-hidden="true"></i> Xuất Excel</button>
+                    </div>
+                    <div class="col-lg-2 col-xs-12 tab-report">
+
+                        <ul class="nav nav-tabs tabs-page" role="tablist">
+                            <li role="presentation" class="active"><a href="#tab-report-list" aria-controls="tab-report-list" role="tab" data-toggle="tab"><i class="fa fa-list-ul" aria-hidden="true"></i></a></li>
+                            <li role="presentation"><a href="#tab-report-chart" aria-controls="tab-report-chart" role="tab" data-toggle="tab"><i class="fa fa-pie-chart" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content-report">
+            <div class="tab-content tabs-page">
+                <div role="tabpanel" class="row row-reset tab-pane active" id="tab-report-list">
+                    <div class="col-lg-6 col-xs-12 tab-report-item" *ngIf="listReport!==null">
+                        <h3>Trạng thái</h3>
+                        <div class="row row-reset">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped" *ngFor="let report of listReport?.WorkStatusList" [ngStyle]="{'background': report.ColorCode,'width': (report.NumberOfWork/totalReport*100) + '%'}">
+                                    <span>{{report.NumberOfWork}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-reset list-report-status">
+                            <div class="dptable">
+                                <div class="dpRow" *ngFor="let report of listReport?.WorkStatusList">
+                                    <div class="dpColum title-status">{{report.StatusName}}</div>
+                                    <div class="dpColum sum-status" [ngStyle]="{'background': report.ColorCode}"><span>{{report.NumberOfWork}}</span></div>
+                                </div>
+                            </div>
+                            <div class="dptable tbTotal">
+                                <div class="dpRow total">
+                                    <div class="dpColum title-status">Tổng cộng</div>
+                                    <div class="dpColum sum-status" style="color: #0288d1"><span>{{totalReport}}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xs-12 tab-report-item" *ngIf="listReport!==null">
+                        <h3>Tình trạng</h3>
+                        <div class="row row-reset">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped" [ngStyle]="{'background-color': '#d43b3b','width': (listReport?.WorkWrong?.NumberOfWorkLate+listReport?.WorkWrong?.NumberOfWorkWrong)===0 ? 0 : (listReport?.WorkWrong?.NumberOfWorkLate/(listReport?.WorkWrong?.NumberOfWorkLate+listReport?.WorkWrong?.NumberOfWorkWrong)*100) + '%'}">
+                                    <span>{{listReport?.WorkWrong?.NumberOfWorkLate}}</span>
+                                </div>
+                                <div class="progress-bar progress-bar-striped" [ngStyle]="{'background-color': '#232523','width': (listReport?.WorkWrong?.NumberOfWorkLate+listReport?.WorkWrong?.NumberOfWorkWrong)===0 ? 0 : (listReport?.WorkWrong?.NumberOfWorkWrong/(listReport?.WorkWrong?.NumberOfWorkLate+listReport?.WorkWrong?.NumberOfWorkWrong)*100) + '%'}">
+                                    <span>{{listReport?.WorkWrong?.NumberOfWorkWrong}}</span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row row-reset list-report-status">
+                            <div class="dptable">
+                                <div class="dpRow">
+                                    <div class="dpColum title-status">Trễ hạn</div>
+                                    <div class="dpColum sum-status"style="background: #d43b3b"><span>{{listReport?.WorkWrong?.NumberOfWorkLate}}</span></div>
+                                </div>
+                                <div class="dpRow">
+                                    <div class="dpColum title-status">Vi phạm</div>
+                                    <div class="dpColum sum-status"  style="background: #232523;"><span>{{listReport?.WorkWrong?.NumberOfWorkWrong}}</span></div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class=" row row-reset tab-pane tab-report-chart" id="tab-report-chart">
+                    <div class="col-lg-12 col-xs-12 map-column">
+                        <div class="row row-reset">
+                            <div class="col-lg-2 col-xs-12"></div>
+                            <div class="col-lg-8 col-xs-12 map-pie">
+                                <div id="chart-container" [hidden]="listReport===null" style="min-width: 310px; height: 400px; max-width: 100%; margin: 0 auto">
+                                <canvas id="myChartDN"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-xs-12"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-12 col-xs-12 map-column">
+                        <div class="row row-reset">
+                            <div class="col-lg-2 col-xs-12"></div>
+                            <div class="col-lg-8 col-xs-12" style="position: relative;">
+                                <div class="sort-by-date">
+                                    <div class="custom-select">Xem theo:
+                                        <select class="form-control" [(ngModel)]="selectedViewMode" (ngModelChange)="getBarChart()">
+                                                        <option value="0">Ngày</option>
+                                                        <option value="1">Tuần</option>
+                                                        <option value="2">Tháng</option>
+                                                        <option value="3">Năm</option>
+                                                    </select>
+
+                                    </div>
+                                </div>
+                                <div id="chart-container" style="min-width: 500px; height: 400px; max-width: 100%; margin: 20px auto">
+                                    <canvas id="myChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-xs-12"></div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="report-detai-project">
+                <div class="row row-reset">
+                    <h3 class="col-lg-6 col-xs-12 title-detail">Chi tiết dự án</h3>
+                    <div class="col-lg-6 col-xs-12">
+                        <div class="tab-filters">
+                            <div>
+                                <div class="custom-select"><i class="fa fa-filter" aria-hidden="true"></i> Xem theo:
+                                    <select class="form-control" id="mySelect">
+                                                <option value="0">Tình trạng</option>
+                                                <option value="1" selected>Trạng thái</option>
+                                                <option value="2">Nhóm công việc</option>
+                                    </select>
+                                    <ul class="nav nav-tabs tabs-page" role="tablist" id="myTab" style="visibility: hidden;">
+                                        <li role="presentation"><a href="#tab-report-condition" aria-controls="tab-report-chart" role="tab" data-toggle="tab"></a></li>
+                                        <li role="presentation" class="active"><a href="#tab-report-status" aria-controls="tab-report-status" role="tab" data-toggle="tab"></a></li>
+                                        <li role="presentation"><a href="#tab-report-worksgroup" aria-controls="tab-report-chart" role="tab" data-toggle="tab"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-reset">
+                    <div class="tab-content tabs-page">
+                        <div role="tabpanel" class="row row-reset tab-pane" id="tab-report-condition">
+                            <table class="table-hover" id="dataTable" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th valign="middle" width="30%" style="text-align: left;">Công việc</th>
+                                        <th valign="middle" width="15%">Trạng thái</th>
+                                        <th valign="middle" width="15%">Hạn xử lý</th>
+                                        <th valign="middle" width="10%">Ngày hoàn thành</th>
+                                        <th valign="middle" width="10%">Trễ hạn (Ngày)</th>
+                                        <th valign="middle" width="10%">Vi phạm (Lần)</th>
+                                        <th valign="middle" width="10%">Tiến độ</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center" valign="middle" align="left" colspan="7" *ngIf="listReportByState===null">Không có dữ liệu</td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="middle" align="left" colspan="7" *ngIf="listReportByState!==null">
+                                            <ul class="treeview">
+                                                <li [ngClass]="{'tree-collapsed':listReportByState?.NumberOfWorkLate>0}" (click)="LoadWorkGroupsByState(1,$event)">Trễ hạn ({{listReportByState?.NumberOfWorkLate}})
+                                                    <ul id="type1" class="collapse" aria-expanded="true">
+                                                        <li [ngClass]="{'tree-collapsed':wg.NumberOfWork>0}" (click)="getWorkDetailByStateType(1,wg.WorksSupportGroupId,$event)"
+                                                            *ngFor="let wg of listReportByState?.listWorkGroupByStateLate">{{wg.WorksSupportGroupName}} ({{wg.NumberOfWork}})
+                                                            <ul id="wg1{{wg.WorksSupportGroupId}}" class="collapse" aria-expanded="false">
+                                                                <li *ngFor="let dt of wg?.listWorkDetailByStateType">
+                                                                    <ul class="list-item-report">
+                                                                        <li>{{dt.WorksSupportName}}</li>
+                                                                        <li>{{dt.WorksSupportStatusName}}</li>
+                                                                        <li>{{stringAsDate(dt.ExpectedCompletedDate)}}</li>
+                                                                        <li>{{stringAsDate(dt.CompletedDate)}}</li>
+                                                                        <li>{{dt.NumberOfLateDate}}</li>
+                                                                        <li>{{dt.NumberOfWork}}</li>
+                                                                        <li>{{dt.CurrentProgress}}%</li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="middle" align="left" colspan="7" *ngIf="listReportByState!==null">
+                                            <ul class="treeview">
+                                                <li [ngClass]="{'tree-collapsed':listReportByState?.NumberOfWorkWrong>0}" (click)="LoadWorkGroupsByState(2,$event)">Vi phạm ({{listReportByState?.NumberOfWorkWrong}})
+                                                    <ul id="type2" class="collapse" aria-expanded="true">
+                                                        <li [ngClass]="{'tree-collapsed':wg.NumberOfWork>0}" (click)="getWorkDetailByStateType(2,wg.WorksSupportGroupId,$event)"
+                                                            *ngFor="let wg of listReportByState?.listWorkGroupByStateWrong">{{wg.WorksSupportGroupName}} ({{wg.NumberOfWork}})
+                                                            <ul id="wg2{{wg.WorksSupportGroupId}}" class="collapse" aria-expanded="false">
+                                                                <li *ngFor="let dt of wg?.listWorkDetailByStateType">
+                                                                    <ul class="list-item-report">
+                                                                        <li>{{dt.WorksSupportName}}</li>
+                                                                        <li>{{dt.WorksSupportStatusName}}</li>
+                                                                        <li>{{stringAsDate(dt.ExpectedCompletedDate)}}</li>
+                                                                        <li>{{stringAsDate(dt.CompletedDate)}}</li>
+                                                                        <li>{{dt.NumberOfLateDate}}</li>
+                                                                        <li>{{dt.NumberOfWork}}</li>
+                                                                        <li>{{dt.CurrentProgress}}%</li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="row row-reset tab-pane active" id="tab-report-status">
+                            <table class="table-hover" id="dataTable" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th valign="middle" width="30%" style="text-align: left;">Công việc</th>
+                                        <th valign="middle" width="20%">Hạn xử lý</th>
+                                        <th valign="middle" width="20%">Ngày hoàn thành</th>
+                                        <th valign="middle" width="10%">Trễ hạn (Ngày)</th>
+                                        <th valign="middle" width="10%">Vi phạm (Lần)</th>
+                                        <th valign="middle" width="10%">Tiến độ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center" valign="middle" align="left" colspan="6" *ngIf="listReportByStatus.length===0">Không có dữ liệu</td>
+                                    </tr>
+                                    <tr *ngFor="let report of listReportByStatus; let l=last;">
+                                        <td valign="middle" align="left" colspan="6">
+                                            <ul class="treeview">
+                                                <li [ngClass]="{'tree-collapsed':report.NumberOfWork>0}" (click)="getWorkGroupByStatus(report.StatusId,$event)">{{report.StatusName}} ({{report.NumberOfWork}})
+                                                    <ul id="{{report.StatusId}}" class="collapse" aria-expanded="true">
+                                                        <li [ngClass]="{'tree-collapsed':wg.NumberOfWork>0}" (click)="getWorkStatusByWorkGroupId(report.StatusId,wg.WorksSupportGroupId,$event)"
+                                                            *ngFor="let wg of report?.listWorkGroupByStatus">{{wg.WorksSupportGroupName}} ({{wg.NumberOfWork}})
+                                                            <ul id="wg{{report.StatusId}}{{wg.WorksSupportGroupId}}" class="collapse" aria-expanded="false">
+                                                                <li *ngFor="let dt of wg?.listWorkStatusByWorkGroupId">
+                                                                    <ul class="list-item-report-status">
+                                                                        <li>{{dt.WorksSupportName}}</li>
+                                                                        <li>{{stringAsDate(dt.ExpectedCompletedDate)}}</li>
+                                                                        <li>{{stringAsDate(dt.CompletedDate)}}</li>
+                                                                        <li>{{dt.NumberOfLateDate}}</li>
+                                                                        <li>{{dt.NumberOfWork}}</li>
+                                                                        <li>{{dt.CurrentProgress}}%</li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="row row-reset tab-pane " id="tab-report-worksgroup">
+                            <table class="table-hover" id="dataTable" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th valign="middle" width="30%" style="text-align: left;">Công việc</th>
+                                        <th valign="middle" width="15%">Trạng thái</th>
+                                        <th valign="middle" width="15%">Hạn xử lý</th>
+                                        <th valign="middle" width="10%">Ngày hoàn thành</th>
+                                        <th valign="middle" width="10%">Trễ hạn (Ngày)</th>
+                                        <th valign="middle" width="10%">Vi phạm (Lần)</th>
+                                        <th valign="middle" width="10%">Tiến độ</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr  *ngFor="let report of listReportByGroup; let l=last;">
+                                    <td valign="middle" align="left" colspan="7">
+                                        <ul class="treeview">
+                                            <li [ngClass]="{'tree-collapsed':report.NumberOfWork>0}" (click)="getWorkDetailByGroupType(report.WorksSupportGroupId,$event)">{{report.WorksSupportGroupName}} ({{report.NumberOfWork}})
+                                                <ul id="wgdt{{report.WorksSupportGroupId}}" class="collapse">
+                                                    <li *ngFor="let dt of report?.listWorkGroupDetailByGroup">
+                                                        <ul class="list-item-report">
+                                                            <li>{{dt.WorksSupportName}}</li>
+                                                            <li>{{dt.WorksSupportStatusName}}</li>
+                                                            <li>{{stringAsDate(dt.ExpectedCompletedDate)}}</li>
+                                                            <li>{{stringAsDate(dt.CompletedDate)}}</li>
+                                                            <li>{{dt.NumberOfLateDate}}</li>
+                                                            <li>{{dt.NumberOfWork}}</li>
+                                                            <li>{{dt.CurrentProgress}}%</li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">© 2017 eOffice</div>
+</div>
+<!--Show popup erorr  -->
+<div class="modal fade model-erorr" role="dialog" id="modalErorr" data-backdrop="static">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center">Thông Báo</h2>
+                <button type="button"   class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            </div>
+            <!-- loi ngay thang nam-->
+            <div class="modal-body" style="font-size:13px;">
+                <p>Ngày tìm kiếm không hợp lệ!!</p>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button"   class="btn btn-default centering text-center" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Đóng</button>
+            </div>
+        </div>
+
+    </div>
+</div>
