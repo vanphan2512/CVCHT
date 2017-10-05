@@ -1,0 +1,16 @@
+import {ValidationException} from "../../../common/models/exception";
+export class UserLoginModel {
+    public username: string = "";
+    public password: string = "";
+    public isValid(): boolean {
+        let validationErrors: ValidationException = new ValidationException();
+        if (!this.username) {
+            validationErrors.add("registration.signin.userNameRequired");
+        }
+        if (!this.password) {
+            validationErrors.add("registration.signin.pwdRequired");
+        }
+        validationErrors.throwIfHasError();
+        return !validationErrors.hasError();
+    }
+}
