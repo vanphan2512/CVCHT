@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WebClientAuthen.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WebClientAuthen_SSOService_HandShake_HandShake" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://ssoservice.egovsams.com/handshake.asmx</Value>
+    </Setting>
+    <Setting Name="WebClientAuthen_ERPMasterDataServices_Users_Users_Users" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://samsmasterdataservices.egovsams.com/Users/Users.asmx</Value>
+    </Setting>
+    <Setting Name="WebClientAuthen_SSOService_TokenAuthentication_TokenAuthentication" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://ssoservice.egovsams.com/TokenAuthentication.asmx</Value>
+    </Setting>
+    <Setting Name="WebClientAuthen_SSOService_WSWebServiceHost_WSWebServiceHost" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://ssoservice.egovsams.com/WSWebServiceHost.asmx</Value>
+    </Setting>
+    <Setting Name="WebClientAuthen_SAMSMasterDataServices_WSUser_WSUser" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://samsmasterdataservices.egovsams.com/SYS/WSUser.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

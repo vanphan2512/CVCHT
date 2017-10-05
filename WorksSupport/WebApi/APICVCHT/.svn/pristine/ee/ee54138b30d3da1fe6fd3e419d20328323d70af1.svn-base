@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+
+namespace Nc.Erp.WorksSupport.Api.Models.WorksSupport
+{
+    public class WorksSupport_AttachmentParam
+    {
+        public string strFileID { get; set; }
+        private string strAttachmentID { get; set; }
+        private decimal decWorksSupportID { get; set; }
+        private string strFilePath { get; set; }
+        private string strFileName { get; set; }
+        private string strCreatedUser { get; set; }
+        private DateTime? dtmCreatedDate { get; set; }
+        private bool bolIsDeleted { get; set; }
+        private string strDeletedUser { get; set; }
+        private DateTime? dtmDeletedDate { get; set; }
+        private DataRowState m_State { get; set; }
+    }
+}

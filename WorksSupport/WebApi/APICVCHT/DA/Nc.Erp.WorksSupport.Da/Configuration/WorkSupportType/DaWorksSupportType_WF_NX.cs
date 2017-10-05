@@ -1,0 +1,302 @@
+﻿using System;
+using System.Collections.Generic;
+using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorkSupportType;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorkSupportType
+{
+    public class DaWorksSupportTypeWfNx
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Tìm kiếm thông tin trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorksSupportTypeWfNx> list, params object[] objKeywords)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter(objKeywords);
+                var dtbData = objIData.ExecStoreToDataTable();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportTypeWfNx>(dtbData);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportType_WF_NX -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll WorksSupportType_WF_NX 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public ResultMessage GetAll(ref List<WorksSupportTypeWfNx> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                var dtb = objIData.ExecStoreToDataTable();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportTypeWfNx>(dtb);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType_WF_NX", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportType_WF_NX -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportType_WF_NX by Id
+        /// </summary>
+        /// <param name="lstWorksSupportTypeWfNx"></param>
+        /// <param name="intWorksSupportStepId"></param>
+        /// <param name="intWorksSupportTypeId"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref List<WorksSupportTypeWfNx> lstWorksSupportTypeWfNx, int intWorksSupportStepId, int intWorksSupportTypeId, IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", intWorksSupportTypeId);
+                objIData.AddParameter("@WORKSSUPPORTSTEPID", intWorksSupportStepId);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportTypeWfNx = new WorksSupportTypeWfNx();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupportTypeWfNx.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTEPID"])) objWorksSupportTypeWfNx.WorksSupportStepId = Convert.ToInt32(reader["WORKSSUPPORTSTEPID"]);
+                    if (!Convert.IsDBNull(reader["NEXTWORKSSUPPORTSTEPID"])) objWorksSupportTypeWfNx.NextWorksSupportStepsId = Convert.ToInt32(reader["NEXTWORKSSUPPORTSTEPID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTEPNAME"])) objWorksSupportTypeWfNx.NextWorksSupportStepsName = Convert.ToString(reader["WORKSSUPPORTSTEPNAME"]);
+                    lstWorksSupportTypeWfNx.Add(objWorksSupportTypeWfNx);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType_WF_NX", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportType_WF_NX -> GetById", "");
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="listWorksSupportTypeWfNx"></param>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportStepId"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(List<WorksSupportTypeWfNx> listWorksSupportTypeWfNx, IData objIData, int worksSupportStepId)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                if (listWorksSupportTypeWfNx != null && listWorksSupportTypeWfNx.Count > 0)
+                {
+                    foreach (var objWorksSupportTypeWfNx in listWorksSupportTypeWfNx)
+                    {
+                        Insert(objIData, objWorksSupportTypeWfNx, worksSupportStepId);
+                    }
+                }
+                
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportType_WF_NX", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_WF_NX -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert WorksSupportTypeNextStep.
+        /// </summary>
+        /// <param name="objWorksSupportTypeWfNx"></param>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportStepId"></param>
+        /// <returns></returns>
+        public ResultMessage InsertNexStep(WorksSupportTypeWfNx objWorksSupportTypeWfNx, IData objIData, int worksSupportStepId)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                Insert(objIData, objWorksSupportTypeWfNx, worksSupportStepId);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportType_WF_NX", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_WF_NX -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="listWorksSupportTypeWfNx"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage Update(List<WorksSupportTypeWfNx> listWorksSupportTypeWfNx, IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                if (listWorksSupportTypeWfNx != null && listWorksSupportTypeWfNx.Count > 0)
+                {
+                    foreach (var objWorksSupportTypeWfNx in listWorksSupportTypeWfNx)
+                    {
+                        Update(objIData, objWorksSupportTypeWfNx);
+                    }
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Update, "Lỗi cập nhật thông tin WorksSupportType_WF_NX", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_WF_NX -> Update", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="worksSupportTypeId"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(int worksSupportTypeId, IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                DeleteWorksSupportNextStep(objIData, worksSupportTypeId);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSuportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_WF_NX -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Thêm trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportTypeWfNx"></param>
+        /// <param name="worksSupportTypeId"></param>
+        protected virtual void Insert(IData objIData, WorksSupportTypeWfNx objWorksSupportTypeWfNx, int worksSupportTypeId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTSTEPID", objWorksSupportTypeWfNx.WorksSupportStepId);
+                objIData.AddParameter("@NEXTWORKSSUPPORTSTEPID", objWorksSupportTypeWfNx.NextWorksSupportStepsId);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", worksSupportTypeId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportTypeWfNx"></param>
+        protected virtual void Update(IData objIData, WorksSupportTypeWfNx objWorksSupportTypeWfNx)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", objWorksSupportTypeWfNx.WorksSupportTypeId);
+                objIData.AddParameter("@WORKSSUPPORTSTEPID", objWorksSupportTypeWfNx.WorksSupportStepId);
+                objIData.AddParameter("@NEXTWORKSSUPPORTSTEPID", objWorksSupportTypeWfNx.NextWorksSupportStepsId);
+
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportTypeId"></param>
+        protected void DeleteWorksSupportNextStep(IData objIData, int worksSupportTypeId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", worksSupportTypeId);
+                
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelectAll = "EO_WorksSupportType_WF_NX_GETALL";
+        public const string SpSelect = "EO_WORKSSUPPORTTYPE_WFNX_SEL";
+        public const string SpAdd = "EO_WORKSSUPPORTTYPE_WF_NX_ADD";
+        public const string SpUpdate = "EO_WorksSupportType_WF_NX_UPD";
+        public const string SpDelete = "EO_WORKSSUPPORTTYPE_WFNX_DEL";
+        public const string SpSearch = "EO_WorksSupportType_WF_NX_SRH";
+        #endregion
+    }
+}

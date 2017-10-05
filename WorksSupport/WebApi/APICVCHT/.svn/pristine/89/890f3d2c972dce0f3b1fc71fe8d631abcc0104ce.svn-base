@@ -1,0 +1,158 @@
+﻿using MyUtils.Validations;
+using System;
+using System.Collections.Generic;
+
+namespace Nc.Erp.WorksSupport.Api.Models.WorksSupport
+{
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class GetByParam
+    {
+        [Required]
+        public int Id { get; set; }
+
+        public string KeyWork { get ; set;}
+    }
+    public class GetByWorksIDParam
+    {
+        public int Id { get; set; }
+
+    }
+    /// <summary>
+    /// Search param By Id Group
+    /// </summary>
+    public class GetByIdGroupParam
+    {
+        public int worksGroupId { get; set; }
+    }
+    public class ProcessUserParam
+    {
+        [Required]
+        public int intStepId { get; set; }
+    }
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SearchParam
+    {
+        public string Keywords { get; set; }
+        public int IsDeleted { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+    }
+    /// <summary>
+    /// Object for delete
+    /// </summary>
+    public class DeleteParam
+    {
+        [Required]
+        public int Id { get; set; }
+        //[Required]
+        public string User { get; set; }
+    }
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class GetById_Group
+    {
+        [Required]
+        public string Id { get; set; }
+    }
+
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SaveParam
+    {
+        public int WorksSupportId { get; set; }
+        public int WorksSupportTypeId { get; set; }
+        public string WorksSupportName { get; set; }
+        public string Content { get; set; }
+        public int WorksSupportStatusId { get; set; }
+        public DateTime? ExpectedCompletedDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
+        public int Currentprogress { get; set; }
+        public string CreatedUser { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string UpdatedUser { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public bool IsDeleted { get; set; }
+        public string DeletedUser { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public DateTime? LastCommentTime { get; set; }
+        public DateTime? LastActionTime { get; set; }
+        public string LastCommentId { get; set; }
+        public int AttachmentFileCount { get; set; }
+        public int WorksSupportGroupId { get; set; }
+        public int WorksSupportPriorityId { get; set; }
+        public int WorksSupportQualityId { get; set; }
+        public string SolutionContent { get; set; }
+        public string WorksSupportStatusName { get; set; }
+        public int WorksSupportProjectId { get; set; }
+        public string WorksSupportProjectName { get; set; }
+        public string MemberUserName { get; set; }
+        public int WorksSupportMemberRoleId { get; set; }
+        public string WorksSupportGroupName { get; set; }
+        public string IsinitStatus { get; set; }
+        public string IsCompleteStatus { get; set; }
+
+        // Quy trinh xu ly cua cong viec EO_WORKSSUPPORTTYPE_WORKFLOW
+        public List<WorksSupportType_WorkFlowParam> lstWorksSupportType_WorkFlow { get; set; }
+        //Độ ưu tiên
+        public List<WorksSupportPriorityParam> lstWorksSupportPriority { get; set; }
+        //Chất lượng
+        public List<WorksSupportQualityParam> lstWorksSupportQuality { get; set; }
+
+        //Nhóm công việc
+        public List<WorksSupportGroupParam> lstWorksSupportGroup { get; set; }
+
+        //Trạng thái công việc
+        public List<WorksSupportStatusParam> lstWorksSupportStatus { get; set; }
+
+        //Bước xử lý công việc cần hỗ trợ
+        public List<WorksSupport_WorkflowParam> lstWorksSupport_Workflow { get; set; }
+
+        //Tiến độ công việc cần hỗ trợ
+        public List<WorksSupport_ProgressParam> lstWorksSupport_Progress { get; set; }
+
+        //Danh sách tập tin đính kèm công việc cần hỗ trợ
+        public List<WorksSupport_AttachmentParam> lstWorksSupport_Attachment { get; set; }
+
+        //Danh sách lịch sử bình luận công việc cần hỗ trợ
+        public List<WorksSupport_CommentParam> lstWorksSupport_Comment { get; set; }
+        //Danh sách lịch sử bình luận công việc cần hỗ trợ
+        public List<WorksSupport_MemberParam> lstWorksSupport_Member { get; set; }
+    }
+
+    public class SaveParamBy
+    {
+        public int Id { get; set; }
+        public string WorksSupportName { get; set; }
+        public string User { get; set; }
+        public string Content { get; set; }
+        public DateTime? ExpectedCompletedDate { get; set; }
+        public int WorksSupportPriorityId { get; set; }
+        public int WorksSupportGroupId { get; set; }
+        //Danh sách tập tin đính kèm công việc cần hỗ trợ
+      //  public List<WorksSupport_AttachmentParam> lstWorksSupport_Attachment { get; set; }
+    }
+    public class SaveNextStepParam
+    {
+        public int WorksSupportId { get; set; }
+        public int NextWorksSupportStepId { get; set; }
+        public string UpdatedUser { get; set; }
+        public string ProcessUser { get; set; }
+        public string Note { get; set; }
+    }
+
+    public class SaveWSMember
+    {
+        public int WorksSupportId { get; set; }
+        public DateTime? WorksSupportDate { get; set; }
+        public string MemberUserName { get; set; }
+        public int WorksSupportMemberRoleId { get; set; }
+        public string UpdatedUser { get; set; }
+        
+    }
+}

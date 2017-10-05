@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nc.Erp.WorksSupport.Api", "Nc.Erp.WorksSupport.Api\Nc.Erp.WorksSupport.Api.csproj", "{34382E65-1A1A-41F8-BB4F-3796E93B2D85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nc.Erp.WorksSupport.Da", "..\DA\Nc.Erp.WorksSupport.Da\Nc.Erp.WorksSupport.Da.csproj", "{FD4AEB35-73D9-4835-8D72-8C7F5B81647F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nc.Erp.WorksSupport.Do", "..\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do.csproj", "{FCC31DCC-124C-4175-9EEB-4F19CF74D9FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClientAuthen", "WebClientAuthen\WebClientAuthen.csproj", "{3A8752F2-677A-4749-9ACF-C13D0267A4EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyUtils", "..\..\CongViecCanHoTro_Common\MyUtils\MyUtils.csproj", "{BD391D6C-1507-4F94-A266-4053C6FFFD54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Common", "Library.Common\Library.Common.csproj", "{AC366A64-5615-49F0-8D6F-EFA765D19188}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34382E65-1A1A-41F8-BB4F-3796E93B2D85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34382E65-1A1A-41F8-BB4F-3796E93B2D85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34382E65-1A1A-41F8-BB4F-3796E93B2D85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34382E65-1A1A-41F8-BB4F-3796E93B2D85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD4AEB35-73D9-4835-8D72-8C7F5B81647F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD4AEB35-73D9-4835-8D72-8C7F5B81647F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD4AEB35-73D9-4835-8D72-8C7F5B81647F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD4AEB35-73D9-4835-8D72-8C7F5B81647F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCC31DCC-124C-4175-9EEB-4F19CF74D9FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC31DCC-124C-4175-9EEB-4F19CF74D9FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC31DCC-124C-4175-9EEB-4F19CF74D9FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC31DCC-124C-4175-9EEB-4F19CF74D9FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A8752F2-677A-4749-9ACF-C13D0267A4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A8752F2-677A-4749-9ACF-C13D0267A4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A8752F2-677A-4749-9ACF-C13D0267A4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A8752F2-677A-4749-9ACF-C13D0267A4EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD391D6C-1507-4F94-A266-4053C6FFFD54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD391D6C-1507-4F94-A266-4053C6FFFD54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD391D6C-1507-4F94-A266-4053C6FFFD54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD391D6C-1507-4F94-A266-4053C6FFFD54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC366A64-5615-49F0-8D6F-EFA765D19188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC366A64-5615-49F0-8D6F-EFA765D19188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC366A64-5615-49F0-8D6F-EFA765D19188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC366A64-5615-49F0-8D6F-EFA765D19188}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+EndGlobal

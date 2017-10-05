@@ -1,0 +1,31 @@
+System.register(["../../event", "./baseComponent"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var event_1, baseComponent_1;
+    var BaseControl;
+    return {
+        setters:[
+            function (event_1_1) {
+                event_1 = event_1_1;
+            },
+            function (baseComponent_1_1) {
+                baseComponent_1 = baseComponent_1_1;
+            }],
+        execute: function() {
+            BaseControl = (function (_super) {
+                __extends(BaseControl, _super);
+                function BaseControl() {
+                    _super.call(this, null, event_1.ComponentType.Control);
+                }
+                return BaseControl;
+            }(baseComponent_1.BaseComponent));
+            exports_1("BaseControl", BaseControl);
+        }
+    }
+});
+//# sourceMappingURL=baseControl.js.map

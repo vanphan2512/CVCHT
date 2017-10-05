@@ -1,0 +1,279 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.WorksSupport
+{
+    /// <summary>
+    /// Created by 		: Luong Trung Nhan 
+    /// Created date 	: 15/06/2017 
+    /// 
+    /// </summary>	
+    public class WorksSupport_Comment
+    {
+
+
+        #region Member Variables
+
+        private decimal decCommentID;
+        private decimal decWorksSupportID;
+        private DateTime? dtmCommentDate;
+        private string strCommentContent = string.Empty;
+        private string strCommentUser = string.Empty;
+        private decimal decOrderIndex;
+        private bool bolIsActive = false;
+        private bool bolIsSystem = false;
+        private string strCreatedUser = string.Empty;
+        private DateTime? dtmCreatedDate;
+        private string strUpdatedUser = string.Empty;
+        private DateTime? dtmUpdatedDate;
+        private bool bolIsDeleted = false;
+        private string strDeletedUser = string.Empty;
+        private DateTime? dtmDeletedDate;
+        private bool bolIsExist = false;
+        private string strWorksSupportName = string.Empty;
+
+        public string WorksSupportName
+        {
+            get { return strWorksSupportName; }
+            set { strWorksSupportName = value; }
+        }
+        private DataRowState m_State = DataRowState.Unchanged;
+        #endregion
+
+
+        #region Properties
+        public DataRowState State
+        {
+            get { return m_State; }
+            set { m_State = value; }
+        }
+        /// <summary>
+        /// CommentID
+        /// 
+        /// </summary>
+        public decimal CommentId
+        {
+            get { return decCommentID; }
+            set { decCommentID = value; }
+        }
+
+        /// <summary>
+        /// WorksSupportID
+        /// 
+        /// </summary>
+        public decimal WorksSupportID
+        {
+            get { return decWorksSupportID; }
+            set { decWorksSupportID = value; }
+        }
+
+        /// <summary>
+        /// CommentDate
+        /// 
+        /// </summary>
+        public DateTime? CommentDate
+        {
+            get { return dtmCommentDate; }
+            set { dtmCommentDate = value; }
+        }
+
+        /// <summary>
+        /// CommentContent
+        /// 
+        /// </summary>
+        public string CommentContent
+        {
+            get { return strCommentContent; }
+            set { strCommentContent = value; }
+        }
+
+        /// <summary>
+        /// CommentUser
+        /// 
+        /// </summary>
+        public string CommentUser
+        {
+            get { return strCommentUser; }
+            set { strCommentUser = value; }
+        }
+
+        /// <summary>
+        /// OrderIndex
+        /// 
+        /// </summary>
+        public decimal OrderIndex
+        {
+            get { return decOrderIndex; }
+            set { decOrderIndex = value; }
+        }
+
+        /// <summary>
+        /// IsActive
+        /// 
+        /// </summary>
+        public bool IsActive
+        {
+            get { return bolIsActive; }
+            set { bolIsActive = value; }
+        }
+
+        /// <summary>
+        /// IsSystem
+        /// 
+        /// </summary>
+        public bool IsSystem
+        {
+            get { return bolIsSystem; }
+            set { bolIsSystem = value; }
+        }
+
+        /// <summary>
+        /// CreatedUser
+        /// 
+        /// </summary>
+        public string CreatedUser
+        {
+            get { return strCreatedUser; }
+            set { strCreatedUser = value; }
+        }
+
+
+
+        /// <summary>
+        /// UpdatedUser
+        /// 
+        /// </summary>
+        public string UpdatedUser
+        {
+            get { return strUpdatedUser; }
+            set { strUpdatedUser = value; }
+        }
+
+        /// <summary>
+        /// UpdatedDate
+        /// 
+        /// </summary>
+        public DateTime? UpdatedDate
+        {
+            get { return dtmUpdatedDate; }
+            set { dtmUpdatedDate = value; }
+        }
+
+        /// <summary>
+        /// IsDeleted
+        /// 
+        /// </summary>
+        public bool IsDeleted
+        {
+            get { return bolIsDeleted; }
+            set { bolIsDeleted = value; }
+        }
+
+        /// <summary>
+        /// DeletedUser
+        /// 
+        /// </summary>
+        public string DeletedUser
+        {
+            get { return strDeletedUser; }
+            set { strDeletedUser = value; }
+        }
+
+        /// <summary>
+        /// DeletedDate
+        /// 
+        /// </summary>
+        public DateTime? DeletedDate
+        {
+            get { return dtmDeletedDate; }
+            set { dtmDeletedDate = value; }
+        }
+
+        /// <summary>
+        /// Có tồn tại không?
+        /// </summary>
+        public bool IsExist
+        {
+            get { return bolIsExist; }
+            set { bolIsExist = value; }
+        }
+
+        #endregion
+
+
+        #region Constructor
+
+        public WorksSupport_Comment()
+        {
+        }
+        public WorksSupport_Comment(decimal decCommentID, decimal decWorksSupportID, DateTime? dtmCommentDate, string strCommentContent, string strCommentUser, decimal decOrderIndex, bool bolIsActive, bool bolIsSystem, string strCreatedUser, DateTime? dtmCreatedDate, string strUpdatedUser, DateTime? dtmUpdatedDate, bool bolIsDeleted, string strDeletedUser, DateTime? dtmDeletedDate)
+        {
+            this.decCommentID = decCommentID;
+            this.decWorksSupportID = decWorksSupportID;
+            this.dtmCommentDate = dtmCommentDate;
+            this.strCommentContent = strCommentContent;
+            this.strCommentUser = strCommentUser;
+            this.decOrderIndex = decOrderIndex;
+            this.bolIsActive = bolIsActive;
+            this.bolIsSystem = bolIsSystem;
+            this.strCreatedUser = strCreatedUser;
+            this.dtmCreatedDate = dtmCreatedDate;
+            this.strUpdatedUser = strUpdatedUser;
+            this.dtmUpdatedDate = dtmUpdatedDate;
+            this.bolIsDeleted = bolIsDeleted;
+            this.strDeletedUser = strDeletedUser;
+            this.dtmDeletedDate = dtmDeletedDate;
+
+        }
+        #endregion
+
+
+        #region Column Names
+
+        public const String colCommentID = "CommentID";
+        public const String colWorksSupportID = "WorksSupportID";
+        public const String colCommentDate = "CommentDate";
+        public const String colCommentContent = "CommentContent";
+        public const String colCommentUser = "CommentUser";
+        public const String colOrderIndex = "OrderIndex";
+        public const String colIsActive = "IsActive";
+        public const String colIsSystem = "IsSystem";
+        public const String colCreatedUser = "CreatedUser";
+        public const String colCreatedDate = "CreatedDate";
+        public const String colUpdatedUser = "UpdatedUser";
+        public const String colUpdatedDate = "UpdatedDate";
+        public const String colIsDeleted = "IsDeleted";
+        public const String colDeletedUser = "DeletedUser";
+        public const String colDeletedDate = "DeletedDate";
+
+        #endregion //Column names
+
+
+
+        public string DefaultPictureUrl { get; set; }
+
+        public string FullName { get; set; }
+
+        public string DepartmentName { get; set; }
+
+
+
+        public string PositionName { get; set; }
+
+        // Property này luôn để cuối
+        /// <summary>
+        /// CreatedDate
+        /// </summary>
+        public DateTime? CreatedDate
+        {
+            get { return dtmCreatedDate; }
+            set { dtmCreatedDate = value; }
+        }
+
+        //List file đính kèm theo comment
+        public List<WorksSupport_CMT_Attachment> ListCommentAttachment { get; set; }
+    }
+}

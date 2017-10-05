@@ -1,0 +1,32 @@
+System.register(["../enum"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function resolve(statusCode) {
+        var errorString = "common.httpError.genericError";
+        switch (statusCode) {
+            case 404:
+            default:
+                errorString = "common.httpError.notFound";
+        }
+        return errorString;
+    }
+    function isSuccesssStatusCode(statusCode) {
+        return statusCode === enum_1.HttpStatusCode.OK;
+    }
+    var enum_1, httpHelper;
+    return {
+        setters: [
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }
+        ],
+        execute: function () {
+            httpHelper = {
+                isSuccessStatusCode: isSuccesssStatusCode,
+                resolve: resolve
+            };
+            exports_1("default", httpHelper);
+        }
+    };
+});
+//# sourceMappingURL=httpHelper.js.map

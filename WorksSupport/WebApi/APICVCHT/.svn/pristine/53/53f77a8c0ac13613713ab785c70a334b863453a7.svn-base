@@ -1,0 +1,277 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorkSupportType;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorkSupportType
+{
+    /// <summary>
+    /// Lương Trung Nhân
+    /// created: 02/06/2017
+    /// Update: Nguyen Thi Kim Ngan
+    /// Bảng liên kết loại công việc và chất lượng công việc
+    /// </summary>
+    public class DaWorkSupportTypeQuality
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Tìm kiếm thông tin công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorksSupportTypeQuality> list, params object[] objKeywords)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter(objKeywords);
+                var dtbData = objIData.ExecStoreToDataTable();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportTypeQuality>(dtbData);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportType_Priority -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll WorksSupportType_Priority 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public ResultMessage GetAll(ref List<WorksSupportTypeQuality> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                var dtb = objIData.ExecStoreToDataTable();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportTypeQuality>(dtb);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType_Quality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportType_Quality -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportType_Priority by Id
+        /// </summary>
+        /// <param name="lstWorksSupportTypePriority"></param>
+        /// <param name="intWorkSupportTypeId"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref List<WorksSupportTypeQuality> lstWorksSupportTypePriority, int intWorkSupportTypeId, IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            //var objIData = Data.CreateData();
+            try
+            {
+                //objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", intWorkSupportTypeId);
+                DataTable dtb = objIData.ExecStoreToDataTable();
+                lstWorksSupportTypePriority = MyUtils.DataTableExtensions.ToList<WorksSupportTypeQuality>(dtb);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType_Priority", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportType_Priority -> GetById", "");
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="listWorksSupportTypeQuality"></param>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportTypeId"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(List<WorksSupportTypeQuality> listWorksSupportTypeQuality, IData objIData, int worksSupportTypeId)
+        {
+            var objResultMessage = new ResultMessage();
+            //var objIData = Data.CreateData();
+            try
+            {
+                //objIData.Connect();
+                if (listWorksSupportTypeQuality.Count > 0)
+                {
+                    foreach (var objWorksSupportTypeQuality in listWorksSupportTypeQuality)
+                    {
+                        Insert(objIData, objWorksSupportTypeQuality, worksSupportTypeId);
+                    }
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportType_Quality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_Quality -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="listWorksSupportTypeQuality"></param>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportTypeId"></param>
+        /// <returns></returns>
+        public ResultMessage Update(List<WorksSupportTypeQuality> listWorksSupportTypeQuality, IData objIData, int worksSupportTypeId)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                Delete(objIData, worksSupportTypeId);
+                if (listWorksSupportTypeQuality != null && listWorksSupportTypeQuality.Count > 0)
+                {
+                    foreach (var tiemQuality in listWorksSupportTypeQuality)
+                    {
+                        Insert(objIData, tiemQuality, worksSupportTypeId);   
+                    }
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Update, "Lỗi cập nhật thông tin WorksSupportType_Quality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_Quality -> Update", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="worksSupportTypeId"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(int worksSupportTypeId, IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                Delete(objIData, worksSupportTypeId);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSupportType_Quality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportType_Quality -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Thêm trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportTypeQuality"></param>
+        /// <param name="worksSupportTypeId"></param>
+        protected virtual void Insert(IData objIData, WorksSupportTypeQuality objWorksSupportTypeQuality, int worksSupportTypeId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYID",  objWorksSupportTypeQuality.WorksSupportQualityId);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID",worksSupportTypeId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportTypeQuality"></param>
+        protected virtual void Update(IData objIData, WorksSupportTypeQuality objWorksSupportTypeQuality)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYID", objWorksSupportTypeQuality.WorksSupportQualityId);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", objWorksSupportTypeQuality.WorksSupportTypeId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportTypeId"></param>
+        protected void Delete(IData objIData, int worksSupportTypeId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", worksSupportTypeId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelectAll = "EO_WorksSupportType_Priority_GETALL";
+        public const string SpSelect = "EO_WORKSSUPPORTTYPE_Q_SEL";
+        public const string SpAdd = "EO_WORKSSUPPORTTYPE_Q_ADD";
+        public const string SpUpdate = "EO_WorksSupportType_Priority_UPD";
+        public const string SpDelete = "EO_WORKSSUPPORTTYPE_Q_DEL";
+        public const string SpSearch = "EO_WorksSupportType_Priority_SRH";
+        #endregion
+    }
+}

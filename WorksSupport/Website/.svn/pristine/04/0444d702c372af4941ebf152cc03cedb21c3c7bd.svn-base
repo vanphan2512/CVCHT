@@ -1,0 +1,148 @@
+import { Component, Input, Output, EventEmitter } from "angular2/core";
+import { BaseControl } from "../../models/ui";
+import guidHelper from "../../helpers/guidHelper";
+@Component({
+    selector: "form-datepicker",
+    templateUrl: "app/common/directives/form/datePicker.html"
+})
+export class FormDatePicker extends BaseControl {
+    public id: string = String.format("date-picker-{0}", guidHelper.create());
+    @Input() model: any;
+    @Input() placeholder: any;
+    @Input() disabled: any;
+    @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onValueChanged = new EventEmitter();
+    @Input() minDate: string = "01/01/1900";
+    @Input() maxDate: string = String.empty;
+    @Input() startDate: string = this.nowDate();
+    private DataPicker: any;
+    protected onReady() {
+        let self: FormDatePicker = this;
+        let month: string;
+        let day: string;
+        let nowDate = self.nowDate();
+        let daysOfWeek: any = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+        let monthNames: any = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+            "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+        self.DataPicker = window.jQuery("#" + this.id).daterangepicker({
+            singleDatePicker: true,
+            autoUpdateInput: true,
+            format: 'DD/MM/YYYY',
+            startDate: self.checkDate(self.startDate),
+            locale: {
+                format: 'DD/MM/YYYY',
+                separator: " - ",
+                applyLabel: "Apply",
+                cancelLabel: "Cancel",
+                fromLabel: "From",
+                toLabel: "To",
+                customRangeLabel: "Custom",
+                daysOfWeek: daysOfWeek,
+                monthNames: monthNames
+            },
+            firstDay: 1,
+            minDate: self.minDate
+        },
+            function (selectedValue: Date) {
+                let objDate = new Date(selectedValue);
+                month = objDate.getMonth() + 1 < 10 ? "0" + (objDate.getMonth() + 1) : (objDate.getMonth() + 1).toString();
+                day = objDate.getDate() < 10 ? "0" + objDate.getDate() : objDate.getDate().toString();
+                self.modelChange.emit(day + "/" + month + "/" + objDate.getFullYear());
+            }
+        );
+        self.modelChange.emit(nowDate);
+    }
+
+    public resetDate() {
+        let self: FormDatePicker = this;
+        let month: string;
+        let day: string;
+        let nowDate = self.nowDate();
+        let daysOfWeek: any = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+        let monthNames: any = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+            "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+        self.DataPicker.daterangepicker({
+            singleDatePicker: true,
+            autoUpdateInput: true,
+            format: 'DD/MM/YYYY',
+            startDate: self.checkDate(self.startDate),
+            locale: {
+                format: 'DD/MM/YYYY',
+                separator: " - ",
+                applyLabel: "Apply",
+                cancelLabel: "Cancel",
+                fromLabel: "From",
+                toLabel: "To",
+                customRangeLabel: "Custom",
+                daysOfWeek: daysOfWeek,
+                monthNames: monthNames
+            },
+            firstDay: 1,
+            minDate: self.minDate
+        },
+            function (selectedValue: Date) {
+                let objDate = new Date(selectedValue);
+                month = objDate.getMonth() + 1 < 10 ? "0" + (objDate.getMonth() + 1) : (objDate.getMonth() + 1).toString();
+                day = objDate.getDate() < 10 ? "0" + objDate.getDate() : objDate.getDate().toString();
+                self.modelChange.emit(day + "/" + month + "/" + objDate.getFullYear());
+            }
+        );
+    }
+    public resetDateEdit(startDate: any) {
+        let self: FormDatePicker = this;
+        let month: string;
+        let day: string;
+        let nowDate = self.nowDate();
+        let daysOfWeek: any = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+        let monthNames: any = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+            "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+        self.DataPicker.daterangepicker({
+            singleDatePicker: true,
+            autoUpdateInput: true,
+            format: 'DD/MM/YYYY',
+            startDate: self.checkDate(startDate),
+            locale: {
+                format: 'DD/MM/YYYY',
+                separator: " - ",
+                applyLabel: "Apply",
+                cancelLabel: "Cancel",
+                fromLabel: "From",
+                toLabel: "To",
+                customRangeLabel: "Custom",
+                daysOfWeek: daysOfWeek,
+                monthNames: monthNames
+            },
+            firstDay: 1,
+            minDate: self.minDate
+        },
+            function (selectedValue: Date) {
+                let objDate = new Date(selectedValue);
+                month = objDate.getMonth() + 1 < 10 ? "0" + (objDate.getMonth() + 1) : (objDate.getMonth() + 1).toString();
+                day = objDate.getDate() < 10 ? "0" + objDate.getDate() : objDate.getDate().toString();
+                self.modelChange.emit(day + "/" + month + "/" + objDate.getFullYear());
+            }
+        );
+    }
+    private checkDate(newDate: string) {
+        let objDate = new Date();
+        let month = objDate.getMonth() + 1 < 10 ? "0" + (objDate.getMonth() + 1) : (objDate.getMonth() + 1).toString();
+        let day = objDate.getDate() < 10 ? "0" + objDate.getDate() : objDate.getDate().toString();
+        if (newDate !== undefined && newDate !== null) {
+            let currentDate: string = "";
+            for (let i = newDate.split("/").length - 1; i >= 0; i--) {
+                currentDate += newDate.split("/")[i];
+            }
+            let nowDate = objDate.getFullYear() + month + day;
+            if (parseInt(currentDate) > parseInt(nowDate)) {
+                return this.startDate = newDate;
+            }
+        }
+        return day + "/" + month + "/" + objDate.getFullYear();
+    }
+    private nowDate() {
+        let objDate = new Date();
+        let month = objDate.getMonth() + 1 < 10 ? "0" + (objDate.getMonth() + 1) : (objDate.getMonth() + 1).toString();
+        let day = objDate.getDate() < 10 ? "0" + objDate.getDate() : objDate.getDate().toString();
+        return day + "/" + month + "/" + objDate.getFullYear();
+    }
+}

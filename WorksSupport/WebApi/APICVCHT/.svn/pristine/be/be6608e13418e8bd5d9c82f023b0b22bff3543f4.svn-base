@@ -1,0 +1,230 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.Project;
+using System;
+using System.Collections.Generic;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Project
+{
+    /// <summary>
+    /// Created by      : Nguyen Thi Kim Ngan
+    /// Created date    : 25/05/2017
+    /// Xử lý nghiệp vụ đối tượng ERP.EO.WORKSSUPPORTPRIORITY.
+    /// </summary>
+    public class DaWorksSupportProjectMember
+    {
+        /// <summary>
+        /// Tìm kiếm thông tin thanh vien công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorksSupportProject_Member> list, params object[] objKeywords)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter(objKeywords);
+                var dtbData = objIData.ExecStoreToDataTable();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportProject_Member>(dtbData);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin thành viên của công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportProject_Member -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Update data
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="listMembers"></param>
+        /// <returns></returns>
+        public ResultMessage Update(IData objIData, List<WorksSupportProject_Member> listMembers)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                foreach (var item in listMembers)
+                {
+                    UpdateProjectMember(objIData, item);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi cap nhat thông tin WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get ProjectMember by Id
+        /// </summary>
+        /// <param name="listWorksSupportProjectMember"></param>
+        /// <param name="worksSupportProjectMemberId"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref List<WorksSupportProject_Member> listWorksSupportProjectMember, int worksSupportProjectMemberId,IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpSearchBy);
+                objIData.AddParameter("@WORKSSUPPORTProjectID", worksSupportProjectMemberId);
+                var dtb = objIData.ExecStoreToDataTable();
+                listWorksSupportProjectMember = MyUtils.DataTableExtensions.ToList<WorksSupportProject_Member>(dtb);
+             }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportProject_Member", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject_Member -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="listMembers"></param>
+        /// <param name="user"></param>
+        /// <param name="projectId"></param>
+        /// <param name="objIData"></param>
+        /// <returns></returns>
+        public ResultMessage InsertProject_Member(List<WorksSupportProject_Member> listMembers, string user, int projectId, IData objIData)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                foreach (var item in listMembers)
+                {
+                    InsertProjectMember(objIData, projectId, item.MemberUserName, item.WorksSupportMemberRoleId, item.IsAutoAddMemberToWorksGroup, user);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="listProjectMember"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(IData objIData, List<WorksSupportProject_Member> listProjectMember)
+        {
+            var objResultMessage = new ResultMessage();
+            foreach (var item in listProjectMember)
+            {
+                Delete_ProjectMember(objIData, item.WorksSupportProjectId, item.MemberUserName);
+            }
+
+            return objResultMessage;
+        }
+        #region
+
+        /// <summary>
+        /// Cập nhật trạng thái dự án cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objProjectMember"></param>
+        protected virtual void UpdateProjectMember(IData objIData, WorksSupportProject_Member objProjectMember)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", objProjectMember.WorksSupportProjectId);
+                objIData.AddParameter("@MEMBERUSERNAME", objProjectMember.MemberUserName);
+                objIData.AddParameter("@UPDATEDUSER", objProjectMember.UpdatedUser);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", objProjectMember.WorksSupportMemberRoleId);
+                objIData.AddParameter("@ISAUTOADDMEMBERTOWORKSGROUP", objProjectMember.IsAutoAddMemberToWorksGroup);
+
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        protected virtual void InsertProjectMember(IData objIData, int projectId, string memberName, int memberRoleId, int intIsAutoGroup, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", projectId);
+                objIData.AddParameter("@MEMBERUSERNAME", memberName);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", memberRoleId);
+                objIData.AddParameter("@ISAUTOADDMEMBERTOWORKSGROUP", intIsAutoGroup);
+                objIData.AddParameter("@CREATEDUSER", user);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xoa thanh vien cua du an
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="projectId"></param>
+        /// <param name="userName"></param>
+        protected void Delete_ProjectMember(IData objIData, int projectId,string userName)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDel);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", projectId);
+                objIData.AddParameter("@MEMBERUSERNAME", userName);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSearch = "WORKSSUPPORTPROJECTMB_V2_SRH";
+        public const string SpSearchBy = "WORKS_ROJECT_V2_SHRMEMBER";
+        public const string SpAdd = "WORKSSP_PROJECT_MEMBER_V2_ADD";
+        public const string SpDel = "WSPROJECT_MEMBER_V2_DEL";
+        public const string SpUpdate = "WSPROJECT_MEMBER_V2_UPD";
+      
+        #endregion
+    }
+}

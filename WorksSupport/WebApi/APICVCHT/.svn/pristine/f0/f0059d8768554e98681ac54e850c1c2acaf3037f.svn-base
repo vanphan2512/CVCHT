@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="HandShake">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strClientResponse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HandShakeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HandShakeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Login">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoginResult" type="tns:AuthenticateResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AuthenticateResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsError" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorMessage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TokenString" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Function" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Department" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DepartmentID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FunctionID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReviewLevelID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LoginLogID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="SecurityLevelID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PositionID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PositionName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DefaultPictureURL" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsUseETokenDevice" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ETokenDeviceEmail" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsCheckVersion" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsUpdateVersionByFTP" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="Dang_nhap_he_thong">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objResultMessage" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ResultMessage">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsError" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorType" type="tns:ErrorTypes" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MessageDetail" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ErrorTypes">
+        <s:restriction base="s:string">
+          <s:enumeration value="No_Error" />
+          <s:enumeration value="LoadInfo" />
+          <s:enumeration value="Insert" />
+          <s:enumeration value="Update" />
+          <s:enumeration value="Delete" />
+          <s:enumeration value="SearchData" />
+          <s:enumeration value="GetData" />
+          <s:enumeration value="InvalidIV" />
+          <s:enumeration value="TokenNotExist" />
+          <s:enumeration value="TokenInvalid" />
+          <s:enumeration value="CheckData" />
+          <s:enumeration value="Others" />
+          <s:enumeration value="UserDefine" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="Dang_nhap_he_thongResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Dang_nhap_he_thongResult" type="tns:AuthenticateResult" />
+            <s:element minOccurs="0" maxOccurs="1" name="objResultMessage" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogOut">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogOutResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="LogOutResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDuplicateLogin">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strCertificateString" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objResultMessage" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDuplicateLoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckDuplicateLoginResult" type="tns:LoginInfo" />
+            <s:element minOccurs="0" maxOccurs="1" name="objResultMessage" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="LoginInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="LoginLogID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StoreName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserHostAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ComputerName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsExist" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UpdateESignData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strESignData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objResultMessage" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateESignDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UpdateESignDataResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="objResultMessage" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangePassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strOldPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strNewPassword" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="intResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangePasswordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ChangePasswordResult" type="tns:ResultMessage" />
+            <s:element minOccurs="1" maxOccurs="1" name="intResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestUseService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestUseServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TestUseServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HandShakeSoapIn">
+    <wsdl:part name="parameters" element="tns:HandShake" />
+  </wsdl:message>
+  <wsdl:message name="HandShakeSoapOut">
+    <wsdl:part name="parameters" element="tns:HandShakeResponse" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapIn">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapOut">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="Dang_nhap_he_thongSoapIn">
+    <wsdl:part name="parameters" element="tns:Dang_nhap_he_thong" />
+  </wsdl:message>
+  <wsdl:message name="Dang_nhap_he_thongSoapOut">
+    <wsdl:part name="parameters" element="tns:Dang_nhap_he_thongResponse" />
+  </wsdl:message>
+  <wsdl:message name="LogOutSoapIn">
+    <wsdl:part name="parameters" element="tns:LogOut" />
+  </wsdl:message>
+  <wsdl:message name="LogOutSoapOut">
+    <wsdl:part name="parameters" element="tns:LogOutResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckDuplicateLoginSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckDuplicateLogin" />
+  </wsdl:message>
+  <wsdl:message name="CheckDuplicateLoginSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckDuplicateLoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateESignDataSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateESignData" />
+  </wsdl:message>
+  <wsdl:message name="UpdateESignDataSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateESignDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:ChangePassword" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:ChangePasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="TestUseServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:TestUseService" />
+  </wsdl:message>
+  <wsdl:message name="TestUseServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:TestUseServiceResponse" />
+  </wsdl:message>
+  <wsdl:portType name="TokenAuthenticationSoap">
+    <wsdl:operation name="HandShake">
+      <wsdl:input message="tns:HandShakeSoapIn" />
+      <wsdl:output message="tns:HandShakeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <wsdl:input message="tns:LoginSoapIn" />
+      <wsdl:output message="tns:LoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LoginSys">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dang nhap he thong</wsdl:documentation>
+      <wsdl:input name="Dang_nhap_he_thong" message="tns:Dang_nhap_he_thongSoapIn" />
+      <wsdl:output name="Dang_nhap_he_thong" message="tns:Dang_nhap_he_thongSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LogOut">
+      <wsdl:input message="tns:LogOutSoapIn" />
+      <wsdl:output message="tns:LogOutSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckDuplicateLogin">
+      <wsdl:input message="tns:CheckDuplicateLoginSoapIn" />
+      <wsdl:output message="tns:CheckDuplicateLoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateESignData">
+      <wsdl:input message="tns:UpdateESignDataSoapIn" />
+      <wsdl:output message="tns:UpdateESignDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <wsdl:input message="tns:ChangePasswordSoapIn" />
+      <wsdl:output message="tns:ChangePasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestUseService">
+      <wsdl:input message="tns:TestUseServiceSoapIn" />
+      <wsdl:output message="tns:TestUseServiceSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TokenAuthenticationSoap" type="tns:TokenAuthenticationSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HandShake">
+      <soap:operation soapAction="http://tempuri.org/HandShake" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap:operation soapAction="http://tempuri.org/Login" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoginSys">
+      <soap:operation soapAction="http://tempuri.org/Dang_nhap_he_thong" style="document" />
+      <wsdl:input name="Dang_nhap_he_thong">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Dang_nhap_he_thong">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogOut">
+      <soap:operation soapAction="http://tempuri.org/LogOut" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDuplicateLogin">
+      <soap:operation soapAction="http://tempuri.org/CheckDuplicateLogin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateESignData">
+      <soap:operation soapAction="http://tempuri.org/UpdateESignData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <soap:operation soapAction="http://tempuri.org/ChangePassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestUseService">
+      <soap:operation soapAction="http://tempuri.org/TestUseService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="TokenAuthenticationSoap12" type="tns:TokenAuthenticationSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HandShake">
+      <soap12:operation soapAction="http://tempuri.org/HandShake" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap12:operation soapAction="http://tempuri.org/Login" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoginSys">
+      <soap12:operation soapAction="http://tempuri.org/Dang_nhap_he_thong" style="document" />
+      <wsdl:input name="Dang_nhap_he_thong">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Dang_nhap_he_thong">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogOut">
+      <soap12:operation soapAction="http://tempuri.org/LogOut" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDuplicateLogin">
+      <soap12:operation soapAction="http://tempuri.org/CheckDuplicateLogin" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateESignData">
+      <soap12:operation soapAction="http://tempuri.org/UpdateESignData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <soap12:operation soapAction="http://tempuri.org/ChangePassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestUseService">
+      <soap12:operation soapAction="http://tempuri.org/TestUseService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TokenAuthentication">
+    <wsdl:port name="TokenAuthenticationSoap" binding="tns:TokenAuthenticationSoap">
+      <soap:address location="http://ssoservice.egovsams.com/TokenAuthentication.asmx" />
+    </wsdl:port>
+    <wsdl:port name="TokenAuthenticationSoap12" binding="tns:TokenAuthenticationSoap12">
+      <soap12:address location="http://ssoservice.egovsams.com/TokenAuthentication.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

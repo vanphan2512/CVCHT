@@ -1,0 +1,216 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.ReportProces
+{
+    public class DaReportProcess
+    {
+        /// <summary>
+        /// Created by      : Nguyen Thi Kim Ngan
+        /// Created date    : 20/06/2017
+        /// Description     :Bao cao tien do cong viec can ho tro.
+        /// </summary>
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+      
+
+        /// Tìm kiếm thông tin công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData_Works(ref List<WorkSupport> list, string KeyWorks, int WorksGroupId, int WorksProject, string MemberUser, int KeyStatus)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                objIData.CreateNewStoredProcedure(SpSearchRepHr);
+                objIData.AddParameter("@KEYWORDS", KeyWorks);
+                objIData.AddParameter("@WORKSSUPPORTGROUPID", WorksGroupId);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", WorksProject);
+                objIData.AddParameter("@MEMBERUERNAME", MemberUser);
+                objIData.AddParameter("@KEYSTATUS", KeyStatus);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]);
+                    if (!Convert.IsDBNull(reader["CONTENT"])) objWorksSupport.Content = Convert.ToString(reader["CONTENT"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupport.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["EXPECTEDCOMPLETEDDATE"])) objWorksSupport.ExpectedCompletedDate = Convert.ToDateTime(reader["EXPECTEDCOMPLETEDDATE"]);
+                    if (objWorksSupport.ExpectedCompletedDate == DateTime.MinValue)
+                    {
+                        objWorksSupport.ExpectedCompletedDate = null;
+                    }
+                    if (!Convert.IsDBNull(reader["COMPLETEDDATE"])) objWorksSupport.CompletedDate = Convert.ToDateTime(reader["COMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorksSupport.Currentprogress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupport.CreatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["ATTACHMENTFILECOUNT"])) objWorksSupport.AttachmentFileCount = Convert.ToInt32(reader["ATTACHMENTFILECOUNT"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTGROUPID"])) objWorksSupport.WorksSupportGroupId = Convert.ToInt32(reader["WORKSSUPPORTGROUPID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupport.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupport.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["SOLUTIONCONTENT"])) objWorksSupport.SolutionContent = Convert.ToString(reader["SOLUTIONCONTENT"]);
+                    if (!Convert.IsDBNull(reader["ISINITSTATUS"])) objWorksSupport.IsinitStatus = Convert.ToString(reader["ISINITSTATUS"]);
+                    if (!Convert.IsDBNull(reader["ISFINISHSTEP"])) objWorksSupport.IsCompleteStatus = Convert.ToBoolean(reader["ISFINISHSTEP"]);
+                    if (!Convert.IsDBNull(reader["KHOITAO"])) objWorksSupport.KhoiTao = Convert.ToInt32(reader["KHOITAO"]);
+                    if (!Convert.IsDBNull(reader["XULY"])) objWorksSupport.XuLy = Convert.ToInt32(reader["XULY"]);
+                    if (!Convert.IsDBNull(reader["TREHAN"])) objWorksSupport.TreHan = Convert.ToInt32(reader["TREHAN"]);
+                    if (!Convert.IsDBNull(reader["HOANTAT"])) objWorksSupport.HoanTat = Convert.ToInt32(reader["HOANTAT"]);
+                    
+                    list.Add(objWorksSupport);
+
+                    //// Nap thong tin nguoi thuc hien theo du an 
+                    // if (objWorksSupport.WorksSupportProjectId > 0)
+                    // {
+
+                    //     DaWorksSupportProjectMember DaProject_Member = new DaWorksSupportProjectMember();
+                    //     List<WorksSupportProject_Member> lstProject_Member = new List<WorksSupportProject_Member>();
+                    //     objResultMessage = DaProject_Member.GetById(ref lstProject_Member, WorksProject, objIData);
+                    //     if (!objResultMessage.IsError && lstProject_Member != null && lstProject_Member.Count > 0)
+                    //     {
+                    //         objWorksSupport.lstWorksSupportProject_Member =lstProject_Member;
+                    //     }
+                    // }
+                    // // Nap thong tin nguoi thuc hien theo nhom cong viec 
+                    // if (objWorksSupport.WorksSupportGroupId > 0)
+                    // {
+                    //     // Nap thong tin nguoi thuc hien theo du an 
+                    //     DaWorksSupportGroupMember DaGroup_Member = new DaWorksSupportGroupMember();
+                    //     List<WorksSupportGroupMember> lstGroup_Member = new List<WorksSupportGroupMember>();
+                    //     objResultMessage = DaGroup_Member.GetById(ref lstGroup_Member, WorksGroupId, objIData);
+                    //     if (!objResultMessage.IsError && lstGroup_Member != null && lstGroup_Member.Count > 0)
+                    //     {
+                    //         objWorksSupport.lstWorksSupportGroup_Member = lstGroup_Member;
+                    //     }
+                    // }
+              
+                }
+                objIData.CommitTransaction();
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// xuat bao cao tien do cua cong viec can ho tro theo du an
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchReportByProject(ref List<WorkSupport> list, int WorksGroupId, int WorksProject)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearchRep);
+                objIData.AddParameter("@PROJECT", WorksProject);
+                //var data = objIData.ExecStoreToDataSet("V_OUT1", "V_OUT2");
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["SUMGROUP"])) objWorksSupport.SumGroup = Convert.ToInt32(reader["SUMGROUP"]);
+                    if (!Convert.IsDBNull(reader["SUMWORKS"])) objWorksSupport.SumWorks = Convert.ToInt32(reader["SUMWORKS"]);
+                    if (!Convert.IsDBNull(reader["SUMPERSON"])) objWorksSupport.SumPerson = Convert.ToInt32(reader["SUMPERSON"]);
+                    if (!Convert.IsDBNull(reader["SUMSTATUS"])) objWorksSupport.SumStatus = Convert.ToInt32(reader["SUMSTATUS"]);
+
+                    list.Add(objWorksSupport);
+                }
+                if (WorksProject > 0)
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    List<WorkSupport> listGroup = new List<WorkSupport>();
+                   // objResultMessage = DaReportProcess.SearchWorksByGroup(WorksGroupId);
+                }
+
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi xuat du lieu bao cao tien do", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Protected Methods
+        /// nap du lieu cong viec theo nhom thuoc du an
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage  SearchWorksByGroup(ref List<WorkSupport> list, int WorksGroupId)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearchRep);
+                objIData.AddParameter("@GROUPID", WorksGroupId);
+                var data = objIData.ExecStoreToDataSet("V_OUT1", "V_OUT2");
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["SUMGROUP"])) objWorksSupport.SumGroup = Convert.ToInt32(reader["SUMGROUP"]);
+                    if (!Convert.IsDBNull(reader["SUMWORKS"])) objWorksSupport.SumWorks = Convert.ToInt32(reader["SUMWORKS"]);
+                    if (!Convert.IsDBNull(reader["SUMPERSON"])) objWorksSupport.SumPerson = Convert.ToInt32(reader["SUMPERSON"]);
+                    if (!Convert.IsDBNull(reader["SUMSTATUS"])) objWorksSupport.SumStatus = Convert.ToInt32(reader["SUMSTATUS"]);
+                    list.Add(objWorksSupport);
+                }
+
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi xuat du lieu bao cao tien do", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Stored Procedure Names
+        public const string SpSearch = "WORKSSUPPORTGROUP_V2_SEARCH";
+        public const string SpSearchRep = "EO_WORKSSUPPORT_REPEXC";
+        public const string SpSearchRepHr = "EO_WORKSSUPPORT_REPSHR";
+
+        #endregion
+    }
+}

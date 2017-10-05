@@ -1,0 +1,799 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using System;
+using System.Collections.Generic;
+using Nc.Erp.WorksSupport.Do.Configuration.Work;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Works
+{
+    using Nc.Erp.WorksSupport.Da.Configuration.WorksSupport;
+    using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+
+    using Newtonsoft.Json;
+
+    /// <summary>
+    /// Created by      : NGUYEN THI KIM NGAN
+    /// Created date    : 06.07.2017
+    /// Khai báo công việc EO_Works
+    /// </summary>
+    public class DaWorks
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Tìm kiếm thông tin cong viec lien quan
+        /// </summary>
+        /// <param name="listWork"></param>
+        /// <param name="projectId"></param>
+        /// <param name="typeSearch"></param>
+        /// <param name="keyWork"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<Work> listWork, string projectId, int typeSearch, string keyWork, DateTime? startDate, DateTime? endDate, int pageIndex, int pageSize)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter("@PROJECTID", projectId.Trim());
+                objIData.AddParameter("@KEYWORDS", keyWork);
+                objIData.AddParameter("@TYPESEARCH", typeSearch);
+                objIData.AddParameter("@STARTDATE", startDate);
+                objIData.AddParameter("@ENDDATE", endDate);
+                objIData.AddParameter("@PAGEINDEX", pageIndex);
+                objIData.AddParameter("@PAGESIZE", pageSize);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWork = new Work();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWork.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWork.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["PROJECTNAME"])) objWork.ProjectName = Convert.ToString(reader["PROJECTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWork.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWork.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["ISDELETED"])) objWork.IsDeleted = Convert.ToInt32(reader["ISDELETED"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWork.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWork.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["DELETEDDATE"])) objWork.DeletedDate = Convert.ToDateTime(reader["DELETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["EXECUSER"])) objWork.ExecUser = Convert.ToString(reader["EXECUSER"]).Trim();
+
+                    listWork.Add(objWork);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportStatus -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage SearchDataInvole(ref List<Work> list, int intWorksId, string strNote)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpLoad);
+                objIData.AddParameter("@WORKSID", intWorksId);
+                objIData.AddParameter("@NOTE", strNote);
+
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorks = new Work();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWorks.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWorks.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWorks.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWorks.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorks.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+
+                    list.Add(objWorks);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin công việc lien quan", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get permission by groupId , userName
+        /// </summary>
+        /// <param name="objWorksPermission"></param>
+        /// <param name="groupId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage GetPermissionByGroupIdAndUserName(ref WorksPermission objWorksPermission, int groupId, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpGetPermissionGroup);
+                objIData.AddParameter("@USERNAME", user);
+                objIData.AddParameter("@WORKSSUPPORTGROUPID", groupId);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    if (!Convert.IsDBNull(reader["ISCANADDWORKSSUPPORT"])) objWorksPermission.IsCanAddWorkssupport = Convert.ToBoolean(reader["ISCANADDWORKSSUPPORT"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDITWORKSSUPPORT"])) objWorksPermission.IsCanEditWorkssupport = Convert.ToBoolean(reader["ISCANEDITWORKSSUPPORT"]);
+                    if (!Convert.IsDBNull(reader["ISCANDELETEWORKSSUPPORT"])) objWorksPermission.IsCanDeleteWorkssupport = Convert.ToBoolean(reader["ISCANDELETEWORKSSUPPORT"]);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin quyền theo nhóm công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchDataInvole", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get permission by workId , userName
+        /// </summary>
+        /// <param name="objWorksPermission"></param>
+        /// <param name="workId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage GetPermissionByWorkIdAndUserName(ref WorksPermission objWorksPermission, int workId, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpGetPermissionWork);
+                objIData.AddParameter("@USERNAME", user);
+                objIData.AddParameter("@WORKSSUPPORTID", workId);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    if (!Convert.IsDBNull(reader["ISCANADDWORKSSUPPORT"])) objWorksPermission.IsCanAddWorkssupport = Convert.ToBoolean(reader["ISCANADDWORKSSUPPORT"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDITWORKSSUPPORT"])) objWorksPermission.IsCanEditWorkssupport = Convert.ToBoolean(reader["ISCANEDITWORKSSUPPORT"]);
+                    if (!Convert.IsDBNull(reader["ISCANDELETEWORKSSUPPORT"])) objWorksPermission.IsCanDeleteWorkssupport = Convert.ToBoolean(reader["ISCANDELETEWORKSSUPPORT"]);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin quyền theo nhóm công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchDataInvole", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        
+
+        /// <summary>
+        /// Get next step permission by WorksSupportId and UserName
+        /// </summary>
+        /// <param name="objWorksNextStepPermission"></param>
+        /// <param name="worksId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage GetPermissionNextStepByWorksSupportIdAndUserName(IData objIData, ref WorksNextStepPermission objWorksNextStepPermission, int worksId, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpGetNextPermission);
+                objIData.AddParameter("@USERNAME", user);
+                objIData.AddParameter("@WORKSSUPPORTID", worksId);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    if (!Convert.IsDBNull(reader["ISCANEDITCONTENT"])) objWorksNextStepPermission.IsCanEditContent = Convert.ToBoolean(reader["ISCANEDITCONTENT"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDITSOLUTIONCONTENT"])) objWorksNextStepPermission.IsCanEditSolutionContent = Convert.ToBoolean(reader["ISCANEDITSOLUTIONCONTENT"]);
+                    if (!Convert.IsDBNull(reader["ISCANADDATTACHMENT"])) objWorksNextStepPermission.IsCanAddAttachment = Convert.ToBoolean(reader["ISCANADDATTACHMENT"]);
+                    if (!Convert.IsDBNull(reader["ISCANCOMMENT"])) objWorksNextStepPermission.IsCanComment = Convert.ToBoolean(reader["ISCANCOMMENT"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDITEXPECTEDCOMPLETEDDATE"])) objWorksNextStepPermission.IsCanEditEpectedCompletedDate = Convert.ToBoolean(reader["ISCANEDITEXPECTEDCOMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["ISCANCHANGEPROGRESS"])) objWorksNextStepPermission.IsCanChangeProcgress = Convert.ToBoolean(reader["ISCANCHANGEPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDITQUALITY"])) objWorksNextStepPermission.IsCanEditQuality = Convert.ToBoolean(reader["ISCANEDITQUALITY"]);
+                    if (!Convert.IsDBNull(reader["ISCANPROCESSWORKFLOW"])) objWorksNextStepPermission.IsCanProcessWorkFlow = Convert.ToBoolean(reader["ISCANPROCESSWORKFLOW"]);
+                    if (!Convert.IsDBNull(reader["ISMUSTCHOOSEPROCESSUSER"])) objWorksNextStepPermission.IsMustChooseProcessUser = Convert.ToBoolean(reader["ISMUSTCHOOSEPROCESSUSER"]);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin quyền theo nhóm công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchDataInvole", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+
+        /// <summary>
+        /// Xóa công việc liên quan
+        /// </summary>
+        /// <param name="worksId"></param>
+        /// <param name="workInvoleId"></param>
+        /// <returns></returns>
+        public ResultMessage DeleteWorksInvoleByWorksIdAndWorkId(int worksId, int workInvoleId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                DeleteWorksInvole(objIData, workInvoleId, worksId);
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa công việc liên quan", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> DeleteWorksInvoleByWorksIdAndWorkId", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa tất cả công việc liên quan công việc
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="workInvoleId"></param>
+        /// <returns></returns>
+        public ResultMessage DeleteByWorkSupportId(IData objIData, int workInvoleId)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                DeleteWorksInvoleByWorkSupportId(objIData, workInvoleId);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa DeleteWorksInvoleByWorksIdAndWorkId", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> DeleteWorksInvoleByWorksIdAndWorkId", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Thêm mới công việc liên quan
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="workInvoleId"></param>
+        /// <param name="worksId"></param>
+        /// <returns></returns>
+        public ResultMessage InsertWorksInvoleByWorkSupportIdAndWorkId(IData objIData, int workInvoleId, int worksId)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                InsertWorksInvole(objIData, workInvoleId, worksId);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa DeleteWorksInvoleByWorksIdAndWorkId", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> DeleteWorksInvoleByWorksIdAndWorkId", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Đánh giá chất lượng công việc
+        /// </summary>
+        /// <param name="worksSupportId"></param>
+        /// <param name="stepId"></param>
+        /// <param name="note"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage QualityProcess(int worksSupportId, int stepId, string note, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                UpdateQualityForWorkSupport(objIData, worksSupportId, stepId, note, user);
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi  thêm data đánh giá chất lượng công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> QualityProcess", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Cập nhật giải pháp
+        /// </summary>
+        /// <param name="worksSupportId"></param>
+        /// <param name="stepId"></param>
+        /// <param name="note"></param>
+        /// <param name="solutionContent"></param>
+        /// <param name="user"></param>
+        /// <param name="listSolutionAttachment"></param>
+        /// <param name="isAddNew"></param>
+        /// <returns></returns>
+        public ResultMessage AddSolution(int worksSupportId, string solutionContent, string user, string listSolutionAttachment, bool isAddNew)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                if (isAddNew)
+                {
+                    new DaWorksSupportSolutionAttachment().DeleteWorkSupportSolutionAttachmentByWorksSupportId(objIData, worksSupportId, user);
+                }
+                this.UpdateSolutionForWorkSupport(objIData, worksSupportId, solutionContent, user);
+                // Insert WorksSupport_Attachment
+                if (!string.IsNullOrEmpty(listSolutionAttachment))
+                {
+                    dynamic rs = JsonConvert.DeserializeObject(listSolutionAttachment);
+                    if (rs.Count > 0)
+                    {
+                        var daWorksSupportSolutionAttachment = new DaWorksSupportSolutionAttachment();
+                        foreach (var r in rs)
+                        {
+                            var item = new WorksSupportSolutionAttachment
+                                           {
+                                               WorksSupportId = worksSupportId,
+                                               FileId = r.FILEID,
+                                               FileName = r.FILENAME,
+                                               FilePath = r.FILEPATH
+                                           };
+                            daWorksSupportSolutionAttachment.InsertSolutionAttachment(objIData, item, user);
+                        }
+                    }
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi  thêm data đánh giá chất lượng công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> QualityProcess", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage DeleteSolution(int worksSupportId, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                this.DeleteSolutionForWorkSupport(objIData, worksSupportId, user);
+                new DaWorksSupportSolutionAttachment().DeleteWorkSupportSolutionAttachmentByWorksSupportId(objIData, worksSupportId, user);
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi  xóa giải pháp", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> DeleteSolution", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Thêm mới comment
+        /// </summary>
+        /// <param name="worksSupportId"></param>
+        /// <param name="commentContent"></param>
+        /// <param name="user"></param>
+        /// <param name="listCommentAttachment"></param>
+        /// <returns></returns>
+        public ResultMessage AddComment(int worksSupportId, string commentContent, string user, string listCommentAttachment)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                var nextCommentId = 0;
+                this.AddCommentForWorkSupport(objIData, worksSupportId, commentContent, user, ref nextCommentId);
+                // Insert WorksSupport_Attachment
+                if (!string.IsNullOrEmpty(listCommentAttachment))
+                {
+                    dynamic rs = JsonConvert.DeserializeObject(listCommentAttachment);
+                    if (rs.Count > 0)
+                    {
+                        var daWorksSupportCommentAttachment = new DaWorksSupportCommentAttachment();
+                        foreach (var r in rs)
+                        {
+                            var item = new WorksSupportCommentAttachment
+                                           {
+                                               CommentId = nextCommentId,
+                                               FileId = r.FILEID,
+                                               FileName = r.FILENAME,
+                                               FilePath = r.FILEPATH
+                                           };
+                            daWorksSupportCommentAttachment.InsertCommentAttachment(objIData, item, user);
+                        }
+                    }
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi  thêm data đánh giá chất lượng công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> QualityProcess", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Cập nhật chi tiết công việc
+        /// </summary>
+        /// <param name="worksSupportId"></param>
+        /// <param name="expectedCompleteDate"></param>
+        /// <param name="content"></param>
+        /// <param name="user"></param>
+        /// <param name="listWorkSupportAttachment"></param>
+        /// <returns></returns>
+        public ResultMessage UpdateWorksSupportDetail(int worksSupportId, DateTime expectedCompleteDate, string content, string user, string listWorkSupportAttachment)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                UpdateDetailForWorkSupport(objIData, worksSupportId, expectedCompleteDate, content, user);
+                // listWorkSupportAttachment
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi  thêm data đánh giá chất lượng công việc", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> QualityProcess", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Đánh giá chất lượng công việc
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="stepId"></param>
+        /// <param name="note"></param>
+        /// <param name="user"></param>
+        protected virtual void UpdateQualityForWorkSupport(IData objIData, int worksSupportId, int stepId, string note, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdateQuality);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYID", stepId);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYNOTE", note);
+                objIData.AddParameter("@UPDATEDUSER", user);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật giải pháp
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="solutionContent"></param>
+        /// <param name="user"></param>
+        protected virtual void UpdateSolutionForWorkSupport(IData objIData, int worksSupportId, string solutionContent, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdateSolution);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@SOLUTIONCONTENT", solutionContent);
+                objIData.AddParameter("@UPDATESOLUTIONUSER", user);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Thêm mới comment
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="commentContent"></param>
+        /// <param name="user"></param>
+        /// <param name="commentId"></param>
+        protected virtual void AddCommentForWorkSupport(IData objIData, int worksSupportId, string commentContent, string user, ref int commentId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAddComment);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@COMMENTCONTENT", commentContent);
+                objIData.AddParameter("@COMMENTUSER", user);
+                commentId = Convert.ToInt32(objIData.ExecStoreToString());
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Xóa giải pháp
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="user"></param>
+        protected virtual void DeleteSolutionForWorkSupport(IData objIData, int worksSupportId, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdateSolution);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@SOLUTIONCONTENT", string.Empty);
+                objIData.AddParameter("@UPDATESOLUTIONUSER", user);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Them moi cong viec lien quan
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="worksId"></param>
+        protected virtual void InsertWorksInvole(IData objIData, int worksSupportId, int worksId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAddWorkInvole);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@WORKSID", worksId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa công việc liên quan 
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksId"></param>
+        /// <param name="workInvoleId"></param>
+        private void DeleteWorksInvole(IData objIData, int workInvoleId, int worksId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDeleteWorksInvoleByWorksIdAndWorkId);
+                objIData.AddParameter("@WORKSSUPPORTID", worksId);
+                objIData.AddParameter("@WORKSID", workInvoleId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa công việc liên quan
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="workInvoleId"></param>
+        private void DeleteWorksInvoleByWorkSupportId(IData objIData, int workInvoleId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDeleteWorksInvoleByWorksId);
+                objIData.AddParameter("@WORKSSUPPORTID", workInvoleId);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Load all cong viec lien quan
+        /// </summary>
+        /// <param name="listWork"></param>
+        public ResultMessage LoadAllInvole(ref List<Work> listWork)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpLoadAll);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorks = new Work();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWorks.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWorks.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWorks.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWorks.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorks.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+
+                    listWork.Add(objWorks);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin công việc lien quan", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Cập nhật chi tiết công việc
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="expectedCompleteDate"></param>
+        /// <param name="content"></param>
+        /// <param name="user"></param>
+        protected virtual void UpdateDetailForWorkSupport(IData objIData, int worksSupportId, DateTime expectedCompleteDate, string content, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpWorksSupportDetailUpdate);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@EXPECTEDCOMPLETEDDATE", expectedCompleteDate);
+                objIData.AddParameter("@CONTENT", content);
+                objIData.AddParameter("@UPDATEDUSER", user);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Writen by  : Nguyen van Huan
+        /// Create by  : 10.08.2017
+        /// Description: check the same work name
+        /// </summary>
+        /// <param name="numberOfWorkName"></param>
+        /// <param name="worksSupportId"></param>
+        /// <param name="WorkGroupId"></param>
+        /// <param name="workName"></param>
+        /// <returns></returns>
+        public ResultMessage CheckWorkName(ref int numberOfWorkName, int worksSupportId, int WorkGroupId, string workName)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpCheckWorkName);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@WORKSSUPPORTGROUPID", WorkGroupId);
+                objIData.AddParameter("@WORKSSUPPORTNAME", workName);
+                numberOfWorkName = Convert.ToInt32(objIData.ExecStoreToString());
+                objIData.Disconnect();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin kiểm tra tên nhóm công việc có trùng nhau", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Attachment -> CheckWorkName", Globals.ModuleName);
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSearch = "EO_WORKS_V2_SHR";
+        public const string SpAdd = "WORKSSUPPORT_WORK_V2_ADD";
+        public const string SpLoad = "WORKSSUPPORT_WORK_V2_Load";
+        public const string SpLoadAll = "WORKSSUPPORT_WORK_V2_LOADALL";
+        public const string SpGetPermissionGroup = "WORKSSUPPORT_V2_PERGROUP";
+        public const string SpGetPermissionWork = "WORKSSUPPORT_V2_PERWORK";
+
+        public const string SpDeleteWorksInvoleByWorksIdAndWorkId = "EO_WORKSSUPPORT_WORKS_DEL";
+        public const string SpDeleteWorksInvoleByWorksId = "EO_WORKSSUPPORT_SUPPORTID_DEL";
+        public const string SpAddWorkInvole = "EO_WORKSSUPPORT_WORKS_V2_ADD";
+        public const string SpGetNextPermission = "WORKSSUPPORT_V2_STEP_WF_PER";
+        public const string SpUpdateQuality = "EO_WORKSSUPPORT_V2_QUALITY";
+        public const string SpUpdateSolution = "EO_WORKSSUPPORT_V2_SOLUTION";
+        public const string SpAddComment = "EO_WORKSSUPPORT_COMMENT_V2_ADD";
+        public const string SpWorksSupportDetailUpdate = "EO_WORKSSUPPORT_V2_UPD";
+        public const string SpCheckWorkName = "WORKSSUPORTWORK_V2_CHK_WORK";
+
+        #endregion
+    }
+}

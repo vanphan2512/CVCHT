@@ -1,0 +1,771 @@
+﻿using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Controllers;
+using Nc.Erp.WorksSupport.Api.Models.WorkSupportGroup;
+using Nc.Erp.WorksSupport.Da.Configuration.Group;
+using Nc.Erp.WorksSupport.Da.Configuration.ReportProces;
+using Nc.Erp.WorksSupport.Do.Configuration;
+using Nc.Erp.WorksSupport.Do.Configuration.Group;
+using Nc.Erp.WorksSupport.Do.Configuration.Project;
+using Nc.Erp.WorksSupport.Do.Configuration.ReportProces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : Nguyen Thi Kim Ngan
+    /// Created date    : 08/06/2017
+    /// Api độ trạng thái "ERP.EO.WORKSSUPPORTGROUP"
+    /// </summary>
+    [RoutePrefix("api/v2/worksgroup")]
+    public class GroupController : BaseController
+    {
+        /// <summary>
+        /// Tìm kiếm nhom cong viev cần hỗ trợ theo keyword va isdelete
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Search")]
+        public Response<List<WorksSupportGroup>> Search([FromUri] SearchParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportGroup>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportGroup = new List<WorksSupportGroup>();
+
+                //object param
+                var objKeywords = new object[] 
+                { 
+                    "@KEYWORDS", objparam.Keywords,
+                    "@ISDELETED",objparam.IsDeleted,
+                    "@PAGEINDEX", objparam.PageIndex,
+                    "@PAGESIZE", objparam.PageSize
+                };
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportGroup().SearchData(ref listWorksSupportGroup, objKeywords);
+
+                if (listWorksSupportGroup != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportGroup;
+                    ret.TotalRecord = listWorksSupportGroup.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+      
+        /// <summary>
+        /// Lấy nhom công việc cần hỗ trợ theo projectId
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{Id}")]
+        public Response<List<WorksSupportGroup>> GetworksGroupByProjectId([FromUri] GetByParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportGroup>>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new List<WorksSupportGroup>();
+
+                // Call DaWorksSupportGroup to search data.
+                var objResultMessage = new DaWorksSupportGroup().GetWorksGroupsByProjectId(ref obj, objparam.Id);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+        //lay du lieu nhom cong viec theo worksgroupId
+        [HttpGet]
+        [Route("{groupId}")]
+        public Response<WorksSupportGroup> GetByGroupId([FromUri] int  worksGroupId)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportGroup>();
+            try
+            {
+             
+                // Definition object return
+                var obj = new WorksSupportGroup();
+
+                // Call DaWorksSupportGroup to search data.
+                var objResultMessage = new DaWorksSupportGroup().GetByWorksGroupId(ref obj, worksGroupId);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Xóa nhom công việc cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Del")]
+        public Response<WorksSupportGroup> Delete([FromBody] DeleteParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportGroup>();
+            try
+            {
+                //Validate param
+                ValidateParams(objparam);
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportGroup().Delete(objparam.Id, objparam.User);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+
+        [HttpPost]
+        [Route("insertBy")]
+        public Response<WorksSupportGroup> SaveDataBy([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportGroup>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var listGroupMember = new List<WorksSupportGroupMember>();
+                var obj = new WorksSupportGroup
+                {
+                    WorksSupportGroupId = objparam.Id,
+                    WorksSupportGroupName = objparam.WorksSupportGroupName,
+                    WorksSupportProjectId = objparam.WorksSupportProjectId,
+                    Description = objparam.Description,
+                    IsActived = objparam.IsActived,
+                    IsSystem = objparam.IsSystem,
+                    IconUrl = objparam.IconUrl,
+                    CreatedUser = objparam.User,
+                    UpdatedUser = objparam.User
+                };
+                int groupId = -1;
+                var objResultMessage = new DaWorksSupportGroup().Insert(obj ,ref groupId);
+                if (groupId != -1)
+                {
+                    foreach (var item in objparam.LstNewMember)
+                    {
+                        var objMember = new WorksSupportGroupMember()
+                        {
+                            WorksSupportGroupId = groupId,
+                            UserName = item.UserName,
+                            FullName = item.FullName,
+                            WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                            IsAutoaddMemberToWorksSupport = item.IsAutoAddMemberToWorksGroup,
+                            CreatedUser = objparam.User,
+                        };
+                        listGroupMember.Add(objMember);
+                    }
+                    objResultMessage = new DaWorksSupportGroupMember().InsertGroup_Member(listGroupMember);
+                }
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("updateWorkGroup")]
+        public Response<WorksSupportGroup> UpdateWorkGroup([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportGroup>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var listGroup_Member = new List<WorksSupportGroupMember>();
+                var listError = new List<ValidationError>();
+                //var objCheck = new ProjectValidation();
+                //var objChekName = new DaWorksSupportGroup().CheckValuesExisted(ref objCheck, objparam.Id, objparam.WorksSupportGroupName);
+                //if (objCheck.CountName >= 1)
+                //{
+                //    var error = new ValidationError();
+                //    error.Key = "WorksSupportProjectName";
+                //    error.Message = "NCS-000001: Tên đã tồn tại";
+                //    listError.Add(error);
+                //}
+
+                //if (listError.Count > 0)
+                //{
+                //    ret.Success = false;
+                //    ret.Errors = listError;
+                //    return ret;
+                //}
+                //var objectProject = new WorksSupportProject();
+                var objGroup = new WorksSupportGroup()
+                {
+                    WorksSupportGroupId = objparam.Id,
+                    WorksSupportGroupName = objparam.WorksSupportGroupName,
+                    WorksSupportProjectId = objparam.WorksSupportProjectId,
+                    Description = objparam.Description,
+                    IconUrl = objparam.IconUrl,
+                    CreatedUser = objparam.User,
+                    UpdatedUser = objparam.User
+                };
+                // Call DaWorksSupportStatus to search data.
+
+                var objResultMessage = new DaWorksSupportGroup().UpdateGroup(objGroup);
+                // 1.Xoa danh sach thanh vien trong nhom cong viec
+                if (objparam.LstDeleteMember.Count() > 0)
+                {
+                    foreach (var item in objparam.LstDeleteMember)
+                    {
+                        var objMember = new WorksSupportGroupMember()
+                        {
+                            WorksSupportGroupId = objparam.Id,
+                            MemberUserName = item.UserName,
+                            WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                            IsAutoaddMemberToWorksSupport = item.IsAutoAddMemberToWorksGroup,
+                            //IsActived = item.IsActive,
+                            //IsSystem = item.IsSystem,
+                            CreatedUser = objparam.User,
+                        };
+                        listGroup_Member.Add(objMember);
+                    }
+                    objResultMessage = new DaWorksSupportGroupMember().Delete(listGroup_Member, objparam.User);
+                }
+                // 2.Them thanh vien vao nhom cong viec
+
+                if (objparam.LstNewMember.Count() > 0)
+                {
+                    listGroup_Member = new List<WorksSupportGroupMember>();
+                    foreach (var item in objparam.LstNewMember)
+                    {
+                        var objMember = new WorksSupportGroupMember()
+                        {
+                            WorksSupportGroupId = objparam.Id,
+                            MemberUserName = item.UserName,
+                            WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                            IsAutoaddMemberToWorksSupport = item.IsAutoAddMemberToWorksGroup,
+                            //IsActived = item.IsActive,
+                            //IsSystem = item.IsSystem,
+                            CreatedUser = objparam.User,
+                        };
+                        listGroup_Member.Add(objMember);
+                    }
+                    objResultMessage = new DaWorksSupportGroupMember().InsertGroup_Member(listGroup_Member);
+                }
+                // 3. Cap nhat thanh vien cua nhom cong viec
+                if (objparam.LstEditMember.Count() > 0)
+                {
+                    listGroup_Member = new List<WorksSupportGroupMember>();
+                    var objProject_Member = new WorksSupportGroupMember();
+                    foreach (var item in objparam.LstEditMember)
+                    {
+                        var objMember = new WorksSupportGroupMember()
+                        {
+                            WorksSupportGroupId = objparam.Id,
+                            MemberUserName = item.UserName,
+                            WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                            IsAutoaddMemberToWorksSupport = item.IsAutoAddMemberToWorksGroup,
+                            //IsActived = item.IsActive,
+                            //IsSystem = item.IsSystem,
+                            CreatedUser = objparam.User,
+                        };
+                        objResultMessage = new DaWorksSupportGroupMember().Update(objMember, ref objProject_Member);
+                    }
+                }
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = objGroup;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+        [HttpPost]
+        [Route("save")]
+        public ResponseV1<WorksSupportGroup> SaveData([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportGroup>();
+            var result = new ResponseV1<WorksSupportGroup>();
+           // ret = SaveDataBy(objparam);
+            if (ret != null)
+            {
+                result.data = new List<WorksSupportGroup> { ret.Data };
+            }
+            return result;
+        }
+        /// <summary>
+        /// lay tat ca cac thanh vien trong nhom con viec can ho tro
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("GetMembers")]
+        public Response<List<WorkGroupMember>> GetAllMemberByGroupId([FromBody] GetByParam objparam)
+        {
+            // Definition object to return.  //GetAllMemberByGroupId
+            var ret = new Response<List<WorkGroupMember>>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new List<WorkGroupMember>();
+
+                // Call DaWorksSupportGroup to search data.
+                var objResultMessage = new DaWorksSupportGroup().GetAllMemberByGroupId(ref obj, objparam.Id);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+        /// <summary>
+        /// xoa thanh vien trong nhom cong viec
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("DeleteMember")]
+        public Response<WorkGroupMember> DeleteMember([FromBody] DeleteParamBy objparam)
+        {
+            // Definition object to return.  //GetAllMemberByGroupId
+            var ret = new Response<WorkGroupMember>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Call DaWorksSupportGroup to search data.
+                var objResultMessage = new DaWorksSupportGroup().DeleteMember(objparam.User, objparam.UserId, objparam.GroupId);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// them thanh vien trong nhom cong viec
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("insertMemberBy")]
+        public Response<WorkGroupMember> SaveGroupMemberBy([FromBody] GroupMember objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkGroupMember>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new WorkGroupMember()
+                {
+                     WorksSupportGroupId = objparam.WorksSupportGroupId,
+                     WorksSupportMemberRoleId =objparam.WorksSupportMemberRoleId,
+                     MemberUserName = objparam.MemberUserName,
+                     CreatedUser = objparam.CreatedUser                  
+                       
+                };
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportGroup().InsertGroupMember(obj);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetAllMemberByProjectId")]
+        public Response<List<WorksSupportProject_Member>> GetAllMemberByProjectId([FromUri] string projectId)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportProject_Member>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportProject = new List<WorksSupportProject_Member>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportGroup().GetAllMemberByProjectId(ref listWorksSupportProject, projectId);
+
+                if (listWorksSupportProject != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportProject;
+                    ret.TotalRecord = listWorksSupportProject.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// <summary>
+        /// them thanh vien vao du an cong viec can ho tro (EO_WORKSSUPPORTPROJECT_MEMBER)
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpPost]
+        [Route("InsertGroupMember")]
+        public Response<List<WorksSupportGroupMember>> SaveDataBy([FromBody] List<SaveGroupMBParam> lstParam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportGroupMember>>();
+            try
+            {
+
+                var lstMember = new List<WorksSupportGroupMember>();
+                var listProject_Member = new List<WorksSupportGroupMember>();
+                foreach (var item in lstParam)
+                {
+                    var objMember = new WorksSupportGroupMember()
+                    {
+                        WorksSupportGroupId = item.WorksSupportGroupId,
+                        MemberUserName = item.UserName,
+                        WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                        IsAutoaddMemberToWorksSupport = item.IsAutoAddGroupMember,
+                        CreatedUser = item.User,
+                    };
+                    listProject_Member.Add(objMember);
+                }
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportGroupMember().InsertGroup_Member(listProject_Member);
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = listProject_Member;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+
+
+
+        /// Load tat ca thanh vien cua nhom cong viec trong edit
+        [HttpGet]
+        [Route("{getMemberByGroupId}")]
+        public Response<List<WorksSupportGroupMember>> GetById_GroupMember([FromUri] int id)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportGroupMember>>();
+            try
+            {
+                // Definition object return
+                var listProject_Member = new List<WorksSupportGroupMember>();
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportGroup().WorksSupportProjectMemberByGroupId(ref listProject_Member, id);
+
+                if (listProject_Member != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listProject_Member;
+                    ret.TotalRecord = listProject_Member.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// <summary>
+        /// Lấy danh sách trạng thái dự án cần hỗ trợ
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("getProjectsIsActive")]
+        public Response<List<WorksSupportProject>> GetAllProjectByMemberId([FromUri] string user)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportProject>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportProject = new List<WorksSupportProject>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportGroup().GetAllProjectByMemberId(ref listWorksSupportProject, user);
+
+                if (listWorksSupportProject != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportProject;
+                    ret.TotalRecord = listWorksSupportProject.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+    }
+}

@@ -1,0 +1,432 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration;
+using Nc.Erp.WorksSupport.Do.Configuration.Quality;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration
+{
+    /// <summary>
+    /// Created by      : Lương Trung Nhân
+    /// Created date    : 30/05/2017
+    /// Đối tượng ERP.EO.WORKSSUPPORTQUALITY
+    /// Chất lượng yêu cầu công việc cần hỗ trợ
+    /// </summary>
+    public class DaWorksSupportQuality
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Tìm kiếm thông tin chất lượng yêu cầu công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorksSupportQuality> list, params object[] objKeywords)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter(objKeywords);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupportQuality objWorksSupportQuality;
+                while (reader.Read())
+                {
+                    objWorksSupportQuality = new WorksSupportQuality();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupportQuality.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYNAME"])) objWorksSupportQuality.WorksSupportQualityName = Convert.ToString(reader["WORKSSUPPORTQUALITYNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportQuality.Description = Convert.ToString(reader["DESCRIPTION"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportQuality.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportQuality.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportQuality.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportQuality.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupportQuality.CreatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupportQuality.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupportQuality.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupportQuality.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    list.Add(objWorksSupportQuality);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin chất lượng yêu cầu công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportQuality -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll WorksSupportQuality 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public ResultMessage GetAll(ref List<WorksSupportQuality> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportQuality = new WorksSupportQuality();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupportQuality.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYNAME"])) objWorksSupportQuality.WorksSupportQualityName = Convert.ToString(reader["WORKSSUPPORTQUALITYNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportQuality.Description = Convert.ToString(reader["DESCRIPTION"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportQuality.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportQuality.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportQuality.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportQuality.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    list.Add(objWorksSupportQuality);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportQuality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportQuality -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage GetAllActived(ref List<WorksSupportQuality> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAllActived);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportQuality = new WorksSupportQuality();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupportQuality.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYNAME"])) objWorksSupportQuality.WorksSupportQualityName = Convert.ToString(reader["WORKSSUPPORTQUALITYNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportQuality.Description = Convert.ToString(reader["DESCRIPTION"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportQuality.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportQuality.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportQuality.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportQuality.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    list.Add(objWorksSupportQuality);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportQuality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportQuality -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportQuality by Id
+        /// </summary>
+        /// <param name="objWorksSupportQuality"></param>
+        /// <param name="intWorkSupportStatusId"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref WorksSupportQuality objWorksSupportQuality, int intWorkSupportStatusId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYID", intWorkSupportStatusId);
+                var reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    var worksSupportQuality = new WorksSupportQuality();
+
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) worksSupportQuality.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYNAME"])) worksSupportQuality.WorksSupportQualityName = Convert.ToString(reader["WORKSSUPPORTQUALITYNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) worksSupportQuality.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ICONURL"])) worksSupportQuality.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) worksSupportQuality.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["isactive"])) worksSupportQuality.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) worksSupportQuality.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+
+                    objWorksSupportQuality = worksSupportQuality;
+                }
+                else
+                {
+                    objWorksSupportQuality = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportQuality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportQuality -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="objWorksSupportQuality"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorksSupportQuality objWorksSupportQuality, ref WorksSupportQuality obj)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                if (objWorksSupportQuality.WorksSupportQualityId > 0)
+                {
+                    Update(objIData, objWorksSupportQuality, ref obj);
+                }
+                else
+                {
+                    Insert(objIData, objWorksSupportQuality);
+
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportQuality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportQuality -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa chất lượng yêu cầu công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupportQuality"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string userQuality, string qualityID)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                var lstQuality = qualityID.Split(',');
+                for (int i = 0; i < lstQuality.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(lstQuality[i]))
+                            continue;
+                    var ID = lstQuality[i];
+                    int QualityID = Convert.ToInt32(ID);
+                    DeleteQuality(objIData, userQuality, QualityID);
+                }
+                
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSuportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportQuality -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+
+        // check name Existed
+        public ResultMessage CheckNameExisted(ref WorksSupportQualityValidation objQualityValidate, int intId, string strName, int intOrderindex)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearchNameExisted);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYID", intId);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYNAME", strName);
+                objIData.AddParameter("@ORDERINDEX", intOrderindex);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objQualityValidate = new WorksSupportQualityValidation();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYNAME"])) objQualityValidate.CountName = Convert.ToInt32(reader["WORKSSUPPORTQUALITYNAME"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objQualityValidate.CountOrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+
+
+                }
+                else
+                {
+                    objQualityValidate = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi kiểm tra tên trùng nhau của đánh giá chất lượng", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportQuality -> CheckNameExisted", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Thêm chất lượng yêu cầu công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportQuality"></param>
+        protected virtual void Insert(IData objIData, WorksSupportQuality objWorksSupportQuality)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTQUALITYID", objWorksSupportQuality.WorksSupportQualityId);
+                objIData.AddParameter("@WorksSupportQualityNAME", objWorksSupportQuality.WorksSupportQualityName);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportQuality.Description);
+                objIData.AddParameter("@ICONURL", objWorksSupportQuality.IconUrl);         
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportQuality.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportQuality.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportQuality.IsSystem);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupportQuality.CreatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật chất lượng yêu cầu công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportQuality"></param>
+        protected virtual void Update(IData objIData, WorksSupportQuality objWorksSupportQuality, ref WorksSupportQuality listWorksSupportQuality)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WorksSupportQualityID", objWorksSupportQuality.WorksSupportQualityId);
+                objIData.AddParameter("@WorksSupportQualityNAME", objWorksSupportQuality.WorksSupportQualityName);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportQuality.Description);
+                objIData.AddParameter("@ICONURL", objWorksSupportQuality.IconUrl);         
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportQuality.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportQuality.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportQuality.IsSystem);
+                objIData.AddParameter("@UPDATEDUSER", objWorksSupportQuality.UpdatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                // objIData.ExecNonQuery();
+                DataTable dtb = objIData.ExecStoreToDataTable();
+                List<WorksSupportQuality> list = new List<WorksSupportQuality>();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportQuality>(dtb);
+                if (list != null && list.Count > 0)
+                {
+                    listWorksSupportQuality = list[0];
+                }
+                else
+                {
+                    listWorksSupportQuality = null;
+                }
+
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa chất lượng yêu cầu công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportQuality"></param>
+        protected void DeleteQuality(IData objIData, string userQuality, int QualityID)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WorksSupportQualityID", QualityID);
+                objIData.AddParameter("@DELETEDUSER", userQuality);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelectAll = "WORKSSUPPORTQUALITY_V2_GETALL";
+        public const string SpSelectAllActived = "WORKSSUPPORTQUALITY_V2_ACTIVED";
+        public const string SpSelect = "WORKSSUPPORTQUALITY_V2_SEL";
+        public const string SpAdd = "WORKSSUPPORTQUALITY_V2_ADD";
+        public const string SpUpdate = "WORKSSUPPORTQUALITY_V2_UPD";
+        public const string SpUpdateInDex = "WORKSSUPPORTQUALITY_V2_UPD";
+        public const string SpDelete = "WORKSSUPPORTQUALITY_V2_DEL";
+        public const string SpSearch = "WORKSSUPPORTQUALITY_V2_SRH";
+        public const string SpSearchNameExisted = "WORKSQUALITY_V2_CHECKISEXITED";
+        
+        #endregion
+    }
+}

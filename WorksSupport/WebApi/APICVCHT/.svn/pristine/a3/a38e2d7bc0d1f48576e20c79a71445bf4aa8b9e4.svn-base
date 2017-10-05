@@ -1,0 +1,512 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.Department;
+using Nc.Erp.WorksSupport.Do.Configuration.MemberRole;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.MemberRole
+{
+    /// <summary>
+    /// Created by      : Nguyen Thi Kim Ngan
+    /// Created date    : 30.05.2017
+    /// Xử lý nghiệp vụ đối tượng ERP.EO_WORKSSUPPORTMEMBERROLE.
+    /// </summary>
+    public class DaWorksSupportMemberRole
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Tìm kiếm thông tin vai tro công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        /// 
+
+        public ResultMessage SearchData(ref List<WorksSupportMemberRole> list, params object[] objKeywords)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter(objKeywords);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupportMemberRole objWorksSupportMemberRole;
+                while (reader.Read())
+                {
+                    objWorksSupportMemberRole = new WorksSupportMemberRole();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) objWorksSupportMemberRole.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objWorksSupportMemberRole.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportMemberRole.Description = Convert.ToString(reader["DESCRIPTION"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportMemberRole.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportMemberRole.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);                    
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportMemberRole.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportMemberRole.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupportMemberRole.CreatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupportMemberRole.CreateDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupportMemberRole.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupportMemberRole.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    list.Add(objWorksSupportMemberRole);
+                }
+                DataTable dtbData = objIData.ExecStoreToDataTable();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportMemberRole>(dtbData);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportMemberRole -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        
+        public ResultMessage GetAll(ref List<WorksSupportMemberRole> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportMemberRole = new WorksSupportMemberRole();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) objWorksSupportMemberRole.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objWorksSupportMemberRole.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportMemberRole.Description = Convert.ToString(reader["DESCRIPTION"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportMemberRole.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportMemberRole.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportMemberRole.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportMemberRole.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupportMemberRole.CreatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupportMemberRole.CreateDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupportMemberRole.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupportMemberRole.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    list.Add(objWorksSupportMemberRole);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportMemberRole", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportMemberRole -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportPriority by Id
+        /// </summary>
+        /// <param name="objWorksSupportPriority"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        public ResultMessage GetById(ref WorksSupportMemberRole objWorksSupportMemberRole, int WorksSupportMemberRoleID)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSel);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", WorksSupportMemberRoleID);
+                //DataTable dtb = objIData.ExecStoreToDataTable();
+                //List<WorksSupportMemberRole> list = new List<WorksSupportMemberRole>();
+                //list = MyUtils.DataTableExtensions.ToList<WorksSupportMemberRole>(dtb);
+                //if (list != null && list.Count > 0)
+                //{
+                //    objWorksSupportMemberRole = list[0];
+                //}
+                //else
+                //{
+                //    objWorksSupportMemberRole = null;
+                //}
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    WorksSupportMemberRole memberRole = new WorksSupportMemberRole();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) memberRole.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) memberRole.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) memberRole.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ICONURL"])) memberRole.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) memberRole.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["isactive"])) memberRole.IsActived = Convert.ToBoolean(reader["isactive"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) memberRole.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) memberRole.CreateDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) memberRole.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) memberRole.CreatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) memberRole.UpdatedDate = Convert.ToDateTime(reader["UpdatedDate"]);
+                    objWorksSupportMemberRole = memberRole;
+                }
+                else
+                {
+                    objWorksSupportMemberRole = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportMemberRole", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportMemberRole -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="objWorksSupportPriority"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorksSupportMemberRole objWorksSupportMemberRole, ref WorksSupportMemberRole obj)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                if (objWorksSupportMemberRole.WorksSupportMemberRoleId > 0)
+                {
+                    Update(objIData, objWorksSupportMemberRole, ref obj);
+                }
+                else
+                {
+                    Insert(objIData, objWorksSupportMemberRole);
+
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportMemberRole", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportMemberRole -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa WorksSupportPriority
+        /// </summary>
+        /// <param name="objWorksSupportPriority"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string DeleteUser, string ids)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                var listMember = ids.Split(',');
+                for (int i = 0; i < listMember.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(listMember[i]))
+                        continue;
+                    string ID = listMember[i];
+                    int MemberID = Convert.ToInt32(ID);
+                    DeleteMemberRole(objIData, DeleteUser, MemberID);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSupportMemberRole", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportMemberRole -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        public ResultMessage SearchData_WorksSupportPriority(ref DataTable dtbData, string strKeywords, int intDelete, int intPageIndex, int intPageSize, int intIsActive)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@Keywords", strKeywords);
+                objIData.AddParameter("@PAGEINDEX", intPageIndex);
+                objIData.AddParameter("@PAGESIZE", intPageSize);
+                objIData.AddParameter("@ISDELETED", intDelete);
+                objIData.AddParameter("@ISACTIVE", intIsActive);
+                dtbData = objIData.ExecStoreToDataTable();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin nhóm nội dung web", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportMemberRole -> WorksSupportMemberRole", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data to table WorksSupportPriority
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected virtual void Insert(IData objIData, WorksSupportMemberRole objWorksSupportMemberRole)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                //objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", objWorksSupportMemberRole.WorksSupportMemberRoleId);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLENAME", objWorksSupportMemberRole.WorksSupportMemberRoleName);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportMemberRole.Description);
+                objIData.AddParameter("@ICONURL", objWorksSupportMemberRole.IconUrl);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportMemberRole.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportMemberRole.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportMemberRole.IsSystem);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupportMemberRole.CreatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                objWorksSupportMemberRole.WorksSupportMemberRoleId = Convert.ToInt32(objIData.ExecStoreToString());
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật data
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected virtual void Update(IData objIData, WorksSupportMemberRole objWorksSupportMemberRole, ref WorksSupportMemberRole listWorksSupportMemberRole)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", objWorksSupportMemberRole.WorksSupportMemberRoleId);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLENAME", objWorksSupportMemberRole.WorksSupportMemberRoleName);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportMemberRole.Description);
+                objIData.AddParameter("@ICONURL", objWorksSupportMemberRole.IconUrl);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportMemberRole.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportMemberRole.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportMemberRole.IsSystem);
+                objIData.AddParameter("@UPDATEDUSER", objWorksSupportMemberRole.UpdatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                //objIData.ExecNonQuery();
+                DataTable dtb = objIData.ExecStoreToDataTable();
+                List<WorksSupportMemberRole> list = new List<WorksSupportMemberRole>();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportMemberRole>(dtb);
+                if (list != null && list.Count > 0)
+                {
+                    listWorksSupportMemberRole = list[0];
+                }
+                else
+                {
+                    listWorksSupportMemberRole = null;
+                }
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa data
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected void DeleteMemberRole(IData objIData, string DeleteUser, int intWorksSupportMemberRoleID)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", intWorksSupportMemberRoleID);
+                objIData.AddParameter("@DELETEDUSER", DeleteUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        // check name Existed
+        public ResultMessage CheckNameExisted(ref WorksSupportMemberRoleValidation objMemberValidate, int intId, string strName, int intOrderindex)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearchNameExisted);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", intId);
+                objIData.AddParameter("@WORKSSUPPORTMEMBERROLENAME", strName);
+                objIData.AddParameter("@ORDERINDEX", intOrderindex);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objMemberValidate = new WorksSupportMemberRoleValidation();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objMemberValidate.CountName = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLENAME"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objMemberValidate.CountOrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+
+
+                }
+                else
+                {
+                    objMemberValidate = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi kiểm tra tên trùng nhau của quyền trên loại", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportMemberRole -> CheckNameExisted", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        
+        /// <summary>
+        /// get role by project id
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ResultMessage SearchRoleByProjectId(ref List<WorksSupportMemberRole> list, int id)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectRoleByProjectId);
+                objIData.AddParameter("@PROJECTID", id);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupportMemberRole objWorksSupportMemberRole;
+                while (reader.Read())
+                {
+                    objWorksSupportMemberRole = new WorksSupportMemberRole();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) objWorksSupportMemberRole.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objWorksSupportMemberRole.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]).Trim();
+
+                    list.Add(objWorksSupportMemberRole);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin role theo projectId", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportMemberRole -> SearchRoleByProjectId", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        public ResultMessage GetDepartmentAll(ref List<MembersOfDepartment> lstDepartment)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectDepartmentAll);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                MembersOfDepartment objDepartment;
+                while (reader.Read())
+                {
+                    objDepartment = new MembersOfDepartment();
+                    if (!Convert.IsDBNull(reader["DEPARTMENTID"])) objDepartment.DepartmentId = Convert.ToString(reader["DEPARTMENTID"]);
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"])) objDepartment.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["USERNAME"])) objDepartment.UserId = Convert.ToString(reader["USERNAME"]);
+                    if (!Convert.IsDBNull(reader["FULLNAME"])) objDepartment.UserName = Convert.ToString(reader["FULLNAME"]);
+                    objDepartment.IsMember = null;
+                    objDepartment.IsShowByDepart = true;
+                    objDepartment.IsShowByMember = true;
+
+                    lstDepartment.Add(objDepartment);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách SYS_DEPARTMENT", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportMemberRole -> GetDepartmentAll", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelect = "WORKSSUPPORTMEMBERROLE_V2_SEL";
+        public const string SpAdd = "WORKSSUPPORTMEMBERROLE_V2_ADD";
+        public const string SpUpdate = "WORKSSUPPORTMEMBERROLE_V2_UPD";
+        public const string SpDelete = "WORKSSUPPORTMEMBERROLE_V2_DEL";
+        public const string SpSelectAll = "WORKSSUPPORTMEMBERROLE_V2_GETS";
+        public const string SpSel = "WORKSSUPPORTMEMBERROLE_V2_BY";
+        public const string SpSearchNameExisted = "WORKSMEMBERROLE_CHECKNAME";
+        public const string SpSelectRoleByProjectId = "WORKSSUPPORT_GROUP_SEL_ROLE";
+        public const string SpSelectDepartmentAll = "SYS_DEPARTMENT_MEMBERS_SRH";
+        #endregion
+    }
+}

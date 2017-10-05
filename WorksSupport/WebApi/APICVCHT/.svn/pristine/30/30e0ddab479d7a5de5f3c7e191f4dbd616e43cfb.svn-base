@@ -1,0 +1,166 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.WorksSupport
+{
+    public class WorksSupport_CMT_Attachment
+    {
+         #region Member Variables
+
+        private string strAttachmentID = string.Empty;
+        private string strCommentID = string.Empty;
+        private DateTime? dtmCommentDate;
+        private string strFilePath = string.Empty;
+        private string strFileName = string.Empty;
+        private string strFileID = string.Empty;
+        private string strCreatedUser = string.Empty;
+        private DateTime? dtmCreatedDate;
+        private bool bolIsDeleted = false;
+        private string strDeletedUser = string.Empty;
+        private DateTime? dtmDeletedDate;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// AttachmentID
+        /// 
+        /// </summary>
+        public string AttachmentID
+        {
+            get { return strAttachmentID; }
+            set { strAttachmentID = value; }
+        }
+
+        /// <summary>
+        /// CommentID
+        /// 
+        /// </summary>
+        public string CommentID
+        {
+            get { return strCommentID; }
+            set { strCommentID = value; }
+        }
+
+        /// <summary>
+        /// CommentDate
+        /// 
+        /// </summary>
+        public DateTime? CommentDate
+        {
+            get { return dtmCommentDate; }
+            set { dtmCommentDate = value; }
+        }
+
+        /// <summary>
+        /// FilePath
+        /// 
+        /// </summary>
+        public string FilePath
+        {
+            get { return strFilePath; }
+            set { strFilePath = value; }
+        }
+
+        /// <summary>
+        /// FileName
+        /// 
+        /// </summary>
+        public string FileName
+        {
+            get { return strFileName; }
+            set { strFileName = value; }
+        }
+
+        /// <summary>
+        /// FileID
+        /// 
+        /// </summary>
+        public string FileID
+        {
+            get { return strFileID; }
+            set { strFileID = value; }
+        }
+
+        /// <summary>
+        /// CreatedUser
+        /// 
+        /// </summary>
+        public string CreatedUser
+        {
+            get { return strCreatedUser; }
+            set { strCreatedUser = value; }
+        }
+
+        /// <summary>
+        /// CreatedDate
+        /// 
+        /// </summary>
+        public DateTime? CreatedDate
+        {
+            get { return dtmCreatedDate; }
+            set { dtmCreatedDate = value; }
+        }
+
+        /// <summary>
+        /// IsDeleted
+        /// 
+        /// </summary>
+        public bool IsDeleted
+        {
+            get { return bolIsDeleted; }
+            set { bolIsDeleted = value; }
+        }
+
+        /// <summary>
+        /// DeletedUser
+        /// 
+        /// </summary>
+        public string DeletedUser
+        {
+            get { return strDeletedUser; }
+            set { strDeletedUser = value; }
+        }
+
+        /// <summary>
+        /// DeletedDate
+        /// 
+        /// </summary>
+        public DateTime? DeletedDate
+        {
+            get { return dtmDeletedDate; }
+            set { dtmDeletedDate = value; }
+        }
+
+
+        #endregion
+
+
+        #region Constructor
+
+        public WorksSupport_CMT_Attachment()
+        {
+        }
+        #endregion
+
+
+        #region Column Names
+
+        public const String colAttachmentID = "AttachmentID";
+        public const String colCommentID = "CommentID";
+        public const String colCommentDate = "CommentDate";
+        public const String colFilePath = "FilePath";
+        public const String colFileName = "FileName";
+        public const String colFileID = "FileID";
+        public const String colCreatedUser = "CreatedUser";
+        public const String colCreatedDate = "CreatedDate";
+        public const String colIsDeleted = "IsDeleted";
+        public const String colDeletedUser = "DeletedUser";
+        public const String colDeletedDate = "DeletedDate";
+
+        #endregion //Column names
+    }
+}

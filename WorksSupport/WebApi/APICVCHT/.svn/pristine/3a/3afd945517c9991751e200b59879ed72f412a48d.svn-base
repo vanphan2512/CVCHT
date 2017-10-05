@@ -1,0 +1,278 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    public class DaWorksSupport_Workflow
+    {
+         #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+        /// <summary>
+        /// Nạp thông tin tiến độ công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupport_Workflow">Đối tượng trả về</param>
+        /// <returns>Kết quả trả về</returns>
+        public ResultMessage LoadInfo(ref List<WorksSupport_Workflow> lstWorksSupport_Workflow, int intWorksSupportID, IData objIData)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                //objIData.Connect();
+                objIData.CreateNewStoredProcedure(SP_SELECT);
+                objIData.AddParameter("@WorksSupportID", intWorksSupportID);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupport_Workflow objWorksSupport_Workflow;
+                while (reader.Read())
+                {
+                    objWorksSupport_Workflow = new WorksSupport_Workflow();
+                    if (!Convert.IsDBNull(reader["DeletedDate"])) objWorksSupport_Workflow.DeletedDate = Convert.ToDateTime(reader["DeletedDate"]);
+                    if (!Convert.IsDBNull(reader["DeletedUser"])) objWorksSupport_Workflow.DeletedUser = Convert.ToString(reader["DeletedUser"]).Trim();
+                    if (!Convert.IsDBNull(reader["IsDeleted"])) objWorksSupport_Workflow.IsDeleted = Convert.ToBoolean(reader["IsDeleted"]);
+                    if (!Convert.IsDBNull(reader["IsProcess"])) objWorksSupport_Workflow.IsProcess = Convert.ToInt32(reader["IsProcess"]);
+                    if (!Convert.IsDBNull(reader["Note"])) objWorksSupport_Workflow.Note = Convert.ToString(reader["Note"]).Trim();
+                    if (!Convert.IsDBNull(reader["ProcessDate"])) objWorksSupport_Workflow.ProcessDate = Convert.ToDateTime(reader["ProcessDate"]);
+                    if (!Convert.IsDBNull(reader["ProcessUser"])) objWorksSupport_Workflow.ProcessUser = Convert.ToString(reader["ProcessUser"]).Trim();
+                    if (!Convert.IsDBNull(reader["UpdatedDate"])) objWorksSupport_Workflow.UpdatedDate = Convert.ToDateTime(reader["UpdatedDate"]);
+                    if (!Convert.IsDBNull(reader["UpdatedUser"])) objWorksSupport_Workflow.UpdatedUser = Convert.ToString(reader["UpdatedUser"]).Trim();
+                    if (!Convert.IsDBNull(reader["WorkflowId"])) objWorksSupport_Workflow.WorkflowId = Convert.ToInt32(reader["WorkflowId"]);
+                    if (!Convert.IsDBNull(reader["WorksSupportDate"])) objWorksSupport_Workflow.WorksSupportDate = Convert.ToDateTime(reader["WorksSupportDate"]);
+                    if (!Convert.IsDBNull(reader["WorksSupportId"])) objWorksSupport_Workflow.WorksSupportId = Convert.ToInt32(reader["WorksSupportId"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTEPID"])) objWorksSupport_Workflow.WorksSupportStepId = Convert.ToInt32(reader["WORKSSUPPORTSTEPID"]);
+                    lstWorksSupport_Workflow.Add(objWorksSupport_Workflow);
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Workflow -> LoadInfo", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                //objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        public ResultMessage Insert(List<WorksSupport_Workflow> lstWorksSupport_Workflow, IData objIData)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                //objIData.Connect();
+                if (lstWorksSupport_Workflow != null && lstWorksSupport_Workflow.Count > 0)
+                {
+                    foreach (WorksSupport_Workflow objWorksSupport_Workflow in lstWorksSupport_Workflow)
+                    {
+                        Insert(objIData, objWorksSupport_Workflow);
+                    }
+
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Workflow -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                //objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Thêm thông tin tiến độ công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupport_Workflow">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        public void Insert(IData objIData, WorksSupport_Workflow objWorksSupport_Workflow)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_ADD);
+                objIData.AddParameter("@WORKSSUPPORTSTEPID", objWorksSupport_Workflow.WorksSupportStepId);
+                objIData.AddParameter("@WORKSSUPPORTID", objWorksSupport_Workflow.WorksSupportId);
+                objIData.AddParameter("@WORKSSUPPORTDATE", objWorksSupport_Workflow.WorksSupportDate);
+                objIData.AddParameter("@WORKFLOWID", objWorksSupport_Workflow.WorkflowId);
+                objIData.AddParameter("@PROCESSUSER", objWorksSupport_Workflow.ProcessUser);
+                objIData.AddParameter("@PROCESSDATE", objWorksSupport_Workflow.ProcessDate);
+                objIData.AddParameter("@NOTE", objWorksSupport_Workflow.Note);
+                objIData.AddParameter("@ISPROCESS", objWorksSupport_Workflow.IsProcess);
+                objIData.AddParameter("@ISDELETED", objWorksSupport_Workflow.IsDeleted);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupport_Workflow.CreatedUser);
+                objIData.AddParameter("@CREATEDDATE", objWorksSupport_Workflow.CreatedDate);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                throw (objEx);
+            }
+        }
+        public ResultMessage Update(List<WorksSupport_Workflow> lstWorksSupport_Workflow, IData objIData)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                //objIData.Connect();
+                if (lstWorksSupport_Workflow != null && lstWorksSupport_Workflow.Count > 0)
+                {
+                    foreach (WorksSupport_Workflow objWorksSupport_Workflow in lstWorksSupport_Workflow)
+                    {
+                        Update(objIData, objWorksSupport_Workflow);
+                    }
+
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Workflow -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                //objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Cập nhật thông tin tiến độ công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupport_Workflow">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        private void Update(IData objIData, WorksSupport_Workflow objWorksSupport_Workflow)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_UPDATE);
+                objIData.AddParameter("@WORKSSUPPORTSTEPID", objWorksSupport_Workflow.WorksSupportStepId);
+                objIData.AddParameter("@WORKSSUPPORTID", objWorksSupport_Workflow.WorksSupportId);
+                objIData.AddParameter("@WORKSSUPPORTDATE", objWorksSupport_Workflow.WorksSupportDate);
+                objIData.AddParameter("@WORKFLOWID", objWorksSupport_Workflow.WorkflowId);
+                objIData.AddParameter("@PROCESSUSER", objWorksSupport_Workflow.ProcessUser);
+                objIData.AddParameter("@PROCESSDATE", objWorksSupport_Workflow.ProcessDate);
+                objIData.AddParameter("@NOTE", objWorksSupport_Workflow.Note);
+                objIData.AddParameter("@ISPROCESS", objWorksSupport_Workflow.IsProcess);
+                objIData.AddParameter("@ISDELETED", objWorksSupport_Workflow.IsDeleted);
+                objIData.AddParameter("@UPDATEDUSER", objWorksSupport_Workflow.UpdatedUser);
+                objIData.AddParameter("@UPDATEDDATE", objWorksSupport_Workflow.UpdatedDate);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                throw (objEx);
+            }
+        }
+        /// <summary>
+        /// Xóa thông tin tiến độ công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupport_Workflow">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        public ResultMessage Delete(WorksSupport_Workflow objWorksSupport_Workflow, IData objIData)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                //objIData.Connect();
+                Delete(objIData, objWorksSupport_Workflow);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Delete, "Lỗi xóa thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Workflow -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                //objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Xóa thông tin tiến độ công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupport_Workflow">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        private void Delete(IData objIData, WorksSupport_Workflow objWorksSupport_Workflow)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_DELETE);
+                objIData.AddParameter("@WorksSupportId", objWorksSupport_Workflow.WorksSupportId);
+                objIData.AddParameter("@DeletedUser", objWorksSupport_Workflow.DeletedUser);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                throw (objEx);
+            }
+        }
+        /// <summary>
+        /// Xu ly buoc ke tiep cho cong viec can ho tro
+        /// 1. Insert buoc ke tiep vao workssupport_worksflow
+        /// 2. Cap nhat buoc hien tai isproccess =1
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ResultMessage InsertWorkFlow_NextStep(int WorksSupportId, int WorksSupportStepId, string UpdatedUser, string ProcessUser, string Note)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                        objIData.Connect(); 
+                        objIData.CreateNewStoredProcedure(SP_ADDNEXTSTEP);
+                        objIData.AddParameter("@WORKSSUPPORTID", WorksSupportId);
+                        objIData.AddParameter("@WORKSSUPPORTSTEPID", WorksSupportStepId);
+                        objIData.AddParameter("@UPDATEDUSER", UpdatedUser);
+                        objIData.AddParameter("@PROCESSUSER", UpdatedUser);
+                        objIData.AddParameter("@NOTE", Note);
+                        objIData.ExecNonQuery();
+                    }    
+            
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupport_Workflow", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport_Workflow -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        
+        #region Stored Procedure Names
+
+        public const String SP_ADD = "WORKSSUPPORT_PRO_V2_ADD_BETA";
+        public const String SP_UPDATE = "WORKSSUPPORT_PRO_V2_UPD_BETA";
+        public const String SP_DELETE = "WORKSSUPPORT_WF_V2_DEL";
+        public const String SP_SELECT = "WORKSSUPPORT_WF_V2_SEL";
+        public const String SP_SEARCH = "WORKSSUPPORT_PRO_V2_SRH_BETA";
+        public const String SP_UPDATEINDEX = "WorksSupport_Workflow_UPDINDEX";
+        public const String SP_ADDNEXTSTEP = "EO_WORKSSP_WORKFLOW_V2_ADD";
+
+        #endregion
+    }
+}

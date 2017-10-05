@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.WorksSupport
+{
+    public partial class CommentView
+    {
+        //public EO_EForm_Comment eo_eform_comment { get; set; }
+        public WorksSupport_Comment WorksSupport_comment { get; set; }
+        string strFullName = "";
+        string strDefaultPictureUrl = "";
+        string strDepartmentName = "";
+        string strPositionName = "";
+        int intTotalRows = 0;
+        string strStt = "";
+        public int TotalRows
+        {
+            get { return intTotalRows; }
+            set { intTotalRows = value; }
+        }
+
+
+        public string Stt
+        {
+            get { return strStt; }
+            set { strStt = value; }
+        }
+
+        public string FullName
+        {
+            get { return strFullName; }
+            set { strFullName = value; }
+        }
+
+
+        public string DefaultPictureUrl
+        {
+            get { return strDefaultPictureUrl; }
+            set { strDefaultPictureUrl = value; }
+        }
+
+
+        public string DepartmentName
+        {
+            get { return strDepartmentName; }
+            set { strDepartmentName = value; }
+        }
+
+
+        public string PositionName
+        {
+            get { return strPositionName; }
+            set { strPositionName = value; }
+        }
+
+    }
+}

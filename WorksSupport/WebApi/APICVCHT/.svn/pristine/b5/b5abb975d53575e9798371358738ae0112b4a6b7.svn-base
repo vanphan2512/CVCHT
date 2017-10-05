@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<configuration>
+    <configSections>
+        <sectionGroup name="applicationSettings" type="System.Configuration.ApplicationSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <section name="WebClientAuthen.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false"/>
+        </sectionGroup>
+    </configSections>
+    <applicationSettings>
+        <WebClientAuthen.Properties.Settings>
+            <setting name="WebClientAuthen_SSOService_HandShake_HandShake"
+                serializeAs="String">
+                <value>http://ssoservice.nc.com/handshake.asmx</value>
+            </setting>
+            <setting name="WebClientAuthen_ERPMasterDataServices_Users_Users_Users"
+                serializeAs="String">
+                <value>http://erpmasterdataservices.nc.com/Users/Users.asmx</value>
+            </setting>
+            <setting name="WebClientAuthen_SSOService_TokenAuthentication_TokenAuthentication"
+                serializeAs="String">
+                <value>http://ssoservice.nc.com/TokenAuthentication.asmx</value>
+            </setting>
+            <setting name="WebClientAuthen_SSOService_WSWebServiceHost_WSWebServiceHost"
+                serializeAs="String">
+                <value>http://ssoservice.nc.com/WSWebServiceHost.asmx</value>
+            </setting>
+            <setting name="WebClientAuthen_SAMSMasterDataServices_WSUser_WSUser"
+                serializeAs="String">
+                <value>http://erpmasterdataservices.nc.com/SYS/WSUser.asmx</value>
+            </setting>
+        </WebClientAuthen.Properties.Settings>
+    </applicationSettings>
+<startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/></startup></configuration>

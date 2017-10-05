@@ -1,0 +1,64 @@
+﻿using System.Web.Mvc;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    using Library.Common.ERPFMSServices_WSFileManager;
+
+    using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+
+    public class DownloadFileController : Controller
+    {
+        //
+        // GET: /DownloadFile/
+        [HttpGet]
+        public FileResult DownloadFile(string fileId, string type)
+        {
+            DownloadFile objDownLoadFile = null;
+            var strFileName = string.Empty;
+            Library.Common.Common.DownloadFile(fileId, 9, ref objDownLoadFile);
+
+            if (!string.IsNullOrEmpty(fileId))
+            {
+                // Delete WorksSupport Attachment
+                if (type == "1")
+                {
+                    var objWorksSupportAttachment = new WorksSupportAttachment();
+                    new Da.Configuration.WorksSupport.DaWorksSupportAttachment()
+                        .GetWorkSupportAttachmentByFileId(ref objWorksSupportAttachment, fileId);
+                    if (objWorksSupportAttachment != null)
+                    {
+                        strFileName = objWorksSupportAttachment.FileName;
+                    }
+                }
+                // Delete WorksSupport Comment Attachment
+                if (type == "2")
+                {
+                    var objWorksSupportCommentAttachment = new WorksSupportCommentAttachment();
+                    new Da.Configuration.WorksSupport.DaWorksSupportCommentAttachment()
+                        .GetById(ref objWorksSupportCommentAttachment, fileId);
+                    if (objWorksSupportCommentAttachment != null)
+                    {
+                        strFileName = objWorksSupportCommentAttachment.FileName;
+                    }
+                }
+                // Delete WorksSupport Solution Attachment
+                if (type == "3")
+                {
+                    var objWorksSupportSolutionAttachment = new WorksSupportSolutionAttachment();
+                    new Da.Configuration.WorksSupport.DaWorksSupportSolutionAttachment()
+                        .GetById(ref objWorksSupportSolutionAttachment, fileId);
+                    if (objWorksSupportSolutionAttachment != null)
+                    {
+                        strFileName = objWorksSupportSolutionAttachment.FileName;
+                    }
+                }
+
+            }
+            if (!string.IsNullOrEmpty(strFileName) && objDownLoadFile.BufferFile != null)
+            {
+                return File(objDownLoadFile.BufferFile, System.Net.Mime.MediaTypeNames.Application.Octet, strFileName);
+            }
+            return null;
+        }
+	}
+}

@@ -1,0 +1,88 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.Work;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Works
+{
+    public class DaWorksSupport_Works
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorksSupport_Works objWorksSupport, ref List<WorksSupport_Works> data)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                
+                    Insert(objIData, objWorksSupport,ref data);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Thêm cong viec lien quan vao eo_workssupport_works
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        protected virtual void Insert(IData objIData, WorksSupport_Works objWorks, ref List<WorksSupport_Works> list)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTID", objWorks.WorksSupportId);
+                objIData.AddParameter("@WORKSID", objWorks.WorksId);
+                objIData.AddParameter("@NOTE", objWorks.Note);
+
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorksSupport_Works objWork = new WorksSupport_Works();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWork.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWork.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWork.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWork.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWork.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    list.Add(objWork);
+                }
+               
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpAdd = "WORKSSUPPORT_WORK_V2_ADD";
+        #endregion
+    }
+}

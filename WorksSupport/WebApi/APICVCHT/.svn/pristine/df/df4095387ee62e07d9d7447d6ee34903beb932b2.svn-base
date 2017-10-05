@@ -1,0 +1,92 @@
+﻿using Library.DataAccess;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    public class DaWorksSupport_CMT_Attachment
+    {
+        public Library.WebCore.LogObject objLogObject = new Library.WebCore.LogObject();
+
+        #region Methods
+        /// <summary>
+        /// Thêm file đính kèm cho bình luận công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupport_CMT_Attachment">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        public void Insert(IData objIData, WorksSupport_CMT_Attachment objWorksSupport_CMT_Attachment)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_ADD);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colCommentID, objWorksSupport_CMT_Attachment.CommentID);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colCommentDate, objWorksSupport_CMT_Attachment.CommentDate);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colFilePath, objWorksSupport_CMT_Attachment.FilePath);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colFileName, objWorksSupport_CMT_Attachment.FileName);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colFileID, objWorksSupport_CMT_Attachment.FileID);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colCreatedUser, objWorksSupport_CMT_Attachment.CreatedUser);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                throw (objEx);
+            }
+        }
+
+        /// <summary>
+        /// Nạp danh sách file đính kèm của bình luận công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupport_CMT_Attachment">Đối tượng trả về</param>
+        /// <returns>Kết quả trả về</returns>
+        public List<WorksSupport_CMT_Attachment> GetListCommentAttachment(IData objIData, string strCommentID)
+        {
+            List<WorksSupport_CMT_Attachment> lstCommentAttachment = new List<WorksSupport_CMT_Attachment>();
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_SELECT);
+                objIData.AddParameter("@" + WorksSupport_CMT_Attachment.colCommentID, strCommentID);
+                IDataReader readerComment = objIData.ExecStoreToDataReader();
+                WorksSupport_CMT_Attachment objWorksSupport_CMT_Attachment = null;
+                while (readerComment.Read())
+                {
+                    objWorksSupport_CMT_Attachment = new WorksSupport_CMT_Attachment();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colAttachmentID])) objWorksSupport_CMT_Attachment.AttachmentID = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colAttachmentID]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colCommentID])) objWorksSupport_CMT_Attachment.CommentID = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colCommentID]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colCommentDate])) objWorksSupport_CMT_Attachment.CommentDate = Convert.ToDateTime(readerComment[WorksSupport_CMT_Attachment.colCommentDate]);
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colFilePath])) objWorksSupport_CMT_Attachment.FilePath = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colFilePath]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colFileName])) objWorksSupport_CMT_Attachment.FileName = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colFileName]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colFileID])) objWorksSupport_CMT_Attachment.FileID = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colFileID]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colCreatedUser])) objWorksSupport_CMT_Attachment.CreatedUser = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colCreatedUser]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colCreatedDate])) objWorksSupport_CMT_Attachment.CreatedDate = Convert.ToDateTime(readerComment[WorksSupport_CMT_Attachment.colCreatedDate]);
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colIsDeleted])) objWorksSupport_CMT_Attachment.IsDeleted = Convert.ToBoolean(readerComment[WorksSupport_CMT_Attachment.colIsDeleted]);
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colDeletedUser])) objWorksSupport_CMT_Attachment.DeletedUser = Convert.ToString(readerComment[WorksSupport_CMT_Attachment.colDeletedUser]).Trim();
+                    if (!Convert.IsDBNull(readerComment[WorksSupport_CMT_Attachment.colDeletedDate])) objWorksSupport_CMT_Attachment.DeletedDate = Convert.ToDateTime(readerComment[WorksSupport_CMT_Attachment.colDeletedDate]);
+
+                    lstCommentAttachment.Add(objWorksSupport_CMT_Attachment);
+                }
+                readerComment.Close();
+                return lstCommentAttachment;
+            }
+            catch (Exception objEx)
+            {
+                return lstCommentAttachment;
+                throw (objEx);
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const String SP_ADD = "WS_CMT_ATTACHMENT_V2_ADD";
+        public const String SP_SELECT = "WS_CMT_ATTACHMENT_V2_SRH";
+
+        #endregion
+    }
+}

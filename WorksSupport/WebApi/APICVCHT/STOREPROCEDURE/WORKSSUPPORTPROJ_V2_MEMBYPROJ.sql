@@ -1,0 +1,39 @@
+CREATE OR REPLACE PROCEDURE ERP.WORKSSUPPORTPROJ_V2_MEMBYPROJ
+/*
+	CREATED BY	:	NGUYEN VAN HUAN
+	DATE		:	29.06.2017
+	DESCRIPTION	:	LAY TAT CA THANH VIEN TRONG MOT DU AN
+*/
+(	 
+  V_PROJECTID IN EO_WORKSSUPPORTPROJECT_MEMBER.WORKSSUPPORTPROJECTID%TYPE,
+  V_OUT OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+ OPEN V_OUT FOR
+    SELECT 
+      SU.USERNAME,
+      SU.FULLNAME,
+      SU.DEFAULTPICTUREURL,
+      SD.DEPARTMENTNAME,
+      EWMR.WORKSSUPPORTMEMBERROLEID,
+      EWMR.WORKSSUPPORTMEMBERROLENAME,
+      EWSG.ISAUTOADDMEMBERTOWORKSGROUP    
+    FROM 
+      ERP.EO_WORKSSUPPORTPROJECT_MEMBER EWSG
+    LEFT JOIN 
+        ERP.EO_WORKSSUPPORTMEMBERROLE EWMR 
+      ON 
+        (EWSG.WORKSSUPPORTMEMBERROLEID = EWMR.WORKSSUPPORTMEMBERROLEID AND EWMR.ISDELETED =0)
+    LEFT JOIN 
+        ERP.SYS_USER SU 
+      ON 
+        (EWSG.MEMBERUSERNAME = SU.USERNAME AND SU.ISDELETED =0 )
+    LEFT JOIN 
+        ERP.SYS_DEPARTMENT SD 
+      ON 
+        (SD.DEPARTMENTID = SU.DEPARTMENTID AND SD.ISDELETED =0)
+    WHERE  
+       EWSG.WORKSSUPPORTPROJECTID =  V_PROJECTID;                                                                                                                                                                                                                                                                                                                                                         
+END;
+/

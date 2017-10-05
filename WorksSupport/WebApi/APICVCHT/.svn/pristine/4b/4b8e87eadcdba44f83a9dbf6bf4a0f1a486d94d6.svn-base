@@ -1,0 +1,310 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    /// <summary>
+    /// Created by 		: Luong Trung Nhan
+    /// Created date 	: 15/06/2017
+    /// Tiến độ công việc cần hỗ trợ
+    /// </summary>	
+    public class DaWorksSupport_Progress
+    {
+        #region Methods			
+		
+
+		/// <summary>
+		/// Nạp thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Progress">Đối tượng trả về</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage LoadInfo(ref List<WorksSupport_Progress> lstWorksSupport_Progress, int intWorksSupportID, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+				objIData.CreateNewStoredProcedure(SP_SELECT);
+                objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportID, intWorksSupportID);
+				IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupport_Progress objWorksSupport_Progress;
+                while (reader.Read())
+ 				{
+ 					objWorksSupport_Progress = new WorksSupport_Progress();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colProgressID])) objWorksSupport_Progress.ProgressID = Convert.ToString(reader[WorksSupport_Progress.colProgressID]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colWorksSupportID])) objWorksSupport_Progress.WorksSupportID = Convert.ToInt32(reader[WorksSupport_Progress.colWorksSupportID]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colProgressValue])) objWorksSupport_Progress.ProgressValue = Convert.ToInt32(reader[WorksSupport_Progress.colProgressValue]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colWorksSupportStatusID])) objWorksSupport_Progress.WorksSupportStatusID = Convert.ToInt32(reader[WorksSupport_Progress.colWorksSupportStatusID]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colUpdatedUser])) objWorksSupport_Progress.UpdatedUser = Convert.ToString(reader[WorksSupport_Progress.colUpdatedUser]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colUpdatedDate])) objWorksSupport_Progress.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Progress.colUpdatedDate]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colLogType])) objWorksSupport_Progress.LogType = Convert.ToInt32(reader[WorksSupport_Progress.colLogType]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colUserHostAddress])) objWorksSupport_Progress.UserHostAddress = Convert.ToString(reader[WorksSupport_Progress.colUserHostAddress]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colCertificateString])) objWorksSupport_Progress.CertificateString = Convert.ToString(reader[WorksSupport_Progress.colCertificateString]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Progress.colLoginLogID])) objWorksSupport_Progress.LoginLogID = Convert.ToString(reader[WorksSupport_Progress.colLoginLogID]).Trim();
+                    lstWorksSupport_Progress.Add(objWorksSupport_Progress);
+ 				}
+				reader.Close();
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Progress -> LoadInfo", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+        ///
+        /// 
+        /// 
+
+        public List<WorksSupport_Progress> GetWSProcessByWSID(decimal decWorksSupportID)
+        {
+            List<WorksSupport_Progress> objEO_WorksSupport_ProcessList = new List<WorksSupport_Progress>();
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure("EO_WSProgress_AT_BYWSID_BETA");
+                objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportID, decWorksSupportID);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupport_Progress objWorksSupport_Progress;
+                while (reader.Read())
+                {
+                    objWorksSupport_Progress = new WorksSupport_Progress();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colProgressID])) objWorksSupport_Progress.ProgressID = Convert.ToString(reader[WorksSupport_Progress.colProgressID]).Trim();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colWorksSupportID])) objWorksSupport_Progress.WorksSupportID = Convert.ToInt32(reader[WorksSupport_Progress.colWorksSupportID]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colProgressValue])) objWorksSupport_Progress.ProgressValue = Convert.ToInt32(reader[WorksSupport_Progress.colProgressValue]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colWorksSupportStatusID])) objWorksSupport_Progress.WorksSupportStatusID = Convert.ToInt32(reader[WorksSupport_Progress.colWorksSupportStatusID]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colUpdatedUser])) objWorksSupport_Progress.UpdatedUser = Convert.ToString(reader[WorksSupport_Progress.colUpdatedUser]).Trim();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colUpdatedDate])) objWorksSupport_Progress.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Progress.colUpdatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colLogType])) objWorksSupport_Progress.LogType = Convert.ToInt32(reader[WorksSupport_Progress.colLogType]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colUserHostAddress])) objWorksSupport_Progress.UserHostAddress = Convert.ToString(reader[WorksSupport_Progress.colUserHostAddress]).Trim();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colCertificateString])) objWorksSupport_Progress.CertificateString = Convert.ToString(reader[WorksSupport_Progress.colCertificateString]).Trim();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Progress.colLoginLogID])) objWorksSupport_Progress.LoginLogID = Convert.ToString(reader[WorksSupport_Progress.colLoginLogID]).Trim();
+                    objEO_WorksSupport_ProcessList.Add(objWorksSupport_Progress);
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_EO_WorksSupport_Attachment -> GetWSAttachmentByWSID", Globals.ModuleName);
+                return null;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objEO_WorksSupport_ProcessList;
+        }
+
+        /// 
+        /// 
+        /// 
+		/// <summary>
+		/// Thêm thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Progress">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage Insert(List<WorksSupport_Progress> lstWorksSupport_Progress, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+                if (lstWorksSupport_Progress != null && lstWorksSupport_Progress.Count > 0)
+                {
+                    foreach (WorksSupport_Progress objWorksSupport_Progress in lstWorksSupport_Progress)
+                    {
+                        Insert(objIData, objWorksSupport_Progress);
+                    }
+                    
+                }
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Progress -> Insert", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Thêm thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Progress">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public void Insert(IData objIData, WorksSupport_Progress objWorksSupport_Progress)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_ADD);
+				objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportID, objWorksSupport_Progress.WorksSupportID);
+				objIData.AddParameter("@" + WorksSupport_Progress.colProgressValue, objWorksSupport_Progress.ProgressValue);
+				objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportStatusID, objWorksSupport_Progress.WorksSupportStatusID);
+                objIData.AddParameter("@" + WorksSupport_Progress.colUpdatedUser, objWorksSupport_Progress.UpdatedUser);
+                objIData.AddParameter("@" + WorksSupport_Progress.colUpdatedDate, objWorksSupport_Progress.UpdatedDate);
+				objIData.AddParameter("@" + WorksSupport_Progress.colLogType, objWorksSupport_Progress.LogType);
+				objIData.AddParameter("@" + WorksSupport_Progress.colUserHostAddress, objWorksSupport_Progress.UserHostAddress);
+				objIData.AddParameter("@" + WorksSupport_Progress.colCertificateString, objWorksSupport_Progress.CertificateString);
+				objIData.AddParameter("@" + WorksSupport_Progress.colLoginLogID, objWorksSupport_Progress.LoginLogID);
+                objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+
+		/// <summary>
+		/// Cập nhật thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Progress">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage Update(WorksSupport_Progress objWorksSupport_Progress, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+				Update(objIData, objWorksSupport_Progress);
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Update, "Lỗi cập nhật thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Progress -> Update", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Cập nhật thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Progress">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public void Update(IData objIData, WorksSupport_Progress objWorksSupport_Progress)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_UPDATE);
+				objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportID, objWorksSupport_Progress.WorksSupportID);
+				objIData.AddParameter("@" + WorksSupport_Progress.colProgressValue, objWorksSupport_Progress.ProgressValue);
+				objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportStatusID, objWorksSupport_Progress.WorksSupportStatusID);
+				objIData.AddParameter("@" + WorksSupport_Progress.colUpdatedUser, objWorksSupport_Progress.UpdatedUser);
+                objIData.AddParameter("@" + WorksSupport_Progress.colUpdatedDate, objWorksSupport_Progress.UpdatedDate);
+				objIData.AddParameter("@" + WorksSupport_Progress.colLogType, objWorksSupport_Progress.LogType);
+				objIData.AddParameter("@" + WorksSupport_Progress.colUserHostAddress, objWorksSupport_Progress.UserHostAddress);
+				objIData.AddParameter("@" + WorksSupport_Progress.colCertificateString, objWorksSupport_Progress.CertificateString);
+				objIData.AddParameter("@" + WorksSupport_Progress.colLoginLogID, objWorksSupport_Progress.LoginLogID);
+                objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+
+		/// <summary>
+		/// Xóa thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Progress">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage Delete(WorksSupport_Progress objWorksSupport_Progress, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+				Delete(objIData, objWorksSupport_Progress);
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Delete, "Lỗi xóa thông tin tiến độ công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Progress -> Delete", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Xóa thông tin tiến độ công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Progress">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		private void Delete(IData objIData, WorksSupport_Progress objWorksSupport_Progress)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_DELETE);
+				objIData.AddParameter("@" + WorksSupport_Progress.colWorksSupportID, objWorksSupport_Progress.WorksSupportID);
+ 				objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+		#endregion
+
+		
+		#region Constructor
+
+		public DaWorksSupport_Progress()
+		{
+		}
+		#endregion
+
+
+		#region Stored Procedure Names
+
+        public const String SP_ADD = "WORKSSUPPORT_PRO__V2_ADD_BETA";
+        public const String SP_UPDATE = "WORKSSUPPORT_PRO_V2_UPD_BETA";
+        public const String SP_DELETE = "WORKSSUPPORT_PRO_V2_DEL_BETA";
+        public const String SP_SELECT = "WORKSSUPPORT_PRO_v2_SEL_BETA";
+        public const String SP_SEARCH = "WORKSSUPPORT_PRO_V2_SRH_BETA";
+		public const String SP_UPDATEINDEX = "WorksSupport_Progress_UPDINDEX";
+		#endregion
+    }
+}

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="Upload_tap_tin_he_thong_moi">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUploadFile" type="tns:UploadFile" />
+            <s:element minOccurs="0" maxOccurs="1" name="strFileID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="UploadFile">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FMSApplicationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BufferFile" type="s:base64Binary" />
+          <s:element minOccurs="0" maxOccurs="1" name="Extension" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="Upload_tap_tin_he_thong_moiResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Upload_tap_tin_he_thong_moiResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="strFileID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ResultMessage">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsError" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorType" type="tns:ErrorTypes" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MessageDetail" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ErrorTypes">
+        <s:restriction base="s:string">
+          <s:enumeration value="No_Error" />
+          <s:enumeration value="LoadInfo" />
+          <s:enumeration value="Insert" />
+          <s:enumeration value="Update" />
+          <s:enumeration value="Delete" />
+          <s:enumeration value="SearchData" />
+          <s:enumeration value="GetData" />
+          <s:enumeration value="InvalidIV" />
+          <s:enumeration value="TokenNotExist" />
+          <s:enumeration value="TokenInvalid" />
+          <s:enumeration value="CheckData" />
+          <s:enumeration value="Others" />
+          <s:enumeration value="UserDefine" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="UploadMultiFile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="lstUploadFile" type="tns:ArrayOfUploadFile" />
+            <s:element minOccurs="0" maxOccurs="1" name="lstFileID" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="lstFilePath" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfUploadFile">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UploadFile" nillable="true" type="tns:UploadFile" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UploadMultiFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UploadMultiFileResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="lstFileID" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="lstFilePath" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Upload_tap_tin_tuong_thich_he_thong_cu">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUploadFile" type="tns:UploadFile" />
+            <s:element minOccurs="0" maxOccurs="1" name="strFileID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strFilePath" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Upload_tap_tin_tuong_thich_he_thong_cuResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Upload_tap_tin_tuong_thich_he_thong_cuResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="strFileID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strFilePath" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DownloadFile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objDownloadFile" type="tns:DownloadFile" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="DownloadFile">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="FileID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BufferFile" type="s:base64Binary" />
+          <s:element minOccurs="0" maxOccurs="1" name="FMSApplicationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FilePath" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="DownloadFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DownloadFileResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="objDownloadFile" type="tns:DownloadFile" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="Upload_tap_tin_he_thong_moiSoapIn">
+    <wsdl:part name="parameters" element="tns:Upload_tap_tin_he_thong_moi" />
+  </wsdl:message>
+  <wsdl:message name="Upload_tap_tin_he_thong_moiSoapOut">
+    <wsdl:part name="parameters" element="tns:Upload_tap_tin_he_thong_moiResponse" />
+  </wsdl:message>
+  <wsdl:message name="UploadMultiFileSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadMultiFile" />
+  </wsdl:message>
+  <wsdl:message name="UploadMultiFileSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadMultiFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="Upload_tap_tin_tuong_thich_he_thong_cuSoapIn">
+    <wsdl:part name="parameters" element="tns:Upload_tap_tin_tuong_thich_he_thong_cu" />
+  </wsdl:message>
+  <wsdl:message name="Upload_tap_tin_tuong_thich_he_thong_cuSoapOut">
+    <wsdl:part name="parameters" element="tns:Upload_tap_tin_tuong_thich_he_thong_cuResponse" />
+  </wsdl:message>
+  <wsdl:message name="DownloadFileSoapIn">
+    <wsdl:part name="parameters" element="tns:DownloadFile" />
+  </wsdl:message>
+  <wsdl:message name="DownloadFileSoapOut">
+    <wsdl:part name="parameters" element="tns:DownloadFileResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WSFileManagerSoap">
+    <wsdl:operation name="UploadFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload tập tin qua webservice</wsdl:documentation>
+      <wsdl:input name="Upload_tap_tin_he_thong_moi" message="tns:Upload_tap_tin_he_thong_moiSoapIn" />
+      <wsdl:output name="Upload_tap_tin_he_thong_moi" message="tns:Upload_tap_tin_he_thong_moiSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadMultiFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload nhiều tập tin qua webservice</wsdl:documentation>
+      <wsdl:input message="tns:UploadMultiFileSoapIn" />
+      <wsdl:output message="tns:UploadMultiFileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload tập tin qua webservice, trả về FilePath</wsdl:documentation>
+      <wsdl:input name="Upload_tap_tin_tuong_thich_he_thong_cu" message="tns:Upload_tap_tin_tuong_thich_he_thong_cuSoapIn" />
+      <wsdl:output name="Upload_tap_tin_tuong_thich_he_thong_cu" message="tns:Upload_tap_tin_tuong_thich_he_thong_cuSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DownloadFile">
+      <wsdl:input message="tns:DownloadFileSoapIn" />
+      <wsdl:output message="tns:DownloadFileSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSFileManagerSoap" type="tns:WSFileManagerSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UploadFile">
+      <soap:operation soapAction="http://tempuri.org/Upload_tap_tin_he_thong_moi" style="document" />
+      <wsdl:input name="Upload_tap_tin_he_thong_moi">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Upload_tap_tin_he_thong_moi">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadMultiFile">
+      <soap:operation soapAction="http://tempuri.org/UploadMultiFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadFile">
+      <soap:operation soapAction="http://tempuri.org/Upload_tap_tin_tuong_thich_he_thong_cu" style="document" />
+      <wsdl:input name="Upload_tap_tin_tuong_thich_he_thong_cu">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Upload_tap_tin_tuong_thich_he_thong_cu">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DownloadFile">
+      <soap:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WSFileManagerSoap12" type="tns:WSFileManagerSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UploadFile">
+      <soap12:operation soapAction="http://tempuri.org/Upload_tap_tin_he_thong_moi" style="document" />
+      <wsdl:input name="Upload_tap_tin_he_thong_moi">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Upload_tap_tin_he_thong_moi">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadMultiFile">
+      <soap12:operation soapAction="http://tempuri.org/UploadMultiFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadFile">
+      <soap12:operation soapAction="http://tempuri.org/Upload_tap_tin_tuong_thich_he_thong_cu" style="document" />
+      <wsdl:input name="Upload_tap_tin_tuong_thich_he_thong_cu">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Upload_tap_tin_tuong_thich_he_thong_cu">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DownloadFile">
+      <soap12:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSFileManager">
+    <wsdl:port name="WSFileManagerSoap" binding="tns:WSFileManagerSoap">
+      <soap:address location="http://samsfmsservices.egovsams.com/WSFileManager.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WSFileManagerSoap12" binding="tns:WSFileManagerSoap12">
+      <soap12:address location="http://samsfmsservices.egovsams.com/WSFileManager.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

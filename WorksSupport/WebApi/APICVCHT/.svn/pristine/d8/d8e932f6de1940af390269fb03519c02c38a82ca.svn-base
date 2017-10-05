@@ -1,0 +1,718 @@
+﻿using System.Web.Mvc;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Drawing;
+    using System.IO;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Web.Http;
+
+    using Library.Common.ERPFMSServices_WSFileManager;
+
+    using Nc.Erp.WorksSupport.Api.Models.ReportProces;
+    using Nc.Erp.WorksSupport.Da.Configuration.ReportProces;
+    using Nc.Erp.WorksSupport.Do.Configuration.ReportProces;
+    using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+
+    using OfficeOpenXml;
+    using OfficeOpenXml.Drawing;
+    using OfficeOpenXml.Drawing.Chart;
+    using OfficeOpenXml.Style;
+
+    public class DownloadFileController : Controller
+    {
+        //
+        // GET: /DownloadFile/
+        [System.Web.Mvc.HttpGet]
+        public FileResult DownloadFile(string fileId, string type)
+        {
+            DownloadFile objDownLoadFile = null;
+            var strFileName = string.Empty;
+            var userName = WebApiApplication.UserName;
+            var password = WebApiApplication.Password;
+            Library.Common.Common.DownloadFile(fileId, 9, ref objDownLoadFile, userName, password);
+
+            if (!string.IsNullOrEmpty(fileId))
+            {
+                // Delete WorksSupport Attachment
+                if (type == "1")
+                {
+                    var objWorksSupportAttachment = new WorksSupportAttachment();
+                    new Da.Configuration.WorksSupport.DaWorksSupportAttachment()
+                        .GetWorkSupportAttachmentByFileId(ref objWorksSupportAttachment, fileId);
+                    if (objWorksSupportAttachment != null)
+                    {
+                        strFileName = objWorksSupportAttachment.FileName;
+                    }
+                }
+                // Delete WorksSupport Comment Attachment
+                if (type == "2")
+                {
+                    var objWorksSupportCommentAttachment = new WorksSupportCommentAttachment();
+                    new Da.Configuration.WorksSupport.DaWorksSupportCommentAttachment()
+                        .GetById(ref objWorksSupportCommentAttachment, fileId);
+                    if (objWorksSupportCommentAttachment != null)
+                    {
+                        strFileName = objWorksSupportCommentAttachment.FileName;
+                    }
+                }
+                // Delete WorksSupport Solution Attachment
+                if (type == "3")
+                {
+                    var objWorksSupportSolutionAttachment = new WorksSupportSolutionAttachment();
+                    new Da.Configuration.WorksSupport.DaWorksSupportSolutionAttachment()
+                        .GetById(ref objWorksSupportSolutionAttachment, fileId);
+                    if (objWorksSupportSolutionAttachment != null)
+                    {
+                        strFileName = objWorksSupportSolutionAttachment.FileName;
+                    }
+                }
+
+            }
+            if (!string.IsNullOrEmpty(strFileName) && objDownLoadFile.BufferFile != null)
+            {
+                return this.File(objDownLoadFile.BufferFile, System.Net.Mime.MediaTypeNames.Application.Octet, strFileName);
+            }
+            return null;
+        }
+
+        public FileResult DownloadReportExcel(int projectId, string workGroupId, string fromDate, string toDate, string projectName, string workGroupName)
+        {
+            var reportParam = new DownExcelReportParam();
+            reportParam.ProjectId = projectId;
+            if (workGroupId == "")
+            {
+                reportParam.WorkGroupId = null;
+            }
+            else
+            {
+                reportParam.WorkGroupId = Convert.ToInt32(workGroupId);
+            }
+            if (fromDate == "")
+            {
+                reportParam.FromDate = null;
+            }
+            else
+            {
+                reportParam.FromDate = Convert.ToDateTime(fromDate);
+            }
+            if (toDate == "")
+            {
+                reportParam.ToDate = null;
+            }
+            else
+            {
+                reportParam.ToDate = Convert.ToDateTime(toDate);
+            }
+            reportParam.ProjectName = projectName;
+            reportParam.WorkGroupName = workGroupName;
+            MediaTypeHeaderValue mediaType = MediaTypeHeaderValue.Parse("application/octet-stream");
+
+            string fileName = "Bao_Cao_Cong_Viec.xlsx";
+            // Definition object return 
+            var excelReport = new List<ExcelReport>();
+            // Call DaSystemManagement to search data.
+            var objReport = new WorkSupportReport();
+            var lstWorkStatus = new List<WorkSupportStatus>();
+            var objWorkWrong = new Object();
+            // Call DaSystemManagement to search data.
+            //new DaReportProcess().LoadReportByWorkStatus(ref lstWorkStatus, reportParam.ProjectId, reportParam.WorkGroupId, reportParam.FromDate, reportParam.ToDate);
+            //new DaReportProcess().LoadReportByWorkState(ref objWorkWrong, reportParam.ProjectId, reportParam.WorkGroupId, reportParam.FromDate, reportParam.ToDate);
+
+            var daExcel = new DaReportProcess().LoadDataForExcelReport(ref excelReport, reportParam.ProjectId, reportParam.WorkGroupId, reportParam.FromDate, reportParam.ToDate);
+            byte[] excelFile = ExcelSheet(excelReport, reportParam);
+            MemoryStream memoryStream = new MemoryStream(excelFile);
+            return this.File(memoryStream, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        public byte[] ExcelSheet(List<ExcelReport> lstExcel, DownExcelReportParam reportParam)
+        {
+            var package = new ExcelPackage();
+            #region  thêm dữ liệu và định dạng sheet tổng quan
+            // get mindate of work
+            string minDate = GetMinDateOfWork(reportParam.ProjectId, reportParam.WorkGroupId);
+            string sheetName = "Tổng quan";
+            var worksheet = package.Workbook.Worksheets.Add(sheetName);
+            DataTable dtOverView = new DataTable();
+            reportParam.WorkGroupName = reportParam.WorkGroupId != null ? reportParam.WorkGroupName : "Tất cả";
+            SetDataForOverViewSheet(ref dtOverView, reportParam, minDate);
+            worksheet.Cells["A1:A3"].Style.Font.Bold = true;
+            worksheet.Cells["A1:A3"].Style.Font.Size = 18;
+            worksheet.Cells["A1:A3"].LoadFromDataTable(dtOverView, true);
+            AddPieChartIntoOverViewSheet(ref package, lstExcel, ref worksheet);
+            AddColumnChartIntoOverViewSheet(ref package, lstExcel, ref worksheet, reportParam, sheetName, minDate);
+            worksheet.DeleteRow(1);
+            for (int i = 1; i < 14; i++)
+            {
+                worksheet.Column(i).AutoFit();
+            }
+            #endregion
+
+            #region thêm dữ liệu và định dạng các sheet trạng thái công việc
+            //1. thêm sheet cho từng trạng thái
+            while (lstExcel.Count > 0)
+            {
+                // package.Workbook.Worksheets.Add("Đang xử lý")
+                DataTable dt = new DataTable();
+                //1.0 lay trang thai de tao ten sheet.
+                int statusId = 0;
+                string statusName = "";
+                List<ExcelReport> lstWork = new List<ExcelReport>();
+                //1.2 lay ten sheet
+                GetSatusName(ref lstExcel, ref statusId, ref statusName);
+                //1.3 tao ten sheet
+                var workSheet = package.Workbook.Worksheets.Add(statusName);
+                //1.4 lay du lieu cho sheet
+                GetWorkList(ref lstExcel, ref statusId, ref lstWork);
+                //1.5 thêm dữ liệu vào sheet
+                AddWorkStatusInSheet(ref dt, lstWork, ref workSheet);
+                workSheet.Cells["A1"].LoadFromDataTable(dt, true);
+                //1.6 căn chỉnh độ rộng ô cho sheet
+                for (int i = 1; i < 5; i++)
+                {
+                    workSheet.Column(i).AutoFit();
+                }
+                //1.7 xóa dòng định nghĩa.
+                workSheet.DeleteRow(1);
+            }
+            #endregion
+            byte[] bytes = package.GetAsByteArray();
+            return bytes;
+
+        }
+
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     :  get status name
+        /// </summary>
+        /// <param name="lstExcel"></param>
+        /// <param name="statusId"></param>
+        /// <param name="statusName"></param>
+        private void GetSatusName(ref List<ExcelReport> lstExcel, ref int statusId, ref string statusName)
+        {
+            statusId = lstExcel.Count > 0 ? lstExcel[0].WorksSupportStatusId : 0;
+            statusName = lstExcel.Count > 0 ? lstExcel[0].WorksSupportStatusName : "";
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     :  get work group name 
+        /// </summary>
+        /// <param name="lstExcel"></param>
+        /// <param name="groupId"></param>
+        /// <param name="groupName"></param>
+        private void GetGroupName(List<ExcelReport> lstExcel, int? groupId, ref int numberOfWork)
+        {
+            foreach (var item in lstExcel)
+            {
+                if (groupId == item.WorksSupportGroupId)
+                {
+                    numberOfWork++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     :  get work list. 
+        /// </summary>
+        /// <param name="lstExcel"></param>
+        /// <param name="statusId"></param>
+        /// <param name="lstWork"></param>
+        private void GetWorkList(ref List<ExcelReport> lstExcel, ref int statusId, ref List<ExcelReport> lstWork)
+        {
+            foreach (var item in lstExcel)
+            {
+                if (statusId == item.WorksSupportStatusId)
+                {
+                    lstWork.Add(item);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            foreach (var item in lstWork)
+            {
+                lstExcel.Remove(item);
+            }
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : set pie chart into sheet 
+        /// </summary>
+        /// <param name="excelPackage"></param>
+        /// <param name="lstExcel"></param>
+        /// <param name="worksheet"></param>
+        private void AddPieChartIntoOverViewSheet(ref ExcelPackage excelPackage, List<ExcelReport> lstExcel, ref ExcelWorksheet worksheet)
+        {
+            List<PieChart> lstPieChart = new List<PieChart>();
+            int numberOfWork = 0;
+            string statusName = "";
+            string color = "";
+            int statusId = lstExcel.Count > 0 ? lstExcel[0].WorksSupportStatusId : -9999;
+            int initRow = 10;
+            int intColumn = 10;
+            // get number of work in status.
+            var flag = false;
+            // dem so cong viec theo trang thai chi mot lan duyet.
+            for (int i = 0; i < lstExcel.Count; i++)
+            {
+                //1.0 kiem tra trang thai khac thi luu lai gia tri vua dem
+                if (lstExcel[i].WorksSupportStatusId != statusId)
+                {
+                    //1.1 neu nhom cong viec is null thì trạng thái chưa có công việc.
+                    if (flag)
+                    {
+                        lstPieChart.Add(new PieChart()
+                        {
+                            StatusId = statusId,
+                            StatusName = statusName,
+                            NumberOfWork = 0,
+                            ColorCode = color
+                        });
+                        flag = false;
+                        numberOfWork = 1;
+                    }
+                    else
+                    {
+                        lstPieChart.Add(new PieChart()
+                        {
+                            StatusId = statusId,
+                            StatusName = statusName,
+                            NumberOfWork = numberOfWork,
+                            ColorCode = color
+                        });
+                        numberOfWork = 1;
+                    }
+                    //1.2 kiem tra phan tu cuoi mang
+                    if (i == lstExcel.Count - 1)
+                    {
+
+                        lstPieChart.Add(new PieChart()
+                        {
+                            StatusId = lstExcel[i].WorksSupportStatusId,
+                            StatusName = lstExcel[i].WorksSupportStatusName,
+                            NumberOfWork = lstExcel[i].WorksSupportGroupId == null ? 0 : 1,
+                            ColorCode = lstExcel[i].ColorCode
+                        });
+                    }
+                    //1.3 kiem tra nhom cong viec is null
+                    if (lstExcel[i].WorksSupportGroupId == null)
+                    {
+                        statusId = lstExcel[i].WorksSupportStatusId;
+                        statusName = lstExcel[i].WorksSupportStatusName;
+                        color = lstExcel[i].ColorCode;
+                        numberOfWork = 0;
+                        flag = true;
+                    }
+
+                    statusName = lstExcel[i].WorksSupportStatusName;
+                    statusId = lstExcel[i].WorksSupportStatusId;
+                    color = lstExcel[i].ColorCode;
+                }
+                else
+                {
+                    numberOfWork++;
+                    if (lstExcel[i].WorksSupportGroupId == null)
+                    {
+                        numberOfWork = 0;
+                    }
+                    statusName = lstExcel[i].WorksSupportStatusName;
+                    statusId = lstExcel[i].WorksSupportStatusId;
+                    color = lstExcel[i].ColorCode;
+                    //1.3 kiem tra phan tu cuoi mang
+                    if (i == lstExcel.Count - 1)
+                    {
+                        lstPieChart.Add(new PieChart()
+                        {
+                            StatusId = statusId,
+                            StatusName = statusName,
+                            NumberOfWork = numberOfWork,
+                            ColorCode = color
+                        });
+                    }
+                }
+
+            }
+            // add data for pieChart into sheet.
+            var data = new List<KeyValuePair<string, int>>();
+            // add data for piechart
+            foreach (var item in lstPieChart)
+            {
+                data.Add(new KeyValuePair<string, int>(item.StatusName, item.NumberOfWork));
+            }
+            // Fill the table
+            var startCell = worksheet.Cells[1 + initRow, 1 + intColumn];
+            startCell.Offset(0, 0).Value = "Trạng thái công việc";
+            startCell.Offset(0, 0).Style.Font.Bold = true;
+            startCell.Offset(0, 0).Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 0).Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 0).Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 0).Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 1).Value = "Số công việc";
+            startCell.Offset(0, 1).Style.Font.Bold = true;
+            startCell.Offset(0, 0).Style.Fill.PatternType = ExcelFillStyle.Solid;
+            startCell.Offset(0, 0).Style.Fill.BackgroundColor.SetColor(Color.Green);
+            startCell.Offset(0, 1).Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 1).Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 1).Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 1).Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            startCell.Offset(0, 1).Style.Fill.PatternType = ExcelFillStyle.Solid;
+            startCell.Offset(0, 1).Style.Fill.BackgroundColor.SetColor(Color.Green);
+            for (var i = 0; i < data.Count; i++)
+            {
+                startCell.Offset(i + 1, 0).Value = data[i].Key;
+                startCell.Offset(i + 1, 1).Value = data[i].Value;
+                startCell.Offset(i + 1, 0).Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 0).Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 0).Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 0).Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 1).Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 1).Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 1).Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                startCell.Offset(i + 1, 1).Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            }
+            // Add the chart to the sheet
+            string pieChartName = "Trạng thái công việc cần hỗ trợ";
+            var pieChart = worksheet.Drawings.AddChart(pieChartName, eChartType.Pie);
+            pieChart.SetPosition(initRow - 1, 0, 0, 0);
+            pieChart.SetSize(575, 300);
+            pieChart.Title.Text = "Trạng thái công việc cần hỗ trợ";
+            pieChart.Title.Font.Bold = true;
+            pieChart.Title.Font.Size = 12;
+            // pieChart.Series("S1").Points(0).Color = System.Drawing.Color.Teal;
+            // Set the data range 
+            var series = pieChart.Series.Add(worksheet.Cells[initRow + 1, 2 + intColumn, data.Count + 1 + initRow - 1, 2 + intColumn], worksheet.Cells[2 + initRow - 1, 1 + intColumn, data.Count + 1 + initRow - 1, 1 + intColumn]);
+            var pieSeries = (ExcelPieChartSerie)series;
+            pieSeries.Explosion = 0;
+            // Format the labels
+            pieSeries.DataLabel.Font.Bold = true;
+            pieSeries.DataLabel.ShowValue = false;
+            pieSeries.DataLabel.ShowPercent = false;
+            pieSeries.DataLabel.ShowLeaderLines = true;
+            pieSeries.DataLabel.Separator = "|";
+          //  pieSeries.DataLabel.Position = eLabelPosition.BestFit;
+            // Format the legend
+            pieChart.Legend.Add();
+            pieChart.Legend.Border.Width = 0;
+            pieChart.Legend.Font.Size = 12;
+            pieChart.Legend.Font.Bold = true;
+            pieSeries.DataLabel.Position = eLabelPosition.BestFit;
+           // pieChart.Legend.Position = eLegendPosition.Right;
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : set column chart into sheet
+        /// </summary>
+        /// <param name="excelPackage"></param>
+        /// <param name="lstExcel"></param>
+        /// <param name="worksheet"></param>
+        private void AddColumnChartIntoOverViewSheet(ref ExcelPackage excelPackage, List<ExcelReport> lstExcel, ref ExcelWorksheet worksheet, DownExcelReportParam reportParam, string sheetName, string minDate)
+        {
+            
+            // get work late
+            List<WorkSupportReportTime> lstWorkLate = new List<WorkSupportReportTime>();
+            GetWorkLateList(reportParam, ref lstWorkLate);
+            // get work wrong
+            List<WorkSupportReportTime> lstWorkWrong = new List<WorkSupportReportTime>();
+            GetWorkWrongList(reportParam, ref lstWorkWrong);
+            // get data for column chart
+            List<ColumnChartData> lstDataChart = SetDataForColumnChart(minDate, lstWorkLate, lstWorkWrong, reportParam);
+            // tre han
+            int startRow = 29;
+            int endRow = 29;
+            string startCellWTime = "K";
+            string startCellWLate = "L";
+            string startCellWWrong = "M";
+            worksheet.Cells[startCellWLate + startRow].Value = "Trễ hạn";
+            worksheet.Cells[startCellWWrong + startRow].Value = "Vi phạm";
+            worksheet.Cells[startCellWTime + startRow].Value = "Thời gian";
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Fill.BackgroundColor.SetColor(Color.Green);
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Font.Bold = true;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + startRow].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            foreach (var item in lstDataChart)
+            {
+                endRow++;
+                worksheet.Cells[startCellWLate + endRow].Value = item.WorkLate;
+                worksheet.Cells[startCellWWrong + endRow].Value = item.WorkWrong;
+                worksheet.Cells[startCellWTime + endRow].Value = item.WorkTime;
+            }
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + endRow].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + endRow].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + endRow].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[startCellWTime + startRow + ":" + startCellWWrong + endRow].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            endRow--;
+            string chartName = "Tình trạng công việc cần hỗ trợ";
+            var columnChart = worksheet.Drawings.AddChart(chartName, eChartType.ColumnClustered);
+            columnChart.SetPosition(startRow - 2, 0, 0, 0);
+            columnChart.SetSize(575, 450);
+            columnChart.Title.Text = "Tình trạng công việc cần hỗ trợ";
+            //columnChart.EditAs = eEditAs.OneCell;
+            columnChart.DisplayBlanksAs = eDisplayBlanksAs.Span;
+            columnChart.Axis[0].Title.Text = "Thời gian";
+            columnChart.Axis[0].Title.Font.Size = 8;
+            columnChart.Axis[0].Title.Rotation = 0;
+            columnChart.Axis[0].Title.Overlay = false;
+            columnChart.Axis[1].Title.Text = "Công việc";
+            columnChart.Axis[1].Title.Font.Size = 8;
+            columnChart.Axis[1].Title.AnchorCtr = true;
+            columnChart.Axis[1].Title.TextVertical = eTextVerticalType.Vertical270;
+            columnChart.Axis[1].Title.Border.LineStyle = eLineStyle.LongDashDotDot;
+            var seriesWorkLate = columnChart.Series.Add(startCellWLate + startRow + ":" + startCellWLate + endRow, startCellWTime + startRow + ":" + startCellWTime + endRow);
+             
+            startRow--;
+            seriesWorkLate.HeaderAddress = new ExcelAddress("'" + sheetName + "'!" + startCellWLate + startRow);
+            startRow++;
+            var seriesWorkWrong = columnChart.Series.Add(startCellWWrong + startRow + ":" + startCellWWrong + endRow, startCellWTime + startRow + ":" + startCellWTime + endRow);
+            startRow--;
+            seriesWorkWrong.HeaderAddress = new ExcelAddress("'" + sheetName + "'!" + startCellWWrong + startRow);
+           // var pieSeries = (ExcelChart)columnChart;
+            // pieSeries.Explosion = 5;
+            // Format the labels
+            //columnChart.eLabelPosition = eLabelPosition.BestFit;
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : get mindate 
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="workGroupId"></param>
+        /// <returns></returns>
+        private string GetMinDateOfWork(int projectId, int? workGroupId)
+        {
+            try
+            {
+                string minDate = "";
+                new DaReportProcess().LoadDataMinDateWork(ref minDate, projectId, workGroupId);
+                return minDate = minDate == null ? DateTime.Now.ToString("dd/mm/yyyy") : minDate;
+            }
+            catch
+            {
+                return DateTime.Now.ToString("dd/mm/yyyy");
+            }
+
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : get work late list
+        /// </summary>
+        /// <param name="reportParam"></param>
+        /// <param name="lstWorkTime"></param>
+        private void GetWorkLateList(DownExcelReportParam reportParam, ref List<WorkSupportReportTime> lstWorkTime)
+        {
+            lstWorkTime = new List<WorkSupportReportTime>();
+            var objResultMessageStatue = new DaReportProcess().LoadWorkStateLateByExcel(ref lstWorkTime, reportParam.ProjectId, reportParam.WorkGroupId, reportParam.FromDate, reportParam.ToDate);
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : get work wrong list
+        /// </summary>
+        /// <param name="reportParam"></param>
+        /// <param name="lstWorkTime"></param>
+        private void GetWorkWrongList(DownExcelReportParam reportParam, ref List<WorkSupportReportTime> lstWorkTime)
+        {
+            lstWorkTime = new List<WorkSupportReportTime>();
+            new DaReportProcess().LoadWorkStateWrongByExcel(ref lstWorkTime, reportParam.ProjectId, reportParam.WorkGroupId, reportParam.FromDate, reportParam.ToDate);
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : set data of column chart. 
+        /// </summary>
+        /// <param name="minDate"></param>
+        /// <param name="lstWorkLate"></param>
+        /// <param name="lstWorkWrong"></param>
+        /// <param name="reportParam"></param>
+        /// <returns></returns>
+        private List<ColumnChartData> SetDataForColumnChart(string minDate, List<WorkSupportReportTime> lstWorkLate, List<WorkSupportReportTime> lstWorkWrong, DownExcelReportParam reportParam)
+        {
+
+            //string fromDate = reportParam.FromDate != null ? reportParam.FromDate.Value  : GetMinDate(reportParam.ProjectId, reportParam.WorkGroupId);
+            DateTime dt = DateTime.Now;
+            List<ColumnChartData> lstWorkLateReport = new List<ColumnChartData>();
+            string fromDate = reportParam.FromDate != null ? reportParam.FromDate.Value.ToString("MM/yyyy") : minDate.Substring(3, 7); //Split('/')[1]+"/"+ minDate.Split('/')[2];
+            string toDate = reportParam.ToDate != null ? reportParam.ToDate.Value.ToString("MM/yyyy") : dt.ToString("MM/yyyy");
+            int fMonth = Convert.ToInt32(fromDate.Split('/')[0]);
+            int fYear = Convert.ToInt32(fromDate.Split('/')[1]);
+            int tMonth = Convert.ToInt32(toDate.Split('/')[0]);
+            int tYear = Convert.ToInt32(toDate.Split('/')[1]);
+            while (fYear * 100 + fMonth <= tYear * 100 + tMonth)
+            {
+                //
+                var workChart = new ColumnChartData();
+                var wLate = lstWorkLate.Find(work => work.WorkTime == (fMonth < 10 ? "0" + fMonth + "/" + fYear : fMonth + "/" + fYear));
+                var wWrong = lstWorkWrong.Find(work => work.WorkTime == (fMonth < 10 ? "0" + fMonth + "/" + fYear : fMonth + "/" + fYear));
+                // add data for WorkLate
+                if (wLate == null)
+                {
+                    workChart.WorkTime = fMonth < 10? "0"+ fMonth + "/" + fYear : fMonth + "/" + fYear;
+                    workChart.WorkLate = 0;
+                }
+                else
+                {
+                    workChart.WorkTime = wLate.WorkTime;
+                    workChart.WorkLate = wLate.NumberOfWork;
+                }
+                // add data for WorkWrong
+                if (wWrong == null)
+                {
+                    workChart.WorkWrong = 0;
+                }
+                else
+                {
+                    workChart.WorkWrong = wWrong.NumberOfWork;
+                }
+                // check date.
+                if (fMonth == 12)
+                {
+                    fYear++;
+                    fMonth = 1;
+                }
+                else
+                {
+                    fMonth++;
+                }
+                // add data list
+                lstWorkLateReport.Add(workChart);
+            }
+            return lstWorkLateReport;
+        }
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : set data for over view sheet
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="reportParam"></param>
+        private void SetDataForOverViewSheet(ref DataTable dt, DownExcelReportParam reportParam, string minDate)
+        {
+            DateTime now = DateTime.Now;
+            string fromDate = reportParam.FromDate != null ? reportParam.FromDate.Value.ToString("dd/MM/yyyy") : minDate; //Split('/')[1]+"/"+ minDate.Split('/')[2];
+            string toDate = reportParam.ToDate != null ? reportParam.ToDate.Value.ToString("dd/MM/yyyy") : now.ToString("dd/MM/yyyy");
+            dt.Columns.Add("1", typeof(string));
+            dt.Columns.Add("2", typeof(string));
+            dt.Columns.Add("3", typeof(string));
+            dt.Columns.Add("4", typeof(string));
+            dt.Columns.Add("5", typeof(string));
+            dt.Rows.Add("Báo cáo công việc cần hỗ trợ");
+            dt.Rows.Add("Dự án", reportParam.ProjectName);
+            dt.Rows.Add("Nhóm công việc", reportParam.WorkGroupName);
+            dt.Rows.Add("Thời gian", fromDate + "-" + toDate);
+        }
+
+        /// <summary>
+        /// Created by      : Nguyen van huan
+        /// Created date    : 11/09/2017
+        /// Description     : add data for excel
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="lstWork"></param>
+        private void AddWorkStatusInSheet(ref DataTable dt, List<ExcelReport> lstWork, ref ExcelWorksheet worksheet)
+        {
+            // defined type date.
+            int numberOfWork = 0;
+            int? groupId = -999;
+            int row = 2;// dòng bắt đầu.
+            // add columns
+            dt.Columns.Add("1", typeof(string));
+            dt.Columns.Add("2", typeof(string));
+            dt.Columns.Add("3", typeof(string));
+            dt.Columns.Add("4", typeof(string));
+            dt.Columns.Add("5", typeof(string));
+            dt.Rows.Add("");
+            // kiểm tra dữ liệu lấy từ data
+            foreach (var item in lstWork)
+            {
+                row++;
+                if (item.WorksSupportGroupId == null)
+                {
+                    dt.Rows.Add("Chưa có công việc!");
+                    break;
+                }
+                else
+                {
+                    //kiem tra nhom cong viec
+                    if (groupId != item.WorksSupportGroupId)
+                    {
+                        groupId = item.WorksSupportGroupId;
+                        GetGroupName(lstWork, groupId, ref numberOfWork);
+                        // thêm dòng trống
+                        dt.Rows.Add("");
+                        row++;// tăng thêm dòng 
+                        // thêm tên nhóm công việc.
+                        dt.Rows.Add("",
+                            item.WorksSupportGroupName + "(" + numberOfWork + ")"
+                        );
+                        row++;
+                        int rowGroup = row - 1;
+                        // định dạng đường tên nhóm công việc
+                        worksheet.Cells["B" + rowGroup].Style.Font.Bold = true;
+                        // thêm title cho cong viec.
+                        dt.Rows.Add("",
+                            "Công việc",
+                            "Hạn xử lý",
+                            "Ngày hoàn thành",
+                            "Tiến độ(%) "
+                        );
+                        // định dạng tiêu đề cho công việc
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Font.Bold = true;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Fill.BackgroundColor.SetColor(Color.Green);
+                        row++;
+                        // thêm chi tiết công việc
+                        dt.Rows.Add(
+                            "",
+                            item.WorksSupportName,
+                            item.ExpectedCompletedDate,
+                            item.CompletedDate,
+                            item.CurrentProgress
+                        );
+                        // định dạng đường viền cho công việc
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        numberOfWork = 0;
+                    }
+                    else
+                    {
+                        // thêm chi tiết công việc
+                        dt.Rows.Add(
+                            "",
+                            item.WorksSupportName,
+                            item.ExpectedCompletedDate,
+                            item.CompletedDate,
+                            item.CurrentProgress
+                        );
+                        // định dạng đường viền cho công việc
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        worksheet.Cells["B" + row + ":" + "E" + row].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    }
+                }
+            }
+        }
+    }
+}

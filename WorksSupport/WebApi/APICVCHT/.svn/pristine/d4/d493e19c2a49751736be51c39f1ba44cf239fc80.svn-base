@@ -1,0 +1,740 @@
+﻿using System;
+using System.Collections.Generic;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.Project;
+using Library.DataAccess;
+using System.Data;
+using Nc.Erp.WorksSupport.Do.Configuration.Department;
+using Nc.Erp.WorksSupport.Do.Configuration.Account;
+using Nc.Erp.WorksSupport.Do.Configuration.MemberRole;
+using Nc.Erp.WorksSupport.Do.Configuration.SuportType;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Project
+{
+    /// <summary>
+    /// Created by      : Nguyễn Văn Phận
+    /// Created date    : 09/06/2017
+    /// Xử lý nghiệp vụ đối tượng EO_WORKSSUPPORTPROJECT.
+    /// </summary>
+    public class DaWorksSupportProject
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Tìm kiếm thông tin dự án
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorksSupportProject> list, params object[] objKeywords)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter(objKeywords);
+                // DataTable dtbData = objIData.ExecStoreToDataTable();
+                // list = MyUtils.DataTableExtensions.ToList<WorksSupportProject>(dtbData);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupportProject objWorksSupportProject;
+                while (reader.Read())
+                {
+                    objWorksSupportProject = new WorksSupportProject();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPROJECTID"])) objWorksSupportProject.WorksSupportProjectId = Convert.ToInt32(reader["WORKSSUPPORTPROJECTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPROJECTNAME"])) objWorksSupportProject.WorksSupportProjectName = Convert.ToString(reader["WORKSSUPPORTPROJECTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupportProject.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportProject.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportProject.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportProject.IsActived = Convert.ToInt32(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportProject.IsSystem = Convert.ToInt32(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportProject.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportProject.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    list.Add(objWorksSupportProject);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage GetAll_WorksSupportProject(ref List<WorksSupportProject> list, string strKeywords, int intDelete, int intPageIndex, int intPageSize)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                var data = new DataTable();
+                SearchWorksSupportProject(ref data, strKeywords, intDelete, intPageIndex, intPageSize);
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportProject>(data);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách hệ thống", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> GetAll", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll WorksSupportType_Priority 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage GetAll(ref List<WorksSupportProject> list , string user, string keyWork, string pageIndex, string pageSize)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                objIData.AddParameter("@USERNAME", user);
+                objIData.AddParameter("@KEYWORDS", keyWork);
+                objIData.AddParameter("@PAGEINDEX", pageIndex);
+                objIData.AddParameter("@PAGESIZE", pageSize);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportProject = new WorksSupportProject();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPROJECTID"])) objWorksSupportProject.WorksSupportProjectId = Convert.ToInt32(reader["WORKSSUPPORTPROJECTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPROJECTNAME"])) objWorksSupportProject.WorksSupportProjectName = Convert.ToString(reader["WORKSSUPPORTPROJECTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupportProject.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["NUMBEROFWORKGROUP"])) objWorksSupportProject.NumberOfWorkGroup = Convert.ToInt32(reader["NUMBEROFWORKGROUP"]);
+                    if (!Convert.IsDBNull(reader["NUMBEROFMEMBER"])) objWorksSupportProject.NumberOfMember = Convert.ToInt32(reader["NUMBEROFMEMBER"]);
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportProject.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportProject.IsActived = Convert.ToInt32(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportProject.IsSystem = Convert.ToInt32(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["ISCANADD"])) objWorksSupportProject.IsCanAdd = Convert.ToBoolean(reader["ISCANADD"]);
+                    if (!Convert.IsDBNull(reader["ISCANDELETE"])) objWorksSupportProject.IsCanDelete = Convert.ToBoolean(reader["ISCANDELETE"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDIT"])) objWorksSupportProject.IsCanEdit = Convert.ToBoolean(reader["ISCANEDIT"]);
+                    if (!Convert.IsDBNull(reader["ISCANVIEW"])) objWorksSupportProject.IsCanView = Convert.ToBoolean(reader["ISCANVIEW"]);
+                    if (!Convert.IsDBNull(reader["ISCANVIEWREPORT"])) objWorksSupportProject.IsCanViewReport = Convert.ToBoolean(reader["ISCANVIEWREPORT"]);
+
+                    list.Add(objWorksSupportProject);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType_Quality", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportProject by Id
+        /// </summary>
+        /// <param name="objProject"></param>
+        /// <param name="worksSupportProjectId"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref WorksSupportProject objProject, int worksSupportProjectId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectById);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", worksSupportProjectId);
+           
+                var reader = objIData.ExecStoreToDataReader();
+                if (reader.Read()) { 
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPROJECTID"])) objProject.WorksSupportProjectId = Convert.ToInt32(reader["WORKSSUPPORTPROJECTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPROJECTNAME"])) objProject.WorksSupportProjectName = Convert.ToString(reader["WORKSSUPPORTPROJECTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objProject.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objProject.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objProject.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objProject.IsActived = Convert.ToInt32(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objProject.IsSystem = Convert.ToInt32(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objProject.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    if (!Convert.IsDBNull(reader["NUMBEROFMEMBER"])) objProject.NumberOfMember = Convert.ToInt32(reader["NUMBEROFMEMBER"]);
+                }
+                else
+                {
+                    objProject = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportStatus -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="objWorksSupportProject"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorksSupportProject objWorksSupportProject, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                var projectId = 0;
+                Insert(objIData, objWorksSupportProject, ref projectId, user);
+                if(projectId > 0)
+                {
+                    new DaWorksSupportProjectMember().InsertProject_Member(objWorksSupportProject.ListProjectMember, user, projectId, objIData);
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage InsertProject(WorksSupportProject objWorksSupportProject, ref int projectId, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                Insert(objIData, objWorksSupportProject, ref projectId, user);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Update data
+        /// </summary>
+        /// <param name="objWorksSupportProject"></param>
+        /// <param name="obj"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ResultMessage Update(WorksSupportProject objWorksSupportProject, ref WorksSupportProject obj, string user)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+
+                UpdateProject(objIData, objWorksSupportProject, ref obj, user);
+                // Check member is deleted to delete data.
+                if (objWorksSupportProject.ListDeletedMember.Count > 0)
+                {
+                    new DaWorksSupportProjectMember().Delete(objIData, objWorksSupportProject.ListDeletedMember);    
+                }
+                // Check member is add new to insert.
+                if (objWorksSupportProject.ListProjectMember.Count > 0)
+                {
+                    new DaWorksSupportProjectMember().InsertProject_Member(objWorksSupportProject.ListProjectMember, user, objWorksSupportProject.WorksSupportProjectId, objIData);
+                }
+                // Check member is edit to update.
+                if (objWorksSupportProject.ListEditedMember.Count > 0)
+                {
+                    objResultMessage = new DaWorksSupportProjectMember().Update(objIData, objWorksSupportProject.ListEditedMember);
+                }
+
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert,
+                    "Lỗi cap nhat thông tin WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="worksSupportProjectId"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string user, int worksSupportProjectId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                DeleteProject(objIData, user, worksSupportProjectId);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// check values existed
+        /// </summary>
+        /// <param name="objWorkProject"></param>
+        /// <param name="intId"></param>
+        /// <param name="strName"></param>
+        /// <param name="inOrderIndex"></param>
+        /// <returns></returns>
+        public ResultMessage CheckValuesExisted(ref ProjectValidation objWorkProject, int intId, string strName, int inOrderIndex)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpCheck);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", intId);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTNAME", strName);
+                objIData.AddParameter("@ORDERINDEX", inOrderIndex);
+                var reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objWorkProject = new ProjectValidation();
+                    if (!Convert.IsDBNull(reader["PROJECTNAME"])) objWorkProject.CountName = Convert.ToInt32(reader["PROJECTNAME"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorkProject.CountOrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                }
+                else
+                {
+                    objWorkProject = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi kiểm tra thuộc tính trùng nhau của trạng thái dự án cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> CheckNameExisted", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll SYS_DEPARTMENT
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public ResultMessage GetAllDepartment(ref List<WorksSupportDepartment> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelAllDepartment);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportDepartment = new WorksSupportDepartment();
+                    if (!Convert.IsDBNull(reader["DEPARTMENTID"])) objWorksSupportDepartment.DepartmentId = Convert.ToInt32(reader["DEPARTMENTID"]);
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"])) objWorksSupportDepartment.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]).Trim();
+                    list.Add(objWorksSupportDepartment);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách phòng ban", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> GetAllDepartment", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Tìm kiếm thông tin chất lượng yêu cầu công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchDataUser(ref List<User> list, params object[] objKeywords)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpUser);
+                objIData.AddParameter(objKeywords);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportUser = new User();
+                    if (!Convert.IsDBNull(reader["USERNAME"])) objWorksSupportUser.UserName = Convert.ToString(reader["USERNAME"]);
+                    if (!Convert.IsDBNull(reader["FULLNAME"])) objWorksSupportUser.FullName = Convert.ToString(reader["FULLNAME"]);
+                    objWorksSupportUser.DefaultPictureURL = !Convert.IsDBNull(reader["DEFAULTPICTUREURL"]) ? Convert.ToString(reader["DEFAULTPICTUREURL"]).Trim() : "2017/05/15/18e2540e-459c-4376-9a76-97d6a10d5600.png";
+                    if (!Convert.IsDBNull(reader["DEPARTMENTID"])) objWorksSupportUser.DepartmentID = Convert.ToInt32(reader["DEPARTMENTID"]);
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"])) objWorksSupportUser.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]).Trim();                    
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) objWorksSupportUser.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objWorksSupportUser.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]);
+                    objWorksSupportUser.MemberUserName = null;
+                    objWorksSupportUser.IsAutoAddMemberToWorksGroup = 0;
+                    list.Add(objWorksSupportUser);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin chất lượng yêu cầu công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportQuality -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportProject_Member by Id
+        /// </summary>
+        /// <param name="lstProjectMember"></param>
+        /// <param name="intProjectId"></param>
+        /// <returns></returns>
+        public ResultMessage GetById_ProjectMember(ref List<User> lstProjectMember, int intProjectId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpMemberById);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", intProjectId);
+
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objProjectMember = new User();
+                    if (!Convert.IsDBNull(reader["USERNAME"])) objProjectMember.UserName = Convert.ToString(reader["USERNAME"]);
+                    if (!Convert.IsDBNull(reader["FULLNAME"])) objProjectMember.FullName = Convert.ToString(reader["FULLNAME"]);
+                    objProjectMember.DefaultPictureURL = !Convert.IsDBNull(reader["DEFAULTPICTUREURL"]) ? Convert.ToString(reader["DEFAULTPICTUREURL"]).Trim() : "2017/05/15/18e2540e-459c-4376-9a76-97d6a10d5600.png";
+                    if (!Convert.IsDBNull(reader["DEPARTMENTID"])) objProjectMember.DepartmentID = Convert.ToInt32(reader["DEPARTMENTID"]);
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"])) objProjectMember.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]);
+                    if (!Convert.IsDBNull(reader["ISAUTOADDMEMBERTOWORKSGROUP"])) objProjectMember.IsAutoAddMemberToWorksGroup = Convert.ToInt32(reader["ISAUTOADDMEMBERTOWORKSGROUP"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) objProjectMember.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objProjectMember.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]).Trim();
+                    lstProjectMember.Add(objProjectMember);
+
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportStatus -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Load danh sach vai tro theo typeid
+        /// </summary>
+        /// <param name="lstProjectMember"></param>
+        /// <param name="intTypeId"></param>
+        /// <returns></returns>
+        public ResultMessage LoadMemberRoleByWorksTypeId(ref List<WorksSupportMemberRole> lstProjectMember, int intTypeId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpRoleById);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", intTypeId);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objProjectMember = new WorksSupportMemberRole();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLEID"])) objProjectMember.WorksSupportMemberRoleId = Convert.ToInt32(reader["WORKSSUPPORTMEMBERROLEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTMEMBERROLENAME"])) objProjectMember.WorksSupportMemberRoleName = Convert.ToString(reader["WORKSSUPPORTMEMBERROLENAME"]).Trim();
+                    lstProjectMember.Add(objProjectMember);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportMemberRole", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> GetById_ProjectMember", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll WorksSupportType 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public ResultMessage GetWorksSupportType(ref List<WorksSupportType> list, string userName)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAllWorksSupportType);
+                objIData.AddParameter("@USERNAME", userName);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportType = new WorksSupportType();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupportType.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPENAME"])) objWorksSupportType.WorksSupportTypeName = Convert.ToString(reader["WORKSSUPPORTTYPENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ISCANADDPROJECT"])) objWorksSupportType.IsCanAddProject = Convert.ToBoolean(reader["ISCANADDPROJECT"]);
+                    if (!Convert.IsDBNull(reader["ISCANEDITPROJECT"])) objWorksSupportType.IsCanEditProject = Convert.ToBoolean(reader["ISCANEDITPROJECT"]);
+                    list.Add(objWorksSupportType);
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportProject -> GetWorksSupportType", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Search project by projectName, pageIndex, pageSize
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="strKeywords"></param>
+        /// <param name="intDelete"></param>
+        /// <param name="intPageIndex"></param>
+        /// <param name="intPageSize"></param>
+        /// <returns></returns>
+        public ResultMessage SearchWorksSupportProject(ref DataTable dtbData, string strKeywords, int intDelete, int intPageIndex, int intPageSize)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@Keywords", strKeywords);
+                objIData.AddParameter("@PAGEINDEX", intPageIndex);
+                objIData.AddParameter("@PAGESIZE", intPageSize);
+                objIData.AddParameter("@ISDELETED", intDelete);
+                dtbData = objIData.ExecStoreToDataTable();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin nhóm nội dung web", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_CMS_WebContentGroup -> SearchData_WebContentGroup", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Thêm trạng thái dự án cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportProject"></param>
+        /// <param name="projectId"></param>
+        /// <param name="user"></param>
+        protected virtual void Insert(IData objIData, WorksSupportProject objWorksSupportProject, ref int projectId, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTNAME", objWorksSupportProject.WorksSupportProjectName);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", objWorksSupportProject.WorksSupportTypeId);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportProject.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportProject.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportProject.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportProject.IsSystem);
+                objIData.AddParameter("@ICONURL", objWorksSupportProject.IconUrl);
+                objIData.AddParameter("@CREATEDUSER", user);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                projectId = Convert.ToInt32(objIData.ExecStoreToString());
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật trạng thái dự án cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportProject"></param>
+        /// <param name="obj"></param>
+        /// <param name="user"></param>
+        protected virtual void UpdateProject(IData objIData, WorksSupportProject objWorksSupportProject, ref WorksSupportProject obj, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", objWorksSupportProject.WorksSupportProjectId);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTNAME", objWorksSupportProject.WorksSupportProjectName);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", objWorksSupportProject.WorksSupportTypeId);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportProject.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportProject.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportProject.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportProject.IsSystem);
+                objIData.AddParameter("@UPDATEDUSER", user);
+                objIData.AddParameter("@ICONURL", objWorksSupportProject.IconUrl);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa dự án
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="user"></param>
+        /// <param name="worksSupportProjectId"></param>
+        protected void DeleteProject(IData objIData, string user, int worksSupportProjectId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTPROJECTID", worksSupportProjectId);
+                objIData.AddParameter("@DELETEDUSER", user);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelect = "WORKSSUPORTPROJECT_V2_SEL";
+        public const string SpSelectAll = "WORKSSUPORTPROJECT_V2_PERMISS";
+        public const string SpSelectById = "WORKSSUPORTPROJECT_V2_GETBYID";
+        public const string SpAdd = "WORKSSUPORTPROJECT_V2_ADD";
+        public const string SpUpdate = "WORKSSUPORTPROJECT_V2_UPD";
+        public const string SpDelete = "WORKSSUPORTPROJECT_V2_DEL";
+        public const string SpSearch = "WORKSSUPORTPROJECT_V2_SRH";
+        public const string SpCheck = "WORKSSUPORTPROJECT_V2_CHECK";
+        public const string SpSelAllDepartment = "WORKSDEPARTMENT_V2_GETALL";
+        public const string SpUser = "WORKSSUPPORTUSER_V2_SRH";
+        public const string SpMemberById = "WSPROJECT_MEMBER_V2_GETBYID";
+        public const string SpRoleById = "WSMEMBERROLE_V2_GETALL";
+        public const string SpSelectAllWorksSupportType = "WORKSSUPPORTTYPE_V2_GETBYUSER";
+
+        #endregion
+    }
+}

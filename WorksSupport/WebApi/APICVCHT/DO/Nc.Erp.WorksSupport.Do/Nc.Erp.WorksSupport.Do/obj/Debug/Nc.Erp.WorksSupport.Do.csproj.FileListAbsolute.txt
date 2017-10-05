@@ -1,0 +1,5 @@
+F:\Project\WorksSupport\WebApi\APICVCHT\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\bin\Debug\Nc.Erp.WorksSupport.Do.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\bin\Debug\Nc.Erp.WorksSupport.Do.pdb
+F:\Project\WorksSupport\WebApi\APICVCHT\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\obj\Debug\Nc.Erp.WorksSupport.Do.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\obj\Debug\Nc.Erp.WorksSupport.Do.pdb
+F:\Project\WorksSupport\WebApi\APICVCHT\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\obj\Debug\Nc.Erp.WorksSupport.Do.csprojResolveAssemblyReference.cache

@@ -1,0 +1,212 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Nc.Erp.WorksSupport.Do.Configuration.Work;
+using System.Data;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Works
+{
+    /// <summary>
+    /// Created by      : NGUYEN THI KIM NGAN
+    /// Created date    : 06.07.2017
+    /// Khai báo công việc EO_Works
+    /// </summary>
+    public class DaWorks
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Tìm kiếm thông tin cong viec lien quan
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<Work> list, string intProject,int intTypeSearch, string strKey, DateTime? dtmStartDate, DateTime? dtmEndDate, int intPageIndex, int intPageSize)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter("@PROJECTID", intProject);
+                objIData.AddParameter("@KEYWORDS", strKey);
+                objIData.AddParameter("@TYPESEARCH", intTypeSearch);
+                objIData.AddParameter("@STARTDATE", dtmStartDate);
+                objIData.AddParameter("@ENDDATE", dtmEndDate);  
+                objIData.AddParameter("@PAGEINDEX", intPageIndex);
+                objIData.AddParameter("@PAGESIZE", intPageSize); 
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    Work objWork = new Work();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWork.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWork.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["PROJECTNAME"])) objWork.ProjectName = Convert.ToString(reader["PROJECTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWork.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWork.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["ISDELETED"])) objWork.IsDeleted = Convert.ToInt32(reader["ISDELETED"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWork.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWork.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["DELETEDDATE"])) objWork.DeletedDate = Convert.ToDateTime(reader["DELETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["EXECUSER"])) objWork.ExecUser = Convert.ToString(reader["EXECUSER"]).Trim();
+
+                    list.Add(objWork);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportStatus -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage SearchDataInvole(ref List<Work> list,  int intWorksId, string strNote)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpLoad);
+                objIData.AddParameter("@WORKSID",intWorksId);
+                objIData.AddParameter("@NOTE",strNote);
+
+                Work objWorks;
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    objWorks = new Work();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWorks.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWorks.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWorks.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWorks.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorks.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+           
+                    list.Add(objWorks);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin công việc lien quan", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa cong viec lien quan
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string strDeleteUser, int strWorksID)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                DeleteWork(objIData,strDeleteUser, strWorksID);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa Works", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorks -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Xóa cong viec lien quan
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        protected void DeleteWork(IData objIData,string strDeleteUser, int intWorksID)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDel);
+                objIData.AddParameter("@WORKSID", intWorksID);
+                objIData.AddParameter("@DELETEDUSER", strDeleteUser);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        /// <summary>
+        /// Load all cong viec lien quan
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        public ResultMessage LoadAllInvole(ref List<Work> list)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpLoadAll);
+                Work objWorks;
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    objWorks = new Work();
+                    if (!Convert.IsDBNull(reader["WORKSID"])) objWorks.WorksId = Convert.ToInt32(reader["WORKSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSNAME"])) objWorks.WorksName = Convert.ToString(reader["WORKSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["STARTDATE"])) objWorks.StartDate = Convert.ToDateTime(reader["STARTDATE"]);
+                    if (!Convert.IsDBNull(reader["ENDDATE"])) objWorks.EndDate = Convert.ToDateTime(reader["ENDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorks.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+
+                    list.Add(objWorks);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin công việc lien quan", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_Works -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSearch = "EO_WORKS_V2_SHR";
+        public const string SpAdd = "WORKSSUPPORT_WORK_V2_ADD";
+        public const string SpLoad = "WORKSSUPPORT_WORK_V2_Load";
+        public const string SpDel = "WORKSSUPPORT_WORK_V2_DEL";
+        public const string SpLoadAll = "WORKSSUPPORT_WORK_V2_LOADALL";
+
+        #endregion
+    }
+}

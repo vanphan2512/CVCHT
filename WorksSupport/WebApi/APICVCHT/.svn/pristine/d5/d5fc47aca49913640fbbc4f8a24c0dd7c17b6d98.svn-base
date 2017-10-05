@@ -1,0 +1,170 @@
+﻿using Nc.Erp.WorksSupport.Do.Configuration.Project;
+
+using System;
+using System.Collections.Generic;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.WorksSupport
+{
+    /// <summary>
+    /// Created by 		: Luong Trung Nhan
+    /// Created date 	: 15/06/2017
+    /// Công việc cần hỗ trợ
+    /// </summary>	
+    public class WorkSupport
+    {
+        public int WorksSupportId { get; set; }
+        public int WorksSupportTypeId { get; set; }
+        public string WorksSupportName { get; set; }
+        public string Content { get; set; }
+        public int WorksSupportStatusId { get; set; }
+        public DateTime ExpectedCompletedDate { get; set; }
+        public DateTime CompletedDate { get; set; }
+        public int Currentprogress { get; set; }
+        public string CreatedUser { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public int AttachmentFileCount { get; set; }
+        public int WorksSupportGroupId { get; set; }
+        public int WorksSupportPriorityId { get; set; }
+        public string WorksSupportQualityNode { get; set; }
+        public int WorksSupportQualityId { get; set; }
+        public string SolutionContent { get; set; }
+
+        public string SolutionUser { get; set; }
+        public DateTime? SolutionDate { get; set; }
+
+        public string SolutionUserPictureUrl { get; set; }
+        // ten trang thai
+        public string IsinitStatus { get; set; }
+        public bool IsCompleteStatus { get; set; }
+        // tong nhom cong viec trong du an
+        public int SumGroup { get; set; }
+        // tong cong viec trong du an 
+        public int SumWorks { get; set; }
+        // tong nhan luc trong du an
+        public int SumPerson { get; set; }
+        // trang thai cong viec trong du an
+        public int SumStatus { get; set; }
+        public int KhoiTao { get; set; }
+        public int XuLy { get; set; }
+        public int TreHan { get; set; }
+        public int HoanTat { get; set; }
+        // Loai cong viec 
+        public int PeriodId { get; set; }
+
+        public string WorkSupportStatusName { get; set; }
+        public string WorkSupportPriorityName { get; set; }
+        public string WorkSupportPriorityColor { get; set; }
+
+        // Danh sách công việc liên quan
+        public List<WorksInvole> ListWorksInvole { get; set; }
+
+        //Danh sách tập tin đính kèm công việc cần hỗ trợ
+        public List<WorksSupportAttachment> ListWorksSupportAttachment { get; set; }
+        
+        //Tiến độ công việc cần hỗ trợ
+        public List<WorksSupportProgress> ListWorksSupportProgressHistory { get; set; }
+
+        public List<WorksSupportWorkflow> ListWorksSupportWorkFlow { get; set; }
+
+        //Danh sách lịch sử bình luận công việc cần hỗ trợ
+        public List<WorksSupportComment> ListWorksSupportComment { get; set; }
+
+        public List<WorksSupportSolutionAttachment> ListWorksSupportSolutionAttachment { get; set; }
+        
+        //Danh sách lịch sử bình luận công việc cần hỗ trợ
+
+        #region Member Variables
+        private int intWorksSupportStepId;
+        private int intNextWorksSupportStepId;
+        private string strProcessUser = string.Empty;
+        private string strWorksSupportStepName = string.Empty;
+        private string strNote = string.Empty;
+        private int intWorksSupportId;
+
+        #endregion
+        #region Properties
+        public string CreateDate { get; set; }
+        public int WorksSupportStepId
+        {
+            get { return intWorksSupportStepId; }
+            set { intWorksSupportStepId = value; }
+        }
+        public string WorksSupportStepName
+        {
+            get { return strWorksSupportStepName; }
+            set { strWorksSupportStepName = value; }
+        }
+        public int NextWorksSupportStepId
+        {
+            get { return intNextWorksSupportStepId; }
+            set { intNextWorksSupportStepId = value; }
+        }
+        public string ProcessUser
+        {
+            get { return strProcessUser; }
+            set { strProcessUser = value; }
+        }
+        public string Note
+        {
+            get { return strNote; }
+            set { strNote = value; }
+        }
+        public int IntWorksSupportId
+        {
+            get { return intWorksSupportId; }
+            set { intWorksSupportId = value; }
+        }
+        #endregion
+        #region Constructor
+
+		#endregion
+        #region Column Names
+        public const String colWorksSupportId = "WORKSSUPPORTID";
+        public const String colWorksSupportStepId = "WORKSSUPPORTSTEPID";
+        public const String colNextWorksSupportStepId = "NEXTWORKSSUPPORTSTEPID";
+        public const String colProcessUser = "PROCESSUSER";
+        public const String colWorksSupportStepName = "WORKSSUPPORTSTEPNAME";
+        public const String colNote = "NOTE";
+        #endregion
+    }
+
+    public class WorksSupportProcess
+    {
+        public List<WorksSupportNextStep> ListWorksSupportNextStep { get; set; }
+
+        public List<WorksSupportNextStep> ListWorksSupportMemberPermission { get; set; }  
+    }
+
+    public class WorksSupportNextStep
+    {
+        public int NextWorksSupportStepId { get; set; }
+        public string WorksSupportStepName { get; set; }
+        public bool IsMustChooseProcessUser { get; set; }
+
+    }
+
+    public class WorksSupportMemberPermission
+    {
+        public int WorksSupportMemberRoleId { get; set; }
+        public int WorksSupportMemberUserName { get; set; }
+        public int WorksSupportMemberFullName{ get; set; }
+    }
+
+    public class WorksSupport
+    {
+        public int WorksSupportId { get; set; }
+        public string WorksSupportName { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public int Currentprogress { get; set; }
+        public string WorksSupportStatusName { get; set; }
+        public int TotalRow { get; set; }
+        public DateTime? ExpectedCompletedDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
+        public int AttachmentFileCount { get; set; }
+        public string Content { get; set; }
+        public int WorksSupportPriorityId { get; set; }
+        public List<WorksInvole> ListWorksInvole { get; set; }
+        public List<WorksSupportAttachment> ListWorksSupportAttachment { get; set; }
+        public bool IsCanProcessWorkFlow {get; set;}
+    }
+}

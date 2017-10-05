@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Nc.Erp.WorksSupport.Api.Models.Work
+{
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SearchParam
+    {
+        public string ProjectIds { get; set; }
+        public string Keywords { get; set; }
+        public int TypeSearch { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+    }
+    public class SaveWS_Works
+    {
+        public int WorksSupportId { get; set; }
+        public List<int> WorksId { get; set; }
+        public string Note { get; set; }
+    }
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SearchInvoleParam
+    {
+        public List<int> WorksId { get; set; }
+        public List<string> Note { get; set; }
+    }
+    /// <summary>
+    /// Deleted param
+    /// </summary>
+    public class DeletedInvoleParam
+    {
+        // Id cong viec
+        public int WorkInvoleId { get; set; }
+        // Id cong viec lien quan
+        public int WorksId { get; set; }
+       
+    }
+
+    public class WorksPermissionParam
+    {
+        public int WorksGroupId { get; set; }
+        public string User { get; set; }
+    }
+
+    public class WorksSupportNextStepPermissionParam
+    {
+        public int WorksSupportId { get; set; }
+        public string User { get; set; }
+    }
+
+}

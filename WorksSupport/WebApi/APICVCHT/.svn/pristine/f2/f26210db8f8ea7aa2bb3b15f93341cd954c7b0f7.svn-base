@@ -1,0 +1,1910 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="GetAutoUserName">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAutoUserNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAutoUserNameResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="strResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ResultMessage">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsError" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorType" type="tns:ErrorTypes" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MessageDetail" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ErrorTypes">
+        <s:restriction base="s:string">
+          <s:enumeration value="No_Error" />
+          <s:enumeration value="LoadInfo" />
+          <s:enumeration value="Insert" />
+          <s:enumeration value="Update" />
+          <s:enumeration value="Delete" />
+          <s:enumeration value="SearchData" />
+          <s:enumeration value="GetData" />
+          <s:enumeration value="InvalidIV" />
+          <s:enumeration value="TokenNotExist" />
+          <s:enumeration value="TokenInvalid" />
+          <s:enumeration value="CheckData" />
+          <s:enumeration value="Others" />
+          <s:enumeration value="UserDefine" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="LoadInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUser" type="tns:User" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="User">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="WorkingStatusID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsCreatedEmployee" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsAutoGenID" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="SigNaturePictureFileID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DefaultPictureFileID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Gender" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Birthday" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MOBI" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DepartmentID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PositionID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="AreaID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BankAccountID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="IDCard" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="BeginWorkDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="WorkStoreID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SIGNATUREPICTURE" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DefaultPICTUREURL" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsGroupUser" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsActive" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsSystem" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="CreatedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CreatedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpdatedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="UpdatedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsDeleted" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="DeletedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeletedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsAutoAddCumulationTimeoffDays" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="WorkingPositionID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsRealStaff" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Customer">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="CustomerID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CustomerTypeID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TaxCustomerName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TaxCustomerAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerTaxID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerMobile" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerFax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerWebsite" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomerIDCard" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TotalEmployees" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="AnnualRevenue" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="IndustryID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Anniversary" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="LogoURL" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsLockPurchaseOrder" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsLockInput" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsLockOutputReturn" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsDefault" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsActive" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsSystem" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="CreatedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CreatedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpdatedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="UpdatedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsDeleted" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="DeletedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeletedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="CRMCustomerID" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LoadInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoadInfoResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUser" type="tns:User" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataCompany">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataCompanyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataCompanyResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataCompanyUser_UserGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataCompanyUser_UserGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataCompanyUser_UserGroupResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_Module">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_ModuleResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUser_ModuleResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_Store">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_StoreResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUser_StoreResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_UserGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_UserGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUser_UserGroupResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserMainGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserMainGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserMainGroupResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserPriceArea">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserPriceAreaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserPriceAreaResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserTypeResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserInputType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserInputTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserInputTypeResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserOutputType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserOutputTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserOutputTypeResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserPayableType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserPayableTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserPayableTypeResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserVoucherType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserVoucherTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserVoucherTypeResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserWorkingShift">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUserWorkingShiftResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUserWorkingShiftResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_SubGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataUser_SubGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataUser_SubGroupResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUser" type="tns:User" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUser_UserGroup">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserModule">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserStore">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserMainGroup">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserPriceArea">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserCompany">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserInputType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserOutputType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserPayableType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserVoucherType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserWorkingShift">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserDepartment">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUser_SubGroup">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệResult" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUser" type="tns:User" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUser_UserGroup">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserModule">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserStore">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserMainGroup">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserPriceArea">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserCompany">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserInputType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserOutputType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserPayableType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserVoucherType">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserWorkingShift">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserDepartment">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="dtbUserSubGroup">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệResult" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Delete">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objUser" type="tns:User" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteResult" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchData_Department">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="1" maxOccurs="1" name="departmentID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchData_DepartmentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchData_DepartmentResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InsertUser_FingerPrint">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="lstUser_FingerPrint" type="tns:ArrayOfUser_FingerPrint" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfUser_FingerPrint">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="User_FingerPrint" nillable="true" type="tns:User_FingerPrint" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="User_FingerPrint">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="FingerPrintTypeID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="FingerPrintData" type="s:base64Binary" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsActive" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsSystem" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="CreatedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CreatedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpdatedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="UpdatedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsDeleted" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="DeletedUser" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeletedDate" nillable="true" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="InsertUser_FingerPrintResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InsertUser_FingerPrintResult" type="tns:ResultMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchData_UserDepartment_Function">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="strUserName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchData_UserDepartment_FunctionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchData_UserDepartment_FunctionResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchDataFromStore">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="strStore" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="keywords" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAnyType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="anyType" nillable="true" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SearchDataFromStoreResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchDataFromStoreResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetActionType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetActionTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetActionTypeResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataFromListParamter">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtb">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="strReportStoreName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="listParameter" type="tns:ArrayOfParameter" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfParameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Parameter" nillable="true" type="tns:Parameter" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Parameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateTimeValue" nillable="true" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetDataFromListParamterResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataFromListParamterResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtb">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchDataLog">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="0" maxOccurs="1" name="keywords" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchDataLogResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchDataLogResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="tblResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNextUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strAuthenData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strNextUser" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNextUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetNextUserResult" type="tns:ResultMessage" />
+            <s:element minOccurs="0" maxOccurs="1" name="strNextUser" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetAutoUserNameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAutoUserName" />
+  </wsdl:message>
+  <wsdl:message name="GetAutoUserNameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAutoUserNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="LoadInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:LoadInfo" />
+  </wsdl:message>
+  <wsdl:message name="LoadInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:LoadInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataCompanySoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataCompany" />
+  </wsdl:message>
+  <wsdl:message name="GetDataCompanySoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataCompanyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataCompanyUser_UserGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataCompanyUser_UserGroup" />
+  </wsdl:message>
+  <wsdl:message name="GetDataCompanyUser_UserGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataCompanyUser_UserGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_ModuleSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUser_Module" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_ModuleSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUser_ModuleResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_StoreSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUser_Store" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_StoreSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUser_StoreResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_UserGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUser_UserGroup" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_UserGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUser_UserGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserMainGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserMainGroup" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserMainGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserMainGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserPriceAreaSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserPriceArea" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserPriceAreaSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserPriceAreaResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserType" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserInputTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserInputType" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserInputTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserInputTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserOutputTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserOutputType" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserOutputTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserOutputTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserPayableTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserPayableType" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserPayableTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserPayableTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserVoucherTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserVoucherType" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserVoucherTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserVoucherTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserWorkingShiftSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUserWorkingShift" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUserWorkingShiftSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUserWorkingShiftResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_SubGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataUser_SubGroup" />
+  </wsdl:message>
+  <wsdl:message name="GetDataUser_SubGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataUser_SubGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapIn">
+    <wsdl:part name="parameters" element="tns:Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ" />
+  </wsdl:message>
+  <wsdl:message name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapOut">
+    <wsdl:part name="parameters" element="tns:Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệResponse" />
+  </wsdl:message>
+  <wsdl:message name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapIn">
+    <wsdl:part name="parameters" element="tns:Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ" />
+  </wsdl:message>
+  <wsdl:message name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapOut">
+    <wsdl:part name="parameters" element="tns:Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSoapIn">
+    <wsdl:part name="parameters" element="tns:Delete" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchData_DepartmentSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchData_Department" />
+  </wsdl:message>
+  <wsdl:message name="SearchData_DepartmentSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchData_DepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="InsertUser_FingerPrintSoapIn">
+    <wsdl:part name="parameters" element="tns:InsertUser_FingerPrint" />
+  </wsdl:message>
+  <wsdl:message name="InsertUser_FingerPrintSoapOut">
+    <wsdl:part name="parameters" element="tns:InsertUser_FingerPrintResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchData_UserDepartment_FunctionSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchData_UserDepartment_Function" />
+  </wsdl:message>
+  <wsdl:message name="SearchData_UserDepartment_FunctionSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchData_UserDepartment_FunctionResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchDataFromStoreSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchDataFromStore" />
+  </wsdl:message>
+  <wsdl:message name="SearchDataFromStoreSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchDataFromStoreResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetActionTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetActionType" />
+  </wsdl:message>
+  <wsdl:message name="GetActionTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetActionTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDataFromListParamterSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDataFromListParamter" />
+  </wsdl:message>
+  <wsdl:message name="GetDataFromListParamterSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDataFromListParamterResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchDataLogSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchDataLog" />
+  </wsdl:message>
+  <wsdl:message name="SearchDataLogSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchDataLogResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetNextUserSoapIn">
+    <wsdl:part name="parameters" element="tns:GetNextUser" />
+  </wsdl:message>
+  <wsdl:message name="GetNextUserSoapOut">
+    <wsdl:part name="parameters" element="tns:GetNextUserResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WSUserSoap">
+    <wsdl:operation name="GetAutoUserName">
+      <wsdl:input message="tns:GetAutoUserNameSoapIn" />
+      <wsdl:output message="tns:GetAutoUserNameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LoadInfo">
+      <wsdl:input message="tns:LoadInfoSoapIn" />
+      <wsdl:output message="tns:LoadInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataCompany">
+      <wsdl:input message="tns:GetDataCompanySoapIn" />
+      <wsdl:output message="tns:GetDataCompanySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataCompanyUser_UserGroup">
+      <wsdl:input message="tns:GetDataCompanyUser_UserGroupSoapIn" />
+      <wsdl:output message="tns:GetDataCompanyUser_UserGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_Module">
+      <wsdl:input message="tns:GetDataUser_ModuleSoapIn" />
+      <wsdl:output message="tns:GetDataUser_ModuleSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_Store">
+      <wsdl:input message="tns:GetDataUser_StoreSoapIn" />
+      <wsdl:output message="tns:GetDataUser_StoreSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_UserGroup">
+      <wsdl:input message="tns:GetDataUser_UserGroupSoapIn" />
+      <wsdl:output message="tns:GetDataUser_UserGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserMainGroup">
+      <wsdl:input message="tns:GetDataUserMainGroupSoapIn" />
+      <wsdl:output message="tns:GetDataUserMainGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserPriceArea">
+      <wsdl:input message="tns:GetDataUserPriceAreaSoapIn" />
+      <wsdl:output message="tns:GetDataUserPriceAreaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserType">
+      <wsdl:input message="tns:GetDataUserTypeSoapIn" />
+      <wsdl:output message="tns:GetDataUserTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserInputType">
+      <wsdl:input message="tns:GetDataUserInputTypeSoapIn" />
+      <wsdl:output message="tns:GetDataUserInputTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserOutputType">
+      <wsdl:input message="tns:GetDataUserOutputTypeSoapIn" />
+      <wsdl:output message="tns:GetDataUserOutputTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserPayableType">
+      <wsdl:input message="tns:GetDataUserPayableTypeSoapIn" />
+      <wsdl:output message="tns:GetDataUserPayableTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserVoucherType">
+      <wsdl:input message="tns:GetDataUserVoucherTypeSoapIn" />
+      <wsdl:output message="tns:GetDataUserVoucherTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserWorkingShift">
+      <wsdl:input message="tns:GetDataUserWorkingShiftSoapIn" />
+      <wsdl:output message="tns:GetDataUserWorkingShiftSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_SubGroup">
+      <wsdl:input message="tns:GetDataUser_SubGroupSoapIn" />
+      <wsdl:output message="tns:GetDataUser_SubGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Insert">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Insert All</wsdl:documentation>
+      <wsdl:input name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ" message="tns:Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapIn" />
+      <wsdl:output name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ" message="tns:Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update All</wsdl:documentation>
+      <wsdl:input name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ" message="tns:Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapIn" />
+      <wsdl:output name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ" message="tns:Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <wsdl:input message="tns:DeleteSoapIn" />
+      <wsdl:output message="tns:DeleteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchData_Department">
+      <wsdl:input message="tns:SearchData_DepartmentSoapIn" />
+      <wsdl:output message="tns:SearchData_DepartmentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertUser_FingerPrint">
+      <wsdl:input message="tns:InsertUser_FingerPrintSoapIn" />
+      <wsdl:output message="tns:InsertUser_FingerPrintSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchData_UserDepartment_Function">
+      <wsdl:input message="tns:SearchData_UserDepartment_FunctionSoapIn" />
+      <wsdl:output message="tns:SearchData_UserDepartment_FunctionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchDataFromStore">
+      <wsdl:input message="tns:SearchDataFromStoreSoapIn" />
+      <wsdl:output message="tns:SearchDataFromStoreSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetActionType">
+      <wsdl:input message="tns:GetActionTypeSoapIn" />
+      <wsdl:output message="tns:GetActionTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDataFromListParamter">
+      <wsdl:input message="tns:GetDataFromListParamterSoapIn" />
+      <wsdl:output message="tns:GetDataFromListParamterSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchDataLog">
+      <wsdl:input message="tns:SearchDataLogSoapIn" />
+      <wsdl:output message="tns:SearchDataLogSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNextUser">
+      <wsdl:input message="tns:GetNextUserSoapIn" />
+      <wsdl:output message="tns:GetNextUserSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSUserSoap" type="tns:WSUserSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAutoUserName">
+      <soap:operation soapAction="http://tempuri.org/GetAutoUserName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoadInfo">
+      <soap:operation soapAction="http://tempuri.org/LoadInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataCompany">
+      <soap:operation soapAction="http://tempuri.org/GetDataCompany" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataCompanyUser_UserGroup">
+      <soap:operation soapAction="http://tempuri.org/GetDataCompanyUser_UserGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_Module">
+      <soap:operation soapAction="http://tempuri.org/GetDataUser_Module" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_Store">
+      <soap:operation soapAction="http://tempuri.org/GetDataUser_Store" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_UserGroup">
+      <soap:operation soapAction="http://tempuri.org/GetDataUser_UserGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserMainGroup">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserMainGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserPriceArea">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserPriceArea" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserType">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserInputType">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserInputType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserOutputType">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserOutputType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserPayableType">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserPayableType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserVoucherType">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserVoucherType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserWorkingShift">
+      <soap:operation soapAction="http://tempuri.org/GetDataUserWorkingShift" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_SubGroup">
+      <soap:operation soapAction="http://tempuri.org/GetDataUser_SubGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Insert">
+      <soap:operation soapAction="http://tempuri.org/Thêm mới tất cả các table quan hệ" style="document" />
+      <wsdl:input name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap:operation soapAction="http://tempuri.org/Update Tất cả các table quan hệ" style="document" />
+      <wsdl:input name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <soap:operation soapAction="http://tempuri.org/Delete" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchData_Department">
+      <soap:operation soapAction="http://tempuri.org/SearchData_Department" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertUser_FingerPrint">
+      <soap:operation soapAction="http://tempuri.org/InsertUser_FingerPrint" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchData_UserDepartment_Function">
+      <soap:operation soapAction="http://tempuri.org/SearchData_UserDepartment_Function" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchDataFromStore">
+      <soap:operation soapAction="http://tempuri.org/SearchDataFromStore" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetActionType">
+      <soap:operation soapAction="http://tempuri.org/GetActionType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataFromListParamter">
+      <soap:operation soapAction="http://tempuri.org/GetDataFromListParamter" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchDataLog">
+      <soap:operation soapAction="http://tempuri.org/SearchDataLog" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNextUser">
+      <soap:operation soapAction="http://tempuri.org/GetNextUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WSUserSoap12" type="tns:WSUserSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAutoUserName">
+      <soap12:operation soapAction="http://tempuri.org/GetAutoUserName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoadInfo">
+      <soap12:operation soapAction="http://tempuri.org/LoadInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataCompany">
+      <soap12:operation soapAction="http://tempuri.org/GetDataCompany" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataCompanyUser_UserGroup">
+      <soap12:operation soapAction="http://tempuri.org/GetDataCompanyUser_UserGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_Module">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUser_Module" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_Store">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUser_Store" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_UserGroup">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUser_UserGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserMainGroup">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserMainGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserPriceArea">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserPriceArea" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserType">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserInputType">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserInputType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserOutputType">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserOutputType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserPayableType">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserPayableType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserVoucherType">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserVoucherType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUserWorkingShift">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUserWorkingShift" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataUser_SubGroup">
+      <soap12:operation soapAction="http://tempuri.org/GetDataUser_SubGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Insert">
+      <soap12:operation soapAction="http://tempuri.org/Thêm mới tất cả các table quan hệ" style="document" />
+      <wsdl:input name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Thêm_x0020_mới_x0020_tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap12:operation soapAction="http://tempuri.org/Update Tất cả các table quan hệ" style="document" />
+      <wsdl:input name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="Update_x0020_Tất_x0020_cả_x0020_các_x0020_table_x0020_quan_x0020_hệ">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <soap12:operation soapAction="http://tempuri.org/Delete" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchData_Department">
+      <soap12:operation soapAction="http://tempuri.org/SearchData_Department" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertUser_FingerPrint">
+      <soap12:operation soapAction="http://tempuri.org/InsertUser_FingerPrint" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchData_UserDepartment_Function">
+      <soap12:operation soapAction="http://tempuri.org/SearchData_UserDepartment_Function" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchDataFromStore">
+      <soap12:operation soapAction="http://tempuri.org/SearchDataFromStore" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetActionType">
+      <soap12:operation soapAction="http://tempuri.org/GetActionType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDataFromListParamter">
+      <soap12:operation soapAction="http://tempuri.org/GetDataFromListParamter" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchDataLog">
+      <soap12:operation soapAction="http://tempuri.org/SearchDataLog" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNextUser">
+      <soap12:operation soapAction="http://tempuri.org/GetNextUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSUser">
+    <wsdl:port name="WSUserSoap" binding="tns:WSUserSoap">
+      <soap:address location="http://erpmasterdataservices.nc.com/SYS/WSUser.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WSUserSoap12" binding="tns:WSUserSoap12">
+      <soap12:address location="http://erpmasterdataservices.nc.com/SYS/WSUser.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,84 @@
+﻿using Library.DataAccess;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    public class DaWorksSupportSolutionAttachment
+    {
+        public Library.WebCore.LogObject objLogObject = new Library.WebCore.LogObject();
+
+        #region Methods
+        /// <summary>
+        /// Thêm file đính kèm cho bình luận công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupport_CMT_Attachment">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        public void InsertComment(IData objIData, WorksSupportCommentAttachment objWorksSupportCommentAttachment, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_ADD);
+                objIData.AddParameter("@COMMENTID", objWorksSupportCommentAttachment.CommentId);
+                objIData.AddParameter("@COMMENTDATE" , objWorksSupportCommentAttachment.CommentDate);
+                objIData.AddParameter("@FILEPATH", objWorksSupportCommentAttachment.FilePath);
+                objIData.AddParameter("@FILENAME", objWorksSupportCommentAttachment.FileName);
+                objIData.AddParameter("@FILEID", objWorksSupportCommentAttachment.FileId);
+                objIData.AddParameter("@CREATEDUSER", user);
+                
+                objIData.ExecNonQuery();
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                throw (objEx);
+            }
+        }
+
+        /// <summary>
+        /// Nạp danh sách file đính kèm của bình luận công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupport_CMT_Attachment">Đối tượng trả về</param>
+        /// <returns>Kết quả trả về</returns>
+        public List<WorksSupportCommentAttachment> GetListCommentAttachment(IData objIData, string commentId)
+        {
+            List<WorksSupportCommentAttachment> lstCommentAttachment = new List<WorksSupportCommentAttachment>();
+            try
+            {
+                objIData.CreateNewStoredProcedure(SP_SELECT);
+                objIData.AddParameter("@COMMENTID" , commentId);
+                IDataReader readerComment = objIData.ExecStoreToDataReader();
+                WorksSupportCommentAttachment objWorksSupportCommentAttachment = null;
+                while (readerComment.Read())
+                {
+                    objWorksSupportCommentAttachment = new WorksSupportCommentAttachment();
+                    if (!Convert.IsDBNull(readerComment["ATTACHMENTID"])) objWorksSupportCommentAttachment.AttachmentId = Convert.ToInt32(readerComment["ATTACHMENTID"]);
+                    if (!Convert.IsDBNull(readerComment["COMMENTID"])) objWorksSupportCommentAttachment.CommentId = Convert.ToInt32(readerComment["COMMENTID"]);
+                    if (!Convert.IsDBNull(readerComment["COMMENTDATE"])) objWorksSupportCommentAttachment.CommentDate = Convert.ToDateTime(readerComment["COMMENTDATE"]);
+                    if (!Convert.IsDBNull(readerComment["FILEPATH"])) objWorksSupportCommentAttachment.FilePath = Convert.ToString(readerComment["FILEPATH"]).Trim();
+                    if (!Convert.IsDBNull(readerComment["FILENAME"])) objWorksSupportCommentAttachment.FileName = Convert.ToString(readerComment["FILENAME"]).Trim();
+                    if (!Convert.IsDBNull(readerComment["FILEID"])) objWorksSupportCommentAttachment.FileId = Convert.ToInt32(readerComment["FILEID"]);
+                    lstCommentAttachment.Add(objWorksSupportCommentAttachment);
+                }
+                readerComment.Close();
+                return lstCommentAttachment;
+            }
+            catch (Exception objEx)
+            {
+                return lstCommentAttachment;
+                throw (objEx);
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const String SP_ADD = "WS_CMT_ATTACHMENT_V2_ADD";
+        public const String SP_SELECT = "WS_CMT_ATTACHMENT_V2_SRH";
+
+        #endregion
+    }
+}

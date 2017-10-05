@@ -1,0 +1,31 @@
+CREATE OR REPLACE PROCEDURE ERP.WORKSSUPPORTGROUP_V2_MEMBERS
+/*
+	CREATED BY	:	Nguyen Van Huan
+	DATE		:	29.06.2017
+	DESCRIPTION	:	lay tat ca thanh vien trong nhom cong viec
+*/
+(	 
+  V_WORKSGROUPID IN EO_WORKSSUPPORTGROUP_MEMBER.WORKSSUPPORTGROUPID%TYPE,
+  V_OUT OUT SYS_REFCURSOR
+)
+AS
+BEGIN
+ OPEN V_OUT FOR
+SELECT SU.USERNAME
+      , SU.FULLNAME
+      , SU.DEFAULTPICTUREURL
+      , SD.DEPARTMENTNAME
+      , EWMR.WORKSSUPPORTMEMBERROLEID
+      , EWMR.WORKSSUPPORTMEMBERROLENAME 
+      , EWSG.ISAUTOADDMEMBERTOWORKSSUPPORT 
+    FROM ERP.EO_WORKSSUPPORTGROUP_MEMBER EWSG
+    LEFT JOIN ERP.EO_WORKSSUPPORTMEMBERROLE EWMR ON EWSG.WORKSSUPPORTMEMBERROLEID = EWMR.WORKSSUPPORTMEMBERROLEID 
+    LEFT JOIN ERP.SYS_USER SU ON EWSG.MEMBERUSERNAME = SU.USERNAME 
+    LEFT JOIN ERP.SYS_DEPARTMENT SD ON SD.DEPARTMENTID = SU.DEPARTMENTID
+    WHERE  
+       (EWMR.ISDELETED =0 OR EWMR.isdeleted IS NULL) AND  (SU.ISDELETED =0 OR SU.isdeleted IS NULL) AND
+       (SD.ISDELETED =0 OR SD.isdeleted IS NULL)  AND  (EWMR.ISDELETED =0  OR EWMR.isdeleted IS NULL) AND
+       (EWSG.ISDELETED =0 OR EWSG.isdeleted IS NULL) AND EWSG.WORKSSUPPORTGROUPID =  V_WORKSGROUPID
+ ;                                                                                                                                                                                                                                                                                                                                                                    
+END;
+/

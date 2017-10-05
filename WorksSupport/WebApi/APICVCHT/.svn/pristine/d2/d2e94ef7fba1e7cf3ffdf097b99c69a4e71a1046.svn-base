@@ -1,0 +1,71 @@
+﻿using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models;
+using Nc.Erp.WorksSupport.Api.Models.Work;
+using Nc.Erp.WorksSupport.Api.Providers;
+using Nc.Erp.WorksSupport.Da.Configuration.Works;
+using Nc.Erp.WorksSupport.Do.Configuration.Work;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using Library.Common;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    [RoutePrefix("api/v2/files")]
+    public class FileController : ApiController
+    {
+        [HttpPost]
+        [Route("")]
+        public async Task<Response<FileUpload>> UploadFile()
+        {
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+//            IResponseData<IList<FileUploadResponse>> response = new ResponseData<IList<FileUploadResponse>>();
+            try
+            {
+
+                Library.Common.ERPFMSServices_WSFileManager.UploadFile objUploadFile = new Library.Common.ERPFMSServices_WSFileManager.UploadFile();
+//                objUploadFile.BufferFile = DateTimeProcessor.ReadFile(StorageRoot + FileName[0]);
+//                objUploadFile.FileName = FileName[0];
+                objUploadFile.FMSApplicationID = System.Configuration.ConfigurationManager.AppSettings["FMSAplication_WorksSupport_Document"];
+
+//                Library.Common.ERPFMSServices_WSFileManager.ResultMessage objR = new Library.Common.PLCFileManager().UploadFileNews(objUploadFile, ref strFileID, ref strFilePath);
+
+//                IFileService service = IoC.Container.Resolve<IFileService>();
+//                IList<FileUploadResponse> fileUploadResponse = service.UploadFiles(provider.FileData);
+//                response.SetData(fileUploadResponse);
+            }
+            catch (ValidationException ex)
+            {
+//                response.SetErrors(ex.Value);
+//                response.SetStatus(System.Net.HttpStatusCode.PreconditionFailed);
+            }
+            return null;
+        }
+
+
+        [HttpGet]
+        [Route("{id}/thumbnail/{size?}")]
+        public HttpResponseMessage CreateThumbnail(Guid id, ThumbnailSize size = ThumbnailSize.Medium)
+        {
+//            IFileService service = IoC.Container.Resolve<IFileService>();
+//            Bitmap bitmap = service.GetThumbnail(id, size);
+//            byte[] imageContent = ImageHelper.GetContent(bitmap);
+//
+//            MemoryStream ms = new MemoryStream(imageContent);
+//            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+//            response.Content = new StreamContent(ms);
+//            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+//            return response;
+            return null;
+        }
+
+        
+	}
+}

@@ -1,0 +1,113 @@
+﻿using Library.Common.ERPFMSServices_WSFileManager;
+using System;
+using WebClientAuthen;
+
+namespace Library.Common
+{
+    public class PlcFileManager
+    {
+        private readonly string wsHostName = System.Configuration.ConfigurationManager.AppSettings["WSHost_ERPFMSServices"];
+
+        private const string WsHostPath = "WSFileManager.asmx";
+
+        public const string WsHostPathCmsWebContent = "WSFileManager.asmx";
+
+        private WSFileManager objWsFileManager;
+
+        public WSFileManager ObjWsFileManagerCms;
+
+        private WSFileManager WsFileManager
+        {
+            get
+            {
+                if (this.objWsFileManager != null) return this.objWsFileManager;
+                this.objWsFileManager =
+                    new WSFileManager
+                        {
+                            Url = RDAuthorize.GetWSHostUrl(this.wsHostName)
+                                  + WsHostPath
+                        };
+                return this.objWsFileManager;
+            }
+        }
+
+        public ResultMessage UploadFile(UploadFile objUploadFile, ref string strFileId, ref string strFilePath, string userName, string passWord, string strUrlLogPath = "")
+        {
+            var objResultMessage = new ResultMessage();
+
+            try
+            {
+                var webSessionUser = RDAuthorize.Login(userName, passWord, false);
+                if (webSessionUser == null)
+                    return null;
+                var strAuthenData = RDAuthorize.GetAuthenData(this.wsHostName, webSessionUser);
+                var strGuid = RDAuthorize.GetGUID(this.wsHostName);
+
+                var strLogId = Guid.NewGuid().ToString();
+                WebCore.WebExecuteLog.LogStartExecuteTime(strGuid, strLogId, "InsertPrintLog", objUploadFile != null ? objUploadFile.ToString() : "");
+
+                objResultMessage = this.WsFileManager.UploadFile(strAuthenData, strGuid, objUploadFile, ref strFileId, ref strFilePath);
+                if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+                {
+                    RDAuthorize.SetUnhandshake(this.wsHostName);
+                    strAuthenData = RDAuthorize.GetAuthenData(this.wsHostName, webSessionUser);
+                    strGuid = RDAuthorize.GetGUID(this.wsHostName);
+                    objResultMessage = this.WsFileManager.UploadFile(strAuthenData, strGuid, objUploadFile, ref strFileId, ref strFilePath);
+                }
+
+                if (!string.IsNullOrEmpty(strUrlLogPath))
+                {
+                    WebCore.FileLogger.LogPath = System.IO.Path.Combine(strUrlLogPath, "LogInternalServerError.log");
+                    WebCore.FileLogger.LogAction("Loi upload hinh loai van ban Lỗi: " + objResultMessage.IsError + " \n Thông tin: " + objResultMessage.Message + " \n detail:" + objResultMessage.MessageDetail + " URL: " + this.WsFileManager.Url);
+                }
+            }
+            catch (Exception objEx)
+            {
+                SSOTransac_WSError.ResultMessage objResultMessageS = new SSOTransac_WSError.ResultMessage();
+                objResultMessageS.IsError = true;
+                objResultMessageS.Message = objEx.Source;
+                objResultMessageS.MessageDetail = objResultMessage.MessageDetail;
+            }
+            return objResultMessage;
+        }
+        public ResultMessage DownloadFile(ref DownloadFile objDownloadFile, string userName, string passWord, string log = "")
+        {
+            var objResultMessage = new ResultMessage();
+
+            try
+            {
+                var webSessionUser = RDAuthorize.Login(userName, passWord, false);
+                if (webSessionUser == null)
+                    return null;
+                var strAuthenData = RDAuthorize.GetAuthenData(this.wsHostName, webSessionUser);
+                var strGuid = RDAuthorize.GetGUID(this.wsHostName);
+
+                var strLogId = Guid.NewGuid().ToString();
+                WebCore.WebExecuteLog.LogStartExecuteTime(strGuid, strLogId, "InsertPrintLog", "");
+
+                objResultMessage = this.WsFileManager.DownloadFile(strAuthenData, strGuid, ref objDownloadFile);
+                if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+                {
+                    RDAuthorize.SetUnhandshake(this.wsHostName);
+                    strAuthenData = RDAuthorize.GetAuthenData(this.wsHostName, webSessionUser);
+                    strGuid = RDAuthorize.GetGUID(this.wsHostName);
+                    objResultMessage = this.WsFileManager.DownloadFile(strAuthenData, strGuid, ref objDownloadFile);
+                }
+
+                WebCore.FileLogger.LogPath = System.IO.Path.Combine(log, "LogInternalServerError.log");
+                WebCore.FileLogger.LogAction("Download tập tin đính kèm Lỗi: " + objResultMessage.IsError + " \n Thông tin: " + objResultMessage.Message + " \n: " + objDownloadFile.FileID + " Path: " + objDownloadFile.FilePath + " application: " + objDownloadFile.FMSApplicationID);
+            }
+            catch (Exception objEx)
+            {
+                new SSOTransac_WSError.ResultMessage
+                    {
+                        IsError = true,
+                        Message = objEx.Source,
+                        MessageDetail = objResultMessage.MessageDetail
+                    };
+            }
+            return objResultMessage;
+        }
+
+    }
+}

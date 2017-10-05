@@ -1,0 +1,767 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
+using WebLibs.Cached;
+using System.Web;
+using WebClientAuthen.SSOService.TokenAuthentication;
+using Library.DataAccess;
+
+namespace WebClientAuthen
+{
+    [Serializable]
+    public class WebSessionUser : SessionUserBO
+    {
+        private static object _lock = new object();
+
+        #region Các phương thức khởi tạo
+        public WebSessionUser(string strUName, string strPwd, bool bolIsCertificate)
+        {
+            this.UserName = strUName;
+            this.Password = strPwd;
+            this.IsCertificate = bolIsCertificate;
+        }
+
+        #endregion
+
+        private const int KEYLENGTH = 256;
+
+        #region public Enum
+
+        public enum ActionForm
+        {
+            DEFINATION_INPUTTYPE = 1,
+            DEFINATION_OUTPUTTYPE = 2,
+            DEFINATION_VOUCHERTYPE = 3,
+            DEFINATION_PAYABLETYPE = 4,
+            DEFINATION_CURRENCYUNIT = 5,
+            DEFINATION_DELIVERYTYPE = 6,
+            DEFINATION_DISCOUNTREASON = 7,
+            DEFINATION_ORDERTYPE = 8,
+            DEFINATION_SALEORDERTYPE = 9,
+            DEFINATION_AREA = 10,
+            DEFINATION_STORE = 11,
+            DEFINATION_CUSTOMERTYPE = 12,
+            DEFINATION_CUSTOMER = 13,
+            DEFINATION_BRAND = 14,
+            DEFINATION_MAINGROUP = 15,
+            DEFINATION_SUBGROUP = 16,
+            DEFINATION_PRODUCT = 17,
+            DEFINATION_AGE = 18,
+            DEFINATION_COUNTRY = 19,
+            DEFINATION_PROVINCE = 20,
+            DEFINATION_DISTRICT = 21,
+            DEFINATION_STOREGROUP = 22,
+            DEFINATION_STORETYPE = 23,
+            DEFINATION_CABINET = 24,
+            DEFINATION_CABINETROW = 25,
+            DEFINATION_CABINETROWSLOT = 26,
+            DEFINATION_MONEYCARD = 27,
+            //User
+            DEFINATION_FUNCTION = 28,
+            DEFINATION_POSITION = 29,
+            DEFINATION_DEPARTMENT = 30,
+            DEFINATION_MODULE = 31,
+            DEFINATION_FUNCTIONGROUP = 32,
+            DEFINATION_FUNCTIONCATEGORY = 33,
+            DEFINATION_USER = 34,
+            DEFINATION_QUANTITYUNIT = 35,
+            //Report
+            DEFINATION_REPORTTYPE = 36,
+            DEFINATION_REPORT = 37,
+            DEFINATION_CUSTOMERDISCOUNTRATE = 38,
+            DEFINATION_SHIFTSTAT = 39,
+            DEFINATION_SALEGROUP = 40,
+
+            //Account
+            MANAGER_BEGINTERMBALANCE = 41,
+
+            //Báo cáo
+            VIEWREPORT_INPUT = 42,
+            VIEWREPORT_OUTPUT = 43,
+            VIEWREPORT_STOCK = 44,
+            VIEWREPORT_STOREINSTOCK = 45,
+            VIEWREPORT_INOUTVOUCHER = 46,
+            VIEWREPORT_FIFO_GENERAL = 47,
+            VIEWREPORT_FIFO_DETAIL = 48,
+            VIEWREPORT_FIFO_MONTHLY = 49,
+            VIEWREPORT_FIFO_RECOMMEND_OUTPUT_IMEI = 50,
+            VIEWREPORT_PROVIDER_BUSINESS_SITUATION = 51,
+            VIEWREPORT_PRODUCT_STATUS_STOCK = 52,
+            VIEWREPORT_PRODUCT_STATUS_STOCK_DETAIL = 53,
+            VIEWREPORT_PROTECT_PRICE = 54,
+            VIEWREPORT_SALES_STATUS = 55,
+            VIEWREPORT_SALES_STATUS_DETAIL = 56,
+            VIEWREPORT_REWARD_BYSTAFF_USER = 57,
+            VIEWREPORT_LACK_PRODUCT = 58,
+            VIEWREPORT_LACK_PRODUCT_MONTHLY = 59,
+            VIEWREPORT_DAILY_SALES = 60,
+            VIEWREPORT_GENERAL_SALES = 61,
+            VIEWREPORT_STORE_STATISTICS = 62,
+
+            //SaleManager
+            DEFINATION_INOUTTYPE_PERMISSION = 63,
+            DEFINATION_MAINGROUP_PERMISSION = 64,
+            MANAGER_EXPORTDATA2ACCESS = 65,
+            MANAGER_BEGINTERMINSTOCK = 65,
+            MANAGER_DELIVERYNOTE = 66,
+            MANAGER_IMEI_HISTORY = 67,
+            MANAGER_CHECKSIM = 68,
+            MANAGER_INPUTVOUCHER = 69,
+            MANAGER_OUTPUTVOUCHER = 70,
+            MANAGER_AUTOSTORECHANGE = 71,
+            MANAGER_AUTOSPLITPRODUCT = 72,
+            DEFINATION_PRODUCTCHANGE = 73,
+            DEFINATION_STORECHANGE = 74,
+            MANAGER_PRODUCTCHANGE = 75,
+            MANAGER_STORECHANGE = 76,
+
+            //Account
+            DEFINATION_ACCCOUNTTYPE = 77,
+            DEFINATION_ACCOUNT = 78,
+            DEFINATION_ANALYSIS = 79,
+            DEFINATION_EXPENSETYPE = 80,
+            DEFINATION_DEPARTMENTACCOUNT = 81,
+            DEFINATION_EXPENSECONTENT = 82,
+            DEFINATION_REVIEWLEVEL = 83,
+            DEFINATION_TRANSACTIONTYPE = 84,
+            DEFINATION_TRANSACTION_USER = 85,
+            DEFINATION_ACCOUNTPERMISSION = 86,
+            MANAGER_AUTOUPDATE_BEGINTERM_BALANCE = 87,
+            MANAGER_AUTOUPDATE_MONTHLY_TRANSACTION = 88,
+            DEFINATION_INVOICEFORM = 89,
+            DEFINATION_REVIEWLEVEL_EXPENSECONTENT = 90,
+            DEFINATION_TAX = 91,
+            DEFINATION_ACCOUNTREPORT = 92,
+            DEFINATION_ACCOUNTREPORT_FORMULA = 93,
+            DEFINATION_ACCOUNTREPORT_TARGET = 94,
+
+            //PromotionManagement
+            DEFINATION_DISCOUNLEVEL = 95,
+            DEFINATION_DISCOUNLEVELBYPRICE = 96,
+            DEFINATION_DISCOUNLEVELSMSPRICE = 97,
+            MANAGER_SELECTPROMOTIONPRODUCT = 98,
+            MANAGER_SELECTPROMOTIONPROGRAM = 99,
+            MANAGER_PROMOTIONLISTGROUP = 100,
+            MANAGER_PROMOTIONMANAGER = 101,
+            MANAGER_UPDATEPROMOTIONINFO = 102,
+            MANAGER_EXPORTPROMOTIONINFO = 103,
+            MANAGER_PROMOTIONIREPORT = 104,
+            MANAGER_PROMOTIONIREPORTMANAGER = 105,
+            MANAGER_ADDSMSMESSAGEAPPORTION = 106,
+            MANAGER_BACKGROUPCONFIG = 107,
+            MANAGER_GRIFTAPPORTIONBYSMSCODE = 108,
+            MANAGER_QUICKSEARCHMESSAGEAPPORTION = 109,
+            MANAGER_SMSGRIFTAPPORTIONMANAGER = 110,
+            MANAGER_SMSAPPORTIONMANAGER = 111,
+            MANAGER_SMSPROMOTION = 112,
+            MANAGER_SMSREPLYMESSAGEMANAGER = 113,
+            MANAGER_TOUCHSCREEN = 114,
+            MANAGER_UPDATEREPLYMESSAGE = 115,
+            DEFINATION_APPLICATIONCONFIG = 116,
+            OTHER = 1000
+
+        }
+
+        public enum ActionType
+        {
+            ADD = 1,
+            EDIT = 2,
+            DELETE = 3,
+            VIEW = 4,
+            SEARCH = 5,
+            UPDATE = 6,
+            CORRECT = 7,
+            OTHER = 100
+        }
+
+        public enum PermissionResult
+        {
+            NOT_PERMISSION = 0,
+            NOT_ENOUGH_SECURITYLEVEL = 1,
+            PERMISSION = 2
+        }
+
+        #endregion
+
+        //const string WSHostNameSAMSMasterDataServices = "WSHost_SAMSMasterDataServices";
+        //const string WSHostNameSAMSMasterDataServices = "WSHost_SAMSMasterDataServicesWeb";
+        static string WSHostNameSAMSMasterDataServices = ConfigurationManager.AppSettings["WSHost_ERPeOfficeMasterDataServices"];
+        //WSHost_SAMSMasterDataServices
+
+        private static WebServiceHost objWebServiceHost = Globals.GetWebServiceHost("WSHost_ERPeOfficeMasterDataServices");
+
+        private static ERPMasterDataServices.Users.Users.Users objUsersProxy = null;
+        public static ERPMasterDataServices.Users.Users.Users UsersProxy
+        {
+            get
+            {
+                if (objUsersProxy == null)
+                {
+                    objWebServiceHost.HandShake("WSHost_ERPeOfficeMasterDataServices");
+                    objUsersProxy = new ERPMasterDataServices.Users.Users.Users();
+                    objUsersProxy.Url = objWebServiceHost.HostURL + "Users/Users.asmx";
+                    objUsersProxy.CookieContainer = objWebServiceHost.CookieContainer;
+                    objUsersProxy.EnableDecompression = true;
+                }
+                return objUsersProxy;
+            }
+        }
+
+        private static SAMSMasterDataServices.WSUser.WSUser objSAMSWSUser = null;
+        public static SAMSMasterDataServices.WSUser.WSUser SAMSWSUser
+        {
+            get
+            {
+                if (objSAMSWSUser == null)
+                {
+                    objWebServiceHost.HandShake(WSHostNameSAMSMasterDataServices);
+                    objSAMSWSUser = new SAMSMasterDataServices.WSUser.WSUser();
+                    objSAMSWSUser.Url = objWebServiceHost.HostURL + "SYS/WSUser.asmx";
+                    objSAMSWSUser.CookieContainer = objWebServiceHost.CookieContainer;
+                    objSAMSWSUser.EnableDecompression = true;
+                }
+                return objSAMSWSUser;
+            }
+        }
+
+        public void Login(bool bolPassMD5 = false)
+        {
+            try
+            {
+                DateTime dt = DateTime.Now;
+                string strWSHost_SSOService = "WSHost_SSOService9P";
+                WebServiceHost objWebServiceHost = Globals.GetWebServiceHost(strWSHost_SSOService);
+
+                if (!objWebServiceHost.HandShake(strWSHost_SSOService))
+                {
+                    Library.WebCore.FileLogger.LogAction("WebSessionUser IsLogin: False");
+                    this.IsLogin = false;
+                    return;
+                }
+
+                //Library.WebCore.FileLogger.LogAction("WebSessionUser Login(objWebServiceHost.HandShake())-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+                try
+                {
+                    SSOService.TokenAuthentication.TokenAuthentication objTokenAuthentication = new SSOService.TokenAuthentication.TokenAuthentication();
+                    objTokenAuthentication.Url = objWebServiceHost.HostURL + "TokenAuthentication.asmx";
+                    objTokenAuthentication.EnableDecompression = true;
+                    objTokenAuthentication.CookieContainer = objWebServiceHost.CookieContainer;
+                    SSOService.TokenAuthentication.ResultMessage objResultMessage = new SSOService.TokenAuthentication.ResultMessage();
+                    dt = DateTime.Now;
+                    String strData = "";
+                    if (bolPassMD5)
+                        strData = objWebServiceHost.CreateLoginDataPassMD5(this.UserName, this.Password);
+                    else
+                        strData = objWebServiceHost.CreateLoginData(this.UserName, this.Password);
+                    Library.WebCore.FileLogger.LogAction("WebSessionUser Login(CreateLoginData)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+                    dt = DateTime.Now;
+                    SSOService.TokenAuthentication.AuthenticateResult objAuthenticateResult = objTokenAuthentication.LoginSys(strData, objWebServiceHost.GUID, ref objResultMessage);
+                    Library.WebCore.FileLogger.LogAction("WebSessionUser Login(LoginSys)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+                    dt = DateTime.Now;
+
+                    if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+                    {
+                        objWebServiceHost.IsHandShake = false;
+                        if (!objWebServiceHost.HandShake(strWSHost_SSOService))
+                        {
+                            this.IsLogin = false;
+                            return;
+                        }
+                        objTokenAuthentication = new SSOService.TokenAuthentication.TokenAuthentication();
+                        objTokenAuthentication.Url = objWebServiceHost.HostURL + "TokenAuthentication.asmx";
+                        objTokenAuthentication.EnableDecompression = true;
+                        objTokenAuthentication.CookieContainer = objWebServiceHost.CookieContainer;
+                        objResultMessage = new SSOService.TokenAuthentication.ResultMessage();
+                        if (bolPassMD5)
+                            strData = objWebServiceHost.CreateLoginDataPassMD5(this.UserName, this.Password);
+                        else
+                            strData = objWebServiceHost.CreateLoginData(this.UserName, this.Password);
+                        this.LoginLogID = objAuthenticateResult.LoginLogID;
+                        objAuthenticateResult = objTokenAuthentication.LoginSys(strData, objWebServiceHost.GUID, ref objResultMessage);
+                        Library.WebCore.FileLogger.LogAction("WebSessionUser Login(LoginSys MissSession)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds + "objResultMessage:" + objResultMessage.Message);
+
+                    }
+                    if (objResultMessage != null && objResultMessage.IsError)
+                    {
+                        Library.WebCore.FileLogger.LogAction("objResultMessage.MessageDetail:" + objResultMessage.Message);
+                    }
+
+                    if (objAuthenticateResult.IsError)
+                    {
+                        Library.WebCore.FileLogger.LogAction("objAuthenticateResult.IsError:" + objAuthenticateResult.ErrorMessage);
+                        this.IsLogin = false;
+                    }
+                    else
+                    {
+                        dt = DateTime.Now;
+                        this.TokenString = objWebServiceHost.RemoveIV(Library.WebCore.Cryptography.AesDecryptString(objAuthenticateResult.TokenString, objWebServiceHost.EncryptKey));
+                        this.FullName = objAuthenticateResult.FullName;
+                        this.DepartmentID = objAuthenticateResult.DepartmentID;
+                        this.Address = objAuthenticateResult.Address;
+                        this.PhoneNumber = objAuthenticateResult.PhoneNumber;
+                        this.Department = objAuthenticateResult.Department;
+                        this.ReviewLevelID = objAuthenticateResult.ReviewLevelID;
+                        this.PositionID = objAuthenticateResult.PositionID;
+                        this.PositionName = objAuthenticateResult.PositionName;
+                        this.DefaultPictureURL = objAuthenticateResult.DefaultPictureURL;
+                        Library.WebCore.FileLogger.LogAction("WebSessionUser Login(RemoveIV)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+                        dt = DateTime.Now;
+                        ////LoadFunction(objAuthenticateResult.LoginLogID, objAuthenticateResult.TokenString);
+                        Library.WebCore.FileLogger.LogAction("WebSessionUser Login(LoadFunction)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+                        this.IsLogin = true;
+                        this.LoginLogID = objAuthenticateResult.LoginLogID;
+                        this.LsUserFunction = GetUserUserFunction(objAuthenticateResult.UserName);
+                    }
+                }
+                catch (Exception objEx)
+                {
+                    Library.WebCore.FileLogger.LogAction("WebSessionUser Login Ex:  " + objEx.StackTrace);
+                    this.IsLogin = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Library.WebCore.FileLogger.LogAction("Lỗi web:" + ex.StackTrace);
+                throw;
+            }
+
+
+        }
+        public static List<UserFunction> GetUserUserFunction(string strUserName)
+        {
+            List<UserFunction> lstUserFunction = new List<UserFunction>();
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure("SYS_USER_LISTFUNCTION");
+                objIData.AddParameter("@USERNAME", strUserName);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    UserFunction objSubject = new UserFunction();
+                    if (!Convert.IsDBNull(reader[UserFunction.colFunctionID])) objSubject.FunctionID = Convert.ToString(reader[UserFunction.colFunctionID]).Trim();
+                    if (!Convert.IsDBNull(reader[UserFunction.colFunctionName])) objSubject.FunctionName = Convert.ToString(reader[UserFunction.colFunctionName]).Trim();
+                    if (!Convert.IsDBNull(reader[UserFunction.colDescription])) objSubject.Description = Convert.ToString(reader[UserFunction.colDescription]).Trim();
+                    if (!Convert.IsDBNull(reader[UserFunction.colSecurityLevelId])) objSubject.SecurityLevelId = Convert.ToInt32(reader[UserFunction.colSecurityLevelId]);
+
+                    lstUserFunction.Add(objSubject);
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage.MessageDetail = objEx.Message.ToString();
+                Library.WebCore.FileLogger.LogAction("WebSessionUser Login Ex:  " + objEx.StackTrace);
+                return null;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return lstUserFunction;
+        }
+        public bool LogOut()
+        {
+            this.hstbPermission.Clear();
+            WebServiceHost objWebServiceHost = Globals.GetWebServiceHost("WSHost_SSOService9P");
+            objWebServiceHost.HandShake("WSHost_SSOService9P");
+            SSOService.TokenAuthentication.TokenAuthentication objTokenAuthentication = new SSOService.TokenAuthentication.TokenAuthentication();
+            objTokenAuthentication.Url = objWebServiceHost.HostURL + "TokenAuthentication.asmx";
+            objTokenAuthentication.EnableDecompression = true;
+            objTokenAuthentication.CookieContainer = objWebServiceHost.CookieContainer;
+            return objTokenAuthentication.LogOut(objWebServiceHost.CreateAuthenticateData(this.TokenString, this.LoginLogID), objWebServiceHost.GUID);
+        }
+
+        /// <summary>
+        /// Doi mat khau
+        /// </summary>
+        /// <param name="strOldPass"></param>
+        /// <param name="strNewPass"></param>
+        /// <param name="intResult"></param>
+        /// <returns></returns>
+        public bool ChangPass(string strOldPass, string strNewPass, ref int intResult)
+        {
+            try
+            {
+                WebServiceHost objWebServiceHost = Globals.GetWebServiceHost("WSHost_SSOService9P");
+
+                objWebServiceHost.HandShake("WSHost_SSOService9P");
+                SSOService.TokenAuthentication.TokenAuthentication objTokenAuthentication = new SSOService.TokenAuthentication.TokenAuthentication();
+                objTokenAuthentication.Url = objWebServiceHost.HostURL + "TokenAuthentication.asmx";
+                objTokenAuthentication.EnableDecompression = true;
+                objTokenAuthentication.CookieContainer = objWebServiceHost.CookieContainer;
+                SSOService.TokenAuthentication.ResultMessage objResultMessage = new SSOService.TokenAuthentication.ResultMessage();
+                objResultMessage = objTokenAuthentication.ChangePassword(objWebServiceHost.CreateAuthenticateData(this.TokenString, this.LoginLogID), objWebServiceHost.GUID, strOldPass, strNewPass, ref intResult);
+
+
+                return this.IsLogin;
+            }
+            catch (Exception ex)
+            {
+                //Library.WebCore.FileLogger.LogAction("changePass ChangPass WebSessionUser Message: " + objResultMessage.Message + " MessageDetail:" + objResultMessage.MessageDetail);
+                //Library.WebCore.FileLogger.LogAction("ChangPass WebSessionUser Exception: " + ex.Message + " Exception:" + ex.ToString());
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Hàm kiểm tra xem trong danh sách quyền có quyền strFunction hay không
+        /// </summary>
+        /// <param name="strFunction"></param>
+        /// <returns></returns>
+        public bool IsPermission(String strFunction)
+        {
+            if (string.IsNullOrEmpty(strFunction.Trim()))
+                return true;
+            strFunction = strFunction.Trim().ToUpper();
+            if (this.hstbPermission.ContainsKey(strFunction))
+            {
+                if (Convert.ToInt32(this.hstbPermission[strFunction]) <= this.SecurityLevelID)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Hàm kiểm tra xem trong danh sách quyền có quyền strFunction hay không
+        /// </summary>
+        /// <param name="strFunction"></param>
+        /// <returns></returns>
+        public PermissionResult IsPermissionExt(String strFunction)
+        {
+            strFunction = strFunction.Trim().ToUpper();
+            if (this.hstbPermission.ContainsKey(strFunction))
+            {
+                if (Convert.ToInt32(this.hstbPermission[strFunction]) <= this.SecurityLevelID)
+                    return PermissionResult.PERMISSION;
+                else return PermissionResult.NOT_ENOUGH_SECURITYLEVEL;
+            }
+            return PermissionResult.NOT_PERMISSION;
+        }
+
+        /// <summary>
+        /// Hàm kiểm tra xem có quyền trên mã sản phẩm strProductID này hay không
+        /// </summary>
+        /// <param name="strProductID"></param>
+        /// <returns></returns>
+        /// 
+        [Obsolete("Thay thế bằng hàm ERP.NomenclatureDObjects.Products.DProduct.CheckPermission")]
+        public bool IsProductPermission(String strProductID)
+        {
+            //return ERP.NomenclatureDObjects.Products.DProduct.CheckPermission(strProductID);
+            return true;
+        }
+
+        public bool IsStorePermission(int intStoreID)
+        {
+            DataRow[] arrRow = this.StorePermission.Select("StoreID = " + intStoreID.ToString());
+            return (arrRow.Length > 0);
+        }
+
+        public bool IsMainGroupPermission(int intMainGroupID)
+        {
+            DataRow[] arrRow = this.MainGroupPermission.Select("MainGroupID = " + intMainGroupID.ToString());
+            return (arrRow.Length > 0);
+        }
+
+        public bool LoadFunction(string strLoginLogID, string strTokenString)
+        {
+            return this.LoadFunction(this.UserName, strLoginLogID, strTokenString);
+        }
+
+        public bool LoadFunction(String strUserName, string strLoginLogID, string strTokenString)
+        {
+            DataTable tblFunction = LoadFunctionPermissionV2(strUserName, strLoginLogID, strTokenString);
+            this.hstbPermission.Clear();
+            if (tblFunction != null && tblFunction.Rows.Count > 0)
+            {
+                foreach (DataRow objRow in tblFunction.Rows)
+                {
+                    String strFunctionID = Convert.ToString(objRow["FunctionID"]).Trim().ToUpper();
+                    this.hstbPermission.Add(strFunctionID, Convert.ToInt32(objRow["SECURITYLEVELID"]));
+                }
+            }
+            return true;
+        }
+
+        public bool LoadCompanyPermission()
+        {
+            this.CompanyPermission = LoadCompanyPermission(this.UserName);
+            return (this.CompanyPermission != null);
+        }
+
+        public DataTable LoadStorePermission()
+        {
+            return LoadStorePermission(this.UserName);
+        }
+
+        public DataTable LoadStorePermission(string strUserName)
+        {
+            //Xử lý cache LoadStorePermission
+            //ICached iCached = CachedFactory.Create(Cached.CacheDSN);
+            string strCacheKey = CacheHelper.GenKeyCache("WebSessionUser", "LoadStorePermission", strUserName);
+            DataTable tblResutl = CacheHelper.iCached.Get<DataTable>(strCacheKey);
+            if (tblResutl != null && tblResutl.Rows.Count > 0)
+                return tblResutl;
+
+            string strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            string strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+
+            DataSet dsStorePermission = new DataSet();
+            var resultMessage = UsersProxy.GetStorePermissionOfUser(ref dsStorePermission, strAuthenData, strGuid, strUserName);
+
+            if (CheckError.CheckMissSession((int)resultMessage.ErrorType, true))
+            {
+                RDAuthorize.SetUnhandshake(WSHostNameSAMSMasterDataServices);
+
+                strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+                strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+                resultMessage = UsersProxy.GetStorePermissionOfUser(ref dsStorePermission, strAuthenData, strGuid, strUserName);
+            }
+
+            if (dsStorePermission != null && dsStorePermission.Tables != null && dsStorePermission.Tables.Count > 0)
+            {
+                CacheHelper.iCached.Set<DataTable>(strCacheKey, dsStorePermission.Tables[0], Cached.CacheMintime);
+                return dsStorePermission.Tables[0];
+            }
+            return new DataTable();
+        }
+
+        public DataTable GetModuleList()
+        {
+            string strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            string strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+
+            DataSet dsModuleList = UsersProxy.GetModuleListOfUser(strAuthenData, strGuid, this.UserName);
+            if (dsModuleList != null && dsModuleList.Tables != null && dsModuleList.Tables.Count > 0)
+                return dsModuleList.Tables[0];
+            return new DataTable();
+        }
+
+        public bool UpdateModuleList(string strModuleIDList)
+        {
+            return UsersProxy.UpdateModuleList(objWebServiceHost.CreateAuthenticateData(this.TokenString, this.LoginLogID),
+                objWebServiceHost.GUID, strModuleIDList);
+        }
+
+        public DataTable LoadCompanyPermission(string strUserName)
+        {
+            //Xử lý cache LoadCompanyPermission
+            //ICached iCached = CachedFactory.Create(Cached.CacheDSN);
+            string strCacheKey = CacheHelper.GenKeyCache("WebSessionUser", "LoadCompanyPermission", strUserName);
+            DataTable tblResutl = CacheHelper.iCached.Get<DataTable>(strCacheKey);
+            if (tblResutl != null && tblResutl.Rows.Count > 0)
+                return tblResutl;
+
+            string strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            string strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+
+            DataSet dsCompanyPermission = new DataSet();
+            var rsl = UsersProxy.GetCompanyPermissionOfUser(strAuthenData, strGuid, strUserName);
+
+            if (dsCompanyPermission != null && dsCompanyPermission.Tables != null && dsCompanyPermission.Tables.Count > 0)
+            {
+                CacheHelper.iCached.Set<DataTable>(strCacheKey, dsCompanyPermission.Tables[0], Cached.CacheMintime);
+                return dsCompanyPermission.Tables[0];
+            }
+
+            return new DataTable();
+        }
+
+        public DataTable LoadFunctionPermission()
+        {
+            return LoadFunctionPermission(this.UserName);
+        }
+
+        public DataTable LoadFunctionPermission(string strUserName)
+        {
+            DateTime dt = DateTime.Now;
+            //Xử lý cache LoadFunctionPermission
+            // ICached iCached = CachedFactory.Create(Cached.CacheDSN);
+            string strCacheKey = CacheHelper.GenKeyCache("WSULFP", strUserName);
+            DataTable tblResutl = CacheHelper.iCached.Get<DataTable>(strCacheKey);
+            if (tblResutl != null && tblResutl.Rows.Count > 0)
+            {
+                Library.WebCore.FileLogger.LogAction("IS cache WebSession(LoadFunctionPermission)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+                return tblResutl;
+            }
+            DataTable dsFunctionPermission = null;
+            dt = DateTime.Now;
+            string strAuthenData = RDAuthorize.GetAuthenData("WSHost_ERPeOfficeMasterDataServices");
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission strAuthenData)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+            string strGuid = RDAuthorize.GetGUID("WSHost_ERPeOfficeMasterDataServices");
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission strGuid)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+
+            DataSet ds = null;
+            ERPMasterDataServices.Users.Users.ResultMessage objResultMessage = UsersProxy.GetFunctionPermissionOfUser(ref ds, strAuthenData, strGuid, strUserName);
+            // DataSet ds = UsersProxy.GetFunctionPermissionOfUser(strAuthenData, strGuid, strUserName);
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission GetFunctionPermissionOfUser)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+            if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+            {
+                RDAuthorize.SetUnhandshake("WSHost_ERPeOfficeMasterDataServices");
+
+                strAuthenData = RDAuthorize.GetAuthenData("WSHost_ERPeOfficeMasterDataServices");
+                strGuid = RDAuthorize.GetGUID("WSHost_ERPeOfficeMasterDataServices");
+
+                objResultMessage = UsersProxy.GetFunctionPermissionOfUser(ref ds, strAuthenData, strGuid, strUserName);
+
+            }
+
+            if (!objResultMessage.IsError && ds != null && ds.Tables.Count > 0)
+            {
+                dsFunctionPermission = ds.Tables[0];
+            }
+
+            if (dsFunctionPermission != null && dsFunctionPermission.Rows.Count > 0)
+                CacheHelper.iCached.Set<DataTable>(strCacheKey, dsFunctionPermission, Cached.CacheMintime);
+
+            //if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+            //{
+            //    RDAuthorize.SetUnhandshake(WSHostNameSAMSMasterDataServices);
+
+            //    strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            //    strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+
+            //    objResultMessage = null;
+            //    objResultMessage = SAMSWSUser.SearchData_UserDepartment_Function(strAuthenData, strGuid, ref dsFunctionPermission, strUserName);
+
+            //    string dtmlog7 = "myhost22_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute + "_" + DateTime.Now.Second + "_" + DateTime.Now.Millisecond + ".txt";
+            //    string strPath7 = "D:\\Projects\\Sources ProErp2015\\ProERP2015\\ProERP2015\\Content\\Files\\FilesContent\\" + dtmlog6;
+            //    string[] lines7 = { objResultMessage.IsError.ToString(), objResultMessage.Message, SAMSWSUser.Url };
+            //    System.IO.File.WriteAllLines(strPath7, lines7);
+            //}
+            //if (objResultMessage != null && objResultMessage.IsError)
+            //{
+            //    strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            //    strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+            //    DataSet ds = UsersProxy.GetFunctionPermissionOfUser(strAuthenData, strGuid, strUserName);
+            //    string dtmlog7 = "myhost23_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute + "_" + DateTime.Now.Second + "_" + DateTime.Now.Millisecond + ".txt";
+            //    string strPath7 = "D:\\Projects\\Sources ProErp2015\\ProERP2015\\ProERP2015\\Content\\Files\\FilesContent\\" + dtmlog6;
+            //    string[] lines7 = { ((ds != null && ds.Tables.Count > 0) ? "!= null" : "null"), UsersProxy.Url };
+            //    System.IO.File.WriteAllLines(strPath7, lines7);
+            //    if (ds != null && ds.Tables.Count > 0)
+            //    {
+            //        dsFunctionPermission = ds.Tables[0];
+            //    }
+            //}
+
+            //if (dsFunctionPermission != null && dsFunctionPermission.Rows.Count > 0)
+            //    CacheHelper.iCached.Set<DataTable>(strCacheKey, dsFunctionPermission, Cached.CacheMintime);
+
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission CheckMissSession)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            return dsFunctionPermission;
+        }
+        public DataTable LoadFunctionPermissionV2(string strUserName, string strLoginLogID, string strTokenString)
+        {
+            DateTime dt = DateTime.Now;
+            //Xử lý cache LoadFunctionPermission
+            // ICached iCached = CachedFactory.Create(Cached.CacheDSN);
+            string strCacheKey = CacheHelper.GenKeyCache("WSULFP", strUserName);
+            DataTable tblResutl = CacheHelper.iCached.Get<DataTable>(strCacheKey);
+            if (tblResutl != null && tblResutl.Rows.Count > 0)
+            {
+                Library.WebCore.FileLogger.LogAction("IS cache WebSession(LoadFunctionPermission)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+                return tblResutl;
+            }
+            DataTable dsFunctionPermission = null;
+            dt = DateTime.Now;
+            string strAuthenData = RDAuthorize.GetAuthenDataV2("WSHost_ERPeOfficeMasterDataServices", strLoginLogID, strTokenString);
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission strAuthenData)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+            string strGuid = RDAuthorize.GetGUID("WSHost_ERPeOfficeMasterDataServices");
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission strGuid)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+
+            DataSet ds = null;
+            ERPMasterDataServices.Users.Users.ResultMessage objResultMessage = UsersProxy.GetFunctionPermissionOfUser(ref ds, strAuthenData, strGuid, strUserName);
+            if (objResultMessage.IsError)
+            {
+
+            }
+            // DataSet ds = UsersProxy.GetFunctionPermissionOfUser(strAuthenData, strGuid, strUserName);
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission GetFunctionPermissionOfUser)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+            if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+            {
+                RDAuthorize.SetUnhandshake("WSHost_ERPeOfficeMasterDataServices");
+
+                strAuthenData = RDAuthorize.GetAuthenData("WSHost_ERPeOfficeMasterDataServices");
+                strGuid = RDAuthorize.GetGUID("WSHost_ERPeOfficeMasterDataServices");
+
+                objResultMessage = UsersProxy.GetFunctionPermissionOfUser(ref ds, strAuthenData, strGuid, strUserName);
+
+            }
+
+            if (!objResultMessage.IsError && ds != null && ds.Tables.Count > 0)
+            {
+                dsFunctionPermission = ds.Tables[0];
+            }
+
+            if (dsFunctionPermission != null && dsFunctionPermission.Rows.Count > 0)
+                CacheHelper.iCached.Set<DataTable>(strCacheKey, dsFunctionPermission, Cached.CacheMintime);
+
+            //if (CheckError.CheckMissSession((int)objResultMessage.ErrorType, true))
+            //{
+            //    RDAuthorize.SetUnhandshake(WSHostNameSAMSMasterDataServices);
+
+            //    strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            //    strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+
+            //    objResultMessage = null;
+            //    objResultMessage = SAMSWSUser.SearchData_UserDepartment_Function(strAuthenData, strGuid, ref dsFunctionPermission, strUserName);
+
+            //    string dtmlog7 = "myhost22_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute + "_" + DateTime.Now.Second + "_" + DateTime.Now.Millisecond + ".txt";
+            //    string strPath7 = "D:\\Projects\\Sources ProErp2015\\ProERP2015\\ProERP2015\\Content\\Files\\FilesContent\\" + dtmlog6;
+            //    string[] lines7 = { objResultMessage.IsError.ToString(), objResultMessage.Message, SAMSWSUser.Url };
+            //    System.IO.File.WriteAllLines(strPath7, lines7);
+            //}
+            //if (objResultMessage != null && objResultMessage.IsError)
+            //{
+            //    strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            //    strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+            //    DataSet ds = UsersProxy.GetFunctionPermissionOfUser(strAuthenData, strGuid, strUserName);
+            //    string dtmlog7 = "myhost23_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute + "_" + DateTime.Now.Second + "_" + DateTime.Now.Millisecond + ".txt";
+            //    string strPath7 = "D:\\Projects\\Sources ProErp2015\\ProERP2015\\ProERP2015\\Content\\Files\\FilesContent\\" + dtmlog6;
+            //    string[] lines7 = { ((ds != null && ds.Tables.Count > 0) ? "!= null" : "null"), UsersProxy.Url };
+            //    System.IO.File.WriteAllLines(strPath7, lines7);
+            //    if (ds != null && ds.Tables.Count > 0)
+            //    {
+            //        dsFunctionPermission = ds.Tables[0];
+            //    }
+            //}
+
+            //if (dsFunctionPermission != null && dsFunctionPermission.Rows.Count > 0)
+            //    CacheHelper.iCached.Set<DataTable>(strCacheKey, dsFunctionPermission, Cached.CacheMintime);
+
+            Library.WebCore.FileLogger.LogAction("No cache WebSession(LoadFunctionPermission CheckMissSession)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            return dsFunctionPermission;
+        }
+        public void AddActionLog(String strActionName, ActionForm enActionForm, ActionType enActionType, String strActionContent)
+        {
+            string strAuthenData = RDAuthorize.GetAuthenData(WSHostNameSAMSMasterDataServices);
+            string strGuid = RDAuthorize.GetGUID(WSHostNameSAMSMasterDataServices);
+
+            //UsersProxy.AddActionLog(strAuthenData, strGuid, strActionName, enActionForm.ToString(), enActionType.ToString(), strActionContent);
+        }
+    }
+}

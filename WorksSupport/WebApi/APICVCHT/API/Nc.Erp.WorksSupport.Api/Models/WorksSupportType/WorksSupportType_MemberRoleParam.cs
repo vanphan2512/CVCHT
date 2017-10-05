@@ -1,0 +1,22 @@
+﻿namespace Nc.Erp.WorksSupport.Api.Models.WorksSupportType
+{
+    public class WorksSupportTypeMemberRoleParam
+    {
+        public int WorksSupportTypeId { get; set; }
+        public int WorksSupportMemberRoleId { get; set; }
+        public string WorksSupportMemberRoleName { get; set; }
+        public int IsCanAddWorksSupportGroup { get; set; }
+        public int IsCanAddWorksSupport { get; set; }
+        public int IsCanEditContent { get; set; }
+        public int IsCanEditSolutionContent { get; set; }
+        public int IsCanAddAttachment { get; set; }
+        public int IsCanComment { get; set; }
+        public int IsCanEditExpectedCompletedDate { get; set; }
+        public int IsCanChangeProgress { get; set; }
+        public int IsCanEditQuality { get; set; }
+        public int IsCanEditWorksSupportGroup { get; set; }
+        public int IsCanEditWorksSupport { get; set; }
+        public int IsCanDeleteWorksSupportGroup { get; set; }
+        public int IsCanDeleteWorksSupport { get; set; }
+    }
+}

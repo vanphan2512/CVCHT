@@ -1,0 +1,639 @@
+﻿using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models.Work;
+using Nc.Erp.WorksSupport.Da.Configuration.Works;
+using Nc.Erp.WorksSupport.Do.Configuration.Work;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Nc.Erp.WorksSupport.Api.Models.WorksSupport;
+using Nc.Erp.WorksSupport.Da.Configuration.WorksSupport;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using SearchParam = Nc.Erp.WorksSupport.Api.Models.Work.SearchParam;
+using Library.DataAccess;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : NGUYEN THI KIM NGAN
+    /// Created date    : 06.07.22017
+    /// Api cong viec "ERP.EO.WORKS"
+    /// </summary>
+    [RoutePrefix("api/v2/works")]
+    public class WorkController : BaseController
+    {
+        /// <summary>
+        /// Tìm kiếm cong viec theo keyword
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Search")]
+        public Response<List<Work>> Search([FromBody] SearchParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<Work>>();
+            try
+            {
+                // Definition object return
+                var listWork = new List<Work>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorks().SearchData(ref listWork, objparam.ProjectIds, objparam.TypeSearch, objparam.Keywords, objparam.StartDate, objparam.EndDate, objparam.PageIndex, objparam.PageSize);
+
+                if (listWork != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWork;
+                    ret.TotalRecord = listWork.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("searchInvole")]
+        public Response<List<Work>> SearchInvole([FromBody] SearchInvoleParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<Work>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportStatus = new List<Work>();
+
+                //var lstWorkInID = item.Split(',');
+                foreach (var t in objparam.WorksId)
+                {
+                    const string note = ""; // objparam.Note[i];
+                    var objResultMessage = new DaWorks().SearchDataInvole(ref listWorksSupportStatus, t, note);
+                    // Call DaSystemManagement to search data.
+
+                    if (listWorksSupportStatus != null)
+                    {
+                        ret.Success = true;
+                        ret.Data = listWorksSupportStatus;
+                        ret.TotalRecord = listWorksSupportStatus.Count;
+                    }
+                    else
+                    {
+                        ret.Success = false;
+                        ret.Message = objResultMessage.Message;
+                    }
+                }
+
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpGet]
+        [Route("")]
+        public Response<List<Work>> LoadInvole()
+        {
+            // Definition object to return.
+            var ret = new Response<List<Work>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportStatus = new List<Work>();
+
+                var objResultMessage = new DaWorks().LoadAllInvole(ref listWorksSupportStatus);
+                // Call DaSystemManagement to search data.
+
+                if (listWorksSupportStatus != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportStatus;
+                    ret.TotalRecord = listWorksSupportStatus.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Check permission by WorkGroupId and UserName 
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getWorksPermission/{User}/{WorksGroupId}")]
+        public Response<WorksPermission> GetWorksPermission([FromUri] WorksPermissionParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksPermission>();
+            try
+            {
+                var outWorksPermission = new WorksPermission();
+                var objResultMessage = new DaWorks().GetPermissionByGroupIdAndUserName(ref outWorksPermission, objparam.WorksGroupId, objparam.User);
+
+                if (outWorksPermission != null)
+                {
+                    ret.Success = true;
+                    ret.Data = outWorksPermission;
+                    ret.TotalRecord = 1;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Get next step permission
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getWorksNextStepPermission/{User}/{WorksSupportId}")]
+        public Response<WorksNextStepPermission> GetPermissionByGroupIdAndUserName([FromUri] WorksSupportNextStepPermissionParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksNextStepPermission>();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                var outWorksNextStepPermission = new WorksNextStepPermission();
+                var objResultMessage = new DaWorks().GetPermissionNextStepByWorksSupportIdAndUserName(objIData, ref outWorksNextStepPermission, objparam.WorksSupportId, objparam.User);
+
+                if (outWorksNextStepPermission != null)
+                {
+                    ret.Success = true;
+                    ret.Data = outWorksNextStepPermission;
+                    ret.TotalRecord = 1;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+        }
+
+        [HttpGet]
+        [Route("{Id}")]
+        public Response<Do.Configuration.WorksSupport.WorksSupport> GetWorkById([FromUri] GetWorksDetailParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<Do.Configuration.WorksSupport.WorksSupport>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new Do.Configuration.WorksSupport.WorksSupport();
+                // Call DaWorksSupportType to search data
+                var objResultMessage = new DaWorksSupport().GetWorksById(ref obj, objparam.Id);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                    ret.TotalRecord = 1;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("deleteWorksInvole")]
+        public Response<Do.Configuration.WorksSupport.WorksSupport> DeleteWorksInvole([FromBody] DeletedInvoleParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<Do.Configuration.WorksSupport.WorksSupport>();
+            try
+            {
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorks().DeleteWorksInvoleByWorksIdAndWorkId(objparam.WorksId, objparam.WorkInvoleId);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+
+        /// <summary>
+        /// Thêm mới chi tiết loại công việc yêu cầu cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("insertBy")]
+        public Response<WorkSupport> SaveDataBy([FromBody] SaveWorksParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var numeberOfWorkName = 0;
+                var listError = new List<ValidationError>();
+                new DaWorks().CheckWorkName(ref numeberOfWorkName, objparam.Id, objparam.WorksSupportGroupId, objparam.WorksSupportName);
+                if (numeberOfWorkName >= 1)
+                {
+                    var error = new ValidationError { Key = "WorksSupportName", Message = "Tên công việc đã tồn tại!" };
+                    listError.Add(error);
+                    ret.Success = false;
+                    ret.Errors = listError;
+                    return ret;
+                }
+
+
+                var obj = new WorkSupport
+                {
+                    WorksSupportId = objparam.Id,
+                    WorksSupportName = objparam.WorksSupportName,
+                    ExpectedCompletedDate = objparam.ExpectedCompletedDate,
+                    Content = objparam.Content,
+                    WorksSupportPriorityId = objparam.WorksSupportPriorityId,
+                    WorksSupportGroupId = objparam.WorksSupportGroupId,
+                    CreatedUser = objparam.User
+                };
+                
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupport().InsertWorksSupport(obj, objparam.ListInvoleId, ref obj, objparam.User, objparam.ListAttachment, objparam.ListDeletedAttachment);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpGet]
+        [Route("detailWorks/{Id}")]
+        public Response<WorkSupport> GetDetail([FromUri] string Id)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                var objWorkSupport = new WorkSupport();
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupport().GetWorksDetailById(ref objWorkSupport, int.Parse(Id));
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = objWorkSupport;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = this.Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+
+        /// <summary>
+        /// Add new Cong Viec lien quan
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addWorksInvoleForDetail")]
+        public Response<WorkSupport> SaveDataBy([FromBody] WorkInvole objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            var objIData = Data.CreateData();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                objIData.Connect();
+                // Insert Công việc liên quan
+                if (!string.IsNullOrWhiteSpace(objparam.ListWorkId))
+                {
+                    var listId = objparam.ListWorkId.Split(',');
+                    foreach (var id in listId)
+                    {
+                        new DaWorks().InsertWorksInvoleByWorkSupportIdAndWorkId(objIData, objparam.WorksSupportId, int.Parse(id));
+                    }
+                }
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật đánh giá chất lượng công việc
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addQuality")]
+        public Response<WorkSupport> AddQualityWorksSupport([FromBody] SaveQualityProcessParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorks().QualityProcess(objparam.WorksSupportId, objparam.QualityId, objparam.Note, objparam.User);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = this.Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Add new Cong Viec lien quan
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addSolution")]
+        public Response<WorkSupport> AddSolutionWorksSupport([FromBody] SaveSolutionParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                //validate param
+                this.ValidateParams(objparam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorks().AddSolution(objparam.WorksSupportId, objparam.SolutionContent, objparam.User, objparam.ListSolutionAttachment);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = this.Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Add new Cong Viec lien quan
+        /// </summary>
+        /// <param name="objParam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("deleteSolution")]
+        public Response<WorkSupport> AddSolutionWorksSupport([FromBody] DeleteSolutionParam objParam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                //validate param
+                this.ValidateParams(objParam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorks().DeleteSolution(objParam.WorksSupportId, objParam.User);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Add new comment
+        /// </summary>
+        /// <param name="objParam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("addComment")]
+        public Response<WorkSupport> AddSolutionWorksSupport([FromBody] CommentParam objParam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                //validate param
+                this.ValidateParams(objParam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorks().AddComment(objParam.WorksSupportId, objParam.CommentContent, objParam.User, objParam.ListCommentAttachment);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật chi tiết công việc
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("updateWorksSupportDetail")]
+        public Response<WorkSupport> AddSolutionWorksSupport([FromBody] UpdateWorksSupportParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                new DaWorks().UpdateWorksSupportDetail(objparam.WorksSupportId,objparam.ExpectedCompleteDate, objparam.Content, objparam.User, objparam.ListWorksSupportAttachment);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("deleteWorkSupportAttachment")]
+        public Response<WorkSupport> DeleteWorkSupportAttachment([FromBody] DeleteWorkSupportAttachment objParam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                this.ValidateParams(objParam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorksSupportAttachment().DeleteWorkSupportAttachmentByAttachment(objParam.User, objParam.AttachmentId);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = this.Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("deleteWorkCommentAttachment")]
+        public Response<WorkSupport> DeleteWorkCommentAttachment([FromBody] DeleteWorkSupportAttachment objParam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                this.ValidateParams(objParam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorksSupportCommentAttachment().DeleteWorkCommentAttachmentByAttachment(objParam.User, objParam.AttachmentId);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = this.Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("deleteSolutionAttachment")]
+        public Response<WorkSupport> DeleteWorksSolutionAttachment([FromBody] DeleteWorkSupportAttachment objParam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorkSupport>();
+            try
+            {
+                this.ValidateParams(objParam);
+                // Cập nhật đánh giá chất lượng công việc
+                new DaWorksSupportSolutionAttachment().DeleteWorkSupportSolutionAttachmentByAttachmentId(objParam.User, objParam.AttachmentId);
+                ret.Success = true;
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = this.Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+    }
+}
+

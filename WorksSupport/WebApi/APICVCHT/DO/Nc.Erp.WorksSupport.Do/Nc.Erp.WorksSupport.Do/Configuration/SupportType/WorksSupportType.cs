@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.SuportType
+{
+    /// <summary>
+    /// Created by      : Nguyễn Thị Kim Ngân
+    /// Created date    : 02.06.2017
+    /// Đối tượng ERP.EO.WORKSSUPPORTTYPE
+    /// </summary>
+    public class WorksSupportType
+    {
+        public int WorksSupportTypeId { get; set; }
+        public string WorksSupportTypeName { get; set; }
+        public string IconUrl { get; set; }
+        public string AddFunctionID { get; set; }
+        public string ViewAllFunctionID { get; set; }
+        public string EditFunctionID { get; set; }
+        public string EditAllFunctionID { get; set; }
+        public string DeleteFunctionID { get; set;}
+        public string DeleteAllFunctionID { get; set; }
+        public string ProcessFunctionID { get; set; }
+        public string CommentFunctionID { get; set; }
+        public string Description { get; set; }
+        public int OrderIndex { get; set; }
+        public int IsActive { get; set; }
+        public int IsSystem { get; set; }
+        public string CreatedUser { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string UpdatedUser { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public int IsDeleted { get; set; }
+        public string DeletedUser { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public int ChooseProcessUserType { get; set; }
+        public int ChooseReferenceUserType { get; set; }
+        public int IshasSolutionContent { get; set; }
+        public string AddProjectFunctionID { get; set; }
+        public bool IsCanAddProject { get; set; }
+        public bool IsCanEditProject { get; set; }
+        public int IsDefaultRole { get; set; }
+    }
+}

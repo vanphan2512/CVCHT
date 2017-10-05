@@ -1,0 +1,494 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.Account
+{
+    /// <summary>
+    /// Created by 		: Trương Trung Lợi 
+    /// Created date 	: 7/13/2012 
+    /// Người dùng
+    /// </summary>	
+    public class User
+    {
+
+
+        #region Member Variables
+        public string MemberUserName { get; set; }
+        public int IsAutoAddMemberToWorksGroup { get; set; }
+
+        private string strUserName = string.Empty;
+        private string strPassword = string.Empty;
+        private string strFullName = string.Empty;
+        private string strFirstName = string.Empty;
+        private string strLastName = string.Empty;
+        private bool bolGender = false;
+        private DateTime? dtmBirthday;
+        private string strEmail = string.Empty;
+        private string strPhoneNumber = string.Empty;
+        private string strMOBI = string.Empty;
+        private string strAddress = string.Empty;
+        private int intDepartmentID = 0;
+        private int intPositionID = 0;
+        private int intAreaID = 0;
+        private string strDescription = string.Empty;
+        private string strBankAccountID = string.Empty;
+        private string strIDCard = string.Empty;
+        private DateTime? dtmBeginWorkDate;
+        private int intWorkStoreID = 0;
+        private string strSIGNATUREPICTURE = string.Empty;
+        private string strDefaultPictureURL = string.Empty;
+        private bool bolIsGroupUser = false;
+        private bool bolIsActive = false;
+        private bool bolIsSystem = false;
+        private string strCreatedUser = string.Empty;
+        private DateTime? dtmCreatedDate;
+        private string strUpdatedUser = string.Empty;
+        private DateTime? dtmUpdatedDate;
+        private bool bolIsDeleted = false;
+        private string strDeletedUser = string.Empty;
+        private DateTime? dtmDeletedDate;
+        //private MD.Customer objCustomer = null;
+        private bool bolIsAutoAddCumulationTimeoffDays = false;
+        private string strDefaultPictureFileID = string.Empty;
+        private string strSigNaturePictureFileID = string.Empty;
+        private int intWorkingPositionID = 0;
+        private bool bolisAutoGenID = false;
+        private int intWorkingStatusID = 0;
+
+
+        private string strDepartmentName = string.Empty;
+        /// <summary>
+        /// Trạng thái làm việc - Bảng sys_user không có cột này, thêm vào để lấy giá trị cấu hình ứng dụng 
+        /// </summary>
+        /// 
+        public string DepartmentName
+        {
+            get { return strDepartmentName; }
+            set { strDepartmentName = value; }
+        }
+
+
+        public int WorkingStatusID
+        {
+            get { return intWorkingStatusID; }
+            set { intWorkingStatusID = value; }
+        }
+        private bool bolIsCreatedEmployee = false;
+
+        public bool IsCreatedEmployee
+        {
+            get { return bolIsCreatedEmployee; }
+            set { bolIsCreatedEmployee = value; }
+        }
+
+        public bool IsAutoGenID
+        {
+            get { return bolisAutoGenID; }
+            set { bolisAutoGenID = value; }
+        }
+        #endregion
+
+        #region Properties
+
+        public string SigNaturePictureFileID
+        {
+            get { return strSigNaturePictureFileID; }
+            set { strSigNaturePictureFileID = value; }
+        }
+
+        public string DefaultPictureFileID
+        {
+            get { return strDefaultPictureFileID; }
+            set { strDefaultPictureFileID = value; }
+        }
+        /// <summary>
+        /// Thông tin khách hàng
+        /// </summary>
+        //public MD.Customer Customer
+        //{
+        //    get { return objCustomer; }
+        //    set { objCustomer = value; }
+        //}
+
+        /// <summary>
+        /// UserName
+        /// 
+        /// </summary>
+        public string UserName
+        {
+            get { return strUserName; }
+            set { strUserName = value; }
+        }
+
+        /// <summary>
+        /// Password
+        /// 
+        /// </summary>
+        public string Password
+        {
+            get { return strPassword; }
+            set { strPassword = value; }
+        }
+
+        /// <summary>
+        /// FullName
+        /// 
+        /// </summary>
+        public string FullName
+        {
+            get { return strFullName; }
+            set { strFullName = value; }
+        }
+
+        /// <summary>
+        /// FirstName
+        /// 
+        /// </summary>
+        public string FirstName
+        {
+            get { return strFirstName; }
+            set { strFirstName = value; }
+        }
+
+        /// <summary>
+        /// LastName
+        /// 
+        /// </summary>
+        public string LastName
+        {
+            get { return strLastName; }
+            set { strLastName = value; }
+        }
+
+        /// <summary>
+        /// Gender
+        /// 
+        /// </summary>
+        public bool Gender
+        {
+            get { return bolGender; }
+            set { bolGender = value; }
+        }
+
+        /// <summary>
+        /// Birthday
+        /// 
+        /// </summary>
+        public DateTime? Birthday
+        {
+            get { return dtmBirthday; }
+            set { dtmBirthday = value; }
+        }
+
+        /// <summary>
+        /// Email
+        /// 
+        /// </summary>
+        public string Email
+        {
+            get { return strEmail; }
+            set { strEmail = value; }
+        }
+
+        /// <summary>
+        /// PhoneNumber
+        /// 
+        /// </summary>
+        public string PhoneNumber
+        {
+            get { return strPhoneNumber; }
+            set { strPhoneNumber = value; }
+        }
+
+        /// <summary>
+        /// MOBI
+        /// 
+        /// </summary>
+        public string MOBI
+        {
+            get { return strMOBI; }
+            set { strMOBI = value; }
+        }
+
+        /// <summary>
+        /// Address
+        /// 
+        /// </summary>
+        public string Address
+        {
+            get { return strAddress; }
+            set { strAddress = value; }
+        }
+
+        /// <summary>
+        /// DepartmentID
+        /// 
+        /// </summary>
+        public int DepartmentID
+        {
+            get { return intDepartmentID; }
+            set { intDepartmentID = value; }
+        }
+
+        /// <summary>
+        /// PositionID
+        /// 
+        /// </summary>
+        public int PositionID
+        {
+            get { return intPositionID; }
+            set { intPositionID = value; }
+        }
+
+        /// <summary>
+        /// AreaID
+        /// 
+        /// </summary>
+        public int AreaID
+        {
+            get { return intAreaID; }
+            set { intAreaID = value; }
+        }
+
+        /// <summary>
+        /// Description
+        /// 
+        /// </summary>
+        public string Description
+        {
+            get { return strDescription; }
+            set { strDescription = value; }
+        }
+
+        /// <summary>
+        /// BankAccountID
+        /// 
+        /// </summary>
+        public string BankAccountID
+        {
+            get { return strBankAccountID; }
+            set { strBankAccountID = value; }
+        }
+
+        /// <summary>
+        /// IDCard
+        /// 
+        /// </summary>
+        public string IDCard
+        {
+            get { return strIDCard; }
+            set { strIDCard = value; }
+        }
+
+        /// <summary>
+        /// BeginWorkDate
+        /// 
+        /// </summary>
+        public DateTime? BeginWorkDate
+        {
+            get { return dtmBeginWorkDate; }
+            set { dtmBeginWorkDate = value; }
+        }
+
+        /// <summary>
+        /// WorkStoreID
+        /// 
+        /// </summary>
+        public int WorkStoreID
+        {
+            get { return intWorkStoreID; }
+            set { intWorkStoreID = value; }
+        }
+
+        /// <summary>
+        /// SIGNATUREPICTURE
+        /// 
+        /// </summary>
+        public string SIGNATUREPICTURE
+        {
+            get { return strSIGNATUREPICTURE; }
+            set { strSIGNATUREPICTURE = value; }
+        }
+
+        /// <summary>
+        /// DefaultPICTUREURL
+        /// 
+        /// </summary>
+        public string DefaultPictureURL
+        {
+            get { return strDefaultPictureURL; }
+            set { strDefaultPictureURL = value; }
+        }
+
+        /// <summary>
+        /// IsGroupUser
+        /// 
+        /// </summary>
+        public bool IsGroupUser
+        {
+            get { return bolIsGroupUser; }
+            set { bolIsGroupUser = value; }
+        }
+
+        /// <summary>
+        /// IsActive
+        /// 
+        /// </summary>
+        public bool IsActive
+        {
+            get { return bolIsActive; }
+            set { bolIsActive = value; }
+        }
+
+        /// <summary>
+        /// IsSystem
+        /// 
+        /// </summary>
+        public bool IsSystem
+        {
+            get { return bolIsSystem; }
+            set { bolIsSystem = value; }
+        }
+
+        /// <summary>
+        /// CreatedUser
+        /// 
+        /// </summary>
+        public string CreatedUser
+        {
+            get { return strCreatedUser; }
+            set { strCreatedUser = value; }
+        }
+
+        /// <summary>
+        /// CreatedDate
+        /// 
+        /// </summary>
+        public DateTime? CreatedDate
+        {
+            get { return dtmCreatedDate; }
+            set { dtmCreatedDate = value; }
+        }
+
+        /// <summary>
+        /// UpdatedUser
+        /// 
+        /// </summary>
+        public string UpdatedUser
+        {
+            get { return strUpdatedUser; }
+            set { strUpdatedUser = value; }
+        }
+
+        /// <summary>
+        /// UpdatedDate
+        /// 
+        /// </summary>
+        public DateTime? UpdatedDate
+        {
+            get { return dtmUpdatedDate; }
+            set { dtmUpdatedDate = value; }
+        }
+
+        /// <summary>
+        /// IsDeleted
+        /// 
+        /// </summary>
+        public bool IsDeleted
+        {
+            get { return bolIsDeleted; }
+            set { bolIsDeleted = value; }
+        }
+
+        /// <summary>
+        /// DeletedUser
+        /// 
+        /// </summary>
+        public string DeletedUser
+        {
+            get { return strDeletedUser; }
+            set { strDeletedUser = value; }
+        }
+
+        /// <summary>
+        /// DeletedDate
+        /// 
+        /// </summary>
+        public DateTime? DeletedDate
+        {
+            get { return dtmDeletedDate; }
+            set { dtmDeletedDate = value; }
+        }
+        public bool IsAutoAddCumulationTimeoffDays
+        {
+            get { return bolIsAutoAddCumulationTimeoffDays; }
+            set { bolIsAutoAddCumulationTimeoffDays = value; }
+        }
+        /// <summary>
+        /// WorkingPositionID
+        /// Vị trí công việc
+        /// </summary>
+        public int WorkingPositionID
+        {
+            get { return intWorkingPositionID; }
+            set { intWorkingPositionID = value; }
+        }
+        public string WorksSupportMemberRoleName { get; set; }
+        public string WorksSupportMemberRoleId { get; set; }
+        
+        public List<UserFunction> LsUserFunction { get; set; }
+        #endregion
+
+
+        #region Constructor
+
+        public User()
+        {
+        }
+        #endregion
+
+
+        #region Column Names
+
+        public const String colUserName = "UserName";
+        public const String colPassword = "Password";
+        public const String colFullName = "FullName";
+        public const String colFirstName = "FirstName";
+        public const String colLastName = "LastName";
+        public const String colGender = "Gender";
+        public const String colBirthday = "Birthday";
+        public const String colEmail = "Email";
+        public const String colPhoneNumber = "PhoneNumber";
+        public const String colMOBI = "MOBI";
+        public const String colAddress = "Address";
+        public const String colDepartmentID = "DepartmentID";
+        public const String colPositionID = "PositionID";
+        public const String colAreaID = "AreaID";
+        public const String colDescription = "Description";
+        public const String colBankAccountID = "BankAccountID";
+        public const String colIDCard = "IDCard";
+        public const String colBeginWorkDate = "BeginWorkDate";
+        public const String colWorkStoreID = "WorkStoreID";
+        public const String colSIGNATUREPICTURE = "SIGNATUREPICTURE";
+        public const String colDefaultPictureURL = "DefaultPictureURL";
+        public const String colIsGroupUser = "IsGroupUser";
+        public const String colIsActive = "IsActive";
+        public const String colIsSystem = "IsSystem";
+        public const String colCreatedUser = "CreatedUser";
+        public const String colCreatedDate = "CreatedDate";
+        public const String colUpdatedUser = "UpdatedUser";
+        public const String colUpdatedDate = "UpdatedDate";
+        public const String colIsDeleted = "IsDeleted";
+        public const String colDeletedUser = "DeletedUser";
+        public const String colDeletedDate = "DeletedDate";
+        public const String colIsAutoAddCumulationTimeoffDays = "ISAUTOADDCUMULATIONTIMEOFFDAYS";
+        public const String colSignaturePictureFileID = "SIGNATUREPICTUREFILEID";
+        public const String colDefaultPictureFileID = "DEFAULTPICTUREFILEID";
+        public const String colWorkingPositionID = "WorkingPositionID";
+        #endregion //Column names
+
+
+    }
+}

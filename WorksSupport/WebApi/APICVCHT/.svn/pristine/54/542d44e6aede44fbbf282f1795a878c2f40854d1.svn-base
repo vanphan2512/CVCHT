@@ -1,0 +1,340 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.ReportProces;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.ReportProces
+{
+    /// <summary>
+    /// Created by      : Nguyen Thi Kim Ngan
+    /// Created date    : 22/07/2017
+    ///Load danh sach nguoi thuc hien them nhom cong viec
+    /// </summary>
+   public class DaWorksSupportGroup_Member
+    {
+       #region Log Property
+       public LogObject ObjLogObject = new LogObject();
+       #endregion
+
+       #region Public Methods
+       /// <summary>
+       /// Get WorksSupportStatus by Id
+       /// </summary>
+       /// <param name="objWorksSupportGroup_Member"></param>
+       /// <param name="id"></param>
+       /// <returns></returns>
+       public ResultMessage GetById(ref List<WorksSupportGroup_Member> listWorksSupportGroup_Member, int intWorksSupportGroup_MemberID, IData objIData)
+       {
+           var objResultMessage = new ResultMessage();
+          // var objIData = Data.CreateData();
+           try
+           {
+              // objIData.Connect();
+               objIData.CreateNewStoredProcedure(SpSelectBy);
+               objIData.AddParameter("@WORKSSUPPORTGROUPID", intWorksSupportGroup_MemberID);
+               DataTable dtb = objIData.ExecStoreToDataTable();
+               listWorksSupportGroup_Member = MyUtils.DataTableExtensions.ToList<WorksSupportGroup_Member>(dtb);
+               //IDataReader reader = objIData.ExecStoreToDataReader();
+               //if (reader.Read())
+               //{
+               //    WorksSupportGroup_Member objWorksSupportGroup_Member = new WorksSupportGroup_Member();
+               //    if (!Convert.IsDBNull(reader["MEMBERUSERNAME"])) objWorksSupportGroup_Member.MemberUserName = Convert.ToString(reader["MEMBERUSERNAME"]).Trim();
+               //    if (!Convert.IsDBNull(reader["WORKSSUPPORTGROUPID"])) objWorksSupportGroup_Member.WorksSupportGroupId = Convert.ToInt32(reader["WORKSSUPPORTGROUPID"]);
+               //    if (!Convert.IsDBNull(reader["ISAUTOADDMEMBERTOWORKSSUPPORT"])) objWorksSupportGroup_Member.IsAutoaddMemberToWorksSupport = Convert.ToInt32(reader["ISAUTOADDMEMBERTOWORKSSUPPORT"]);
+
+               //    listWorksSupportGroup_Member = objWorksSupportGroup_Member;
+               //}
+               //else
+               //{
+               //    listWorksSupportGroup_Member = null;
+               //}
+           }
+           catch (Exception objEx)
+           {
+               objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                   "Lỗi nạp thông tin danh sách WorksSupportGroup_Member", objEx.ToString());
+               ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                   "DaWorksSupportGroup_Member -> GetById", "");
+               return objResultMessage;
+           }
+           finally
+           {
+               objIData.Disconnect();
+           }
+           return objResultMessage;
+       }
+
+       /// <summary>
+       /// Thêm trạng thái công việc cần hỗ trợ
+       /// </summary>
+       /// <param name="objIData"></param>
+       /// <param name="objWorksSupportGroup_Member"></param>
+       protected virtual void Insert(IData objIData, WorksSupportGroup_Member objWorksSupportGroup_Member)
+       {
+           try
+           {
+               objIData.CreateNewStoredProcedure(SpAdd);
+               //objIData.AddParameter("@WORKSSUPPORTSTATUSID", objWorksSupportGroup_Member.WorksSupportStatusId);
+               objIData.AddParameter("@WORKSSUPPORTGROUPID", objWorksSupportGroup_Member.WorksSupportGroupId);
+               objIData.AddParameter("@MEMBERUSERNAME", objWorksSupportGroup_Member.MemberUserName);
+               objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", objWorksSupportGroup_Member.WorksSupportMemberRoleId);
+               objIData.AddParameter("@ISAUTOADDMEMBERTOWORKSSUPPORT", objWorksSupportGroup_Member.IsAutoaddMemberToWorksSupport);
+               objIData.AddParameter("@DESCRIPTION", objWorksSupportGroup_Member.Decription);
+               objIData.AddParameter("@ORDERINDEX", objWorksSupportGroup_Member.OrderIndex);
+               objIData.AddParameter("@ISACTIVE", objWorksSupportGroup_Member.IsActive);
+               objIData.AddParameter("@ISSYSTEM", objWorksSupportGroup_Member.IsSystem);
+               objIData.AddParameter("@CREATEDUSER", objWorksSupportGroup_Member.CreatedUser);
+
+               objWorksSupportGroup_Member.WorksSupportGroupId = Convert.ToInt32(objIData.ExecStoreToString());
+           }
+           catch (Exception)
+           {
+               objIData.RollBackTransaction();
+               throw;
+           }
+       }
+
+       /// <summary>
+       /// Insert WorksSupportGroup_Member
+       /// </summary>
+       /// <param name="objWorksSupportStatus"></param>
+       /// <returns></returns>
+       public ResultMessage InsertGroup_Member(List<WorksSupportGroup_Member> data)
+       {
+           var objResultMessage = new ResultMessage();
+           var objIData = Data.CreateData();
+           WorksSupportGroup_Member objWork = new WorksSupportGroup_Member();
+           try
+           {
+
+               objIData.Connect();
+               foreach (var item in data)
+               {
+                   InsertGroup_Member(objIData, item.WorksSupportGroupId, item.UserName, item.WorksSupportMemberRoleId, item.IsAutoaddMemberToWorksSupport, item.CreatedUser);
+               }
+           }
+           catch (Exception objEx)
+           {
+               objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportStatus", objEx.ToString());
+               ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Insert", Globals.ModuleName);
+               return objResultMessage;
+           }
+           finally
+           {
+               objIData.Disconnect();
+           }
+           return objResultMessage;
+       }
+
+       /// <summary>
+       /// Xóa trạng thái công việc cần hỗ trợ
+       /// </summary>
+       /// <param name="objWorksSupportStatus"></param>
+       /// <returns></returns>
+       public ResultMessage Delete(List<WorksSupportGroup_Member> data, string DeleteUer)
+       {
+           var objResultMessage = new ResultMessage();
+           var objIData = Data.CreateData();
+           try
+           {
+               objIData.Connect();
+               foreach (var item in data)
+               {
+                   Delete_GroupMember(objIData, DeleteUer, item.WorksSupportGroupId, item.MemberUserName);
+               }
+           }
+           catch (Exception objEx)
+           {
+               objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSuportStatus", objEx.ToString());
+               ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Delete", Globals.ModuleName);
+               return objResultMessage;
+           }
+           finally
+           {
+               objIData.Disconnect();
+           }
+           return objResultMessage;
+       }
+
+       /// <summary>
+       /// Update data
+       /// </summary>
+       /// <param name="WorksSupportProject"></param>
+       /// <returns></returns>
+       public ResultMessage Update(WorksSupportGroup_Member objGroupMember, ref WorksSupportGroup_Member obj)
+       {
+           var objResultMessage = new ResultMessage();
+           var objIData = Data.CreateData();
+           try
+           {
+               objIData.Connect();
+               
+                   Update_MemberGroup(objIData, objGroupMember, ref obj);
+           }
+           catch (Exception objEx)
+           {
+               objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi cap nhat thông tin WorksSupportProject", objEx.ToString());
+               ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> Insert", Globals.ModuleName);
+               return objResultMessage;
+           }
+           finally
+           {
+               objIData.Disconnect();
+           }
+           return objResultMessage;
+       }
+
+       #endregion
+
+       #region Protected Methods
+       
+       /// <summary>
+       /// Thêm cong viec lien quan vao eo_workssupport_works
+       /// </summary>
+       /// <param name="objIData"></param>
+       /// <param name="objWorksSupportStatus"></param>
+       protected virtual void InsertGroup_Member(IData objIData, int intWS_GroupId, string strMemberUserName, int intWP_MemberRoleId, int intIsAutoGroup, string strUser)
+       {
+           try
+           {
+               objIData.CreateNewStoredProcedure(SpAddMember);
+               objIData.AddParameter("@WORKSSUPPORTGROUPID", intWS_GroupId);
+               objIData.AddParameter("@MEMBERUSERNAME", strMemberUserName);
+               objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", intWP_MemberRoleId);
+               objIData.AddParameter("@ISAUTOADDGROUPMEMBER", intIsAutoGroup);
+               objIData.AddParameter("@CREATEDUSER", strUser);
+               objIData.ExecNonQuery();
+
+           }
+           catch (Exception)
+           {
+               objIData.RollBackTransaction();
+               throw;
+           }
+       }
+       /// <summary>
+       /// Cập nhật trạng thái công việc cần hỗ trợ
+       /// </summary>
+       /// <param name="objIData"></param>
+       /// <param name="objWorksSupportStatus"></param>
+       /// 
+       //protected virtual void Update(IData objIData, WorksSupportGroup_Member objWorksGroup_Member, ref WorksSupportGroup_Member lstWorksSupportStatus)
+       //{
+       //    try
+       //    {
+       //        objIData.CreateNewStoredProcedure(SpUpdate);
+       //        objIData.AddParameter("@WORKSSUPPORTGROUPID", objWorksGroup_Member.WorksSupportGroupId);
+       //        objIData.AddParameter("@MEMBERUSERNAME", objWorksGroup_Member.MemberUserName);
+       //        objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", objWorksGroup_Member.WorksSupportMemberRoleId);
+       //        objIData.AddParameter("@ISAUTOADDMEMBERTOWORKSSUPPORT", objWorksGroup_Member.IsAutoaddMemberToWorksSupport);
+       //        objIData.AddParameter("@DESCRIPTION", objWorksGroup_Member.Decription);
+       //        objIData.AddParameter("@ORDERINDEX", objWorksGroup_Member.OrderIndex);
+       //        objIData.AddParameter("@ISACTIVE", objWorksGroup_Member.IsActive);
+       //        objIData.AddParameter("@ISSYSTEM", objWorksGroup_Member.IsSystem);
+       //        objIData.AddParameter("@UPDATEDUSER", objWorksGroup_Member.UpdatedUser);
+       //        DataTable dtb = objIData.ExecStoreToDataTable();
+       //        List<WorksSupportGroup_Member> list = new List<WorksSupportGroup_Member>();
+       //        list = MyUtils.DataTableExtensions.ToList<WorksSupportGroup_Member>(dtb);
+       //        if (list != null && list.Count > 0)
+       //        {
+       //            lstWorksSupportStatus = list[0];
+       //        }
+       //        else
+       //        {
+       //            lstWorksSupportStatus = null;
+       //        }
+
+       //    }
+       //    catch (Exception)
+       //    {
+       //        objIData.RollBackTransaction();
+       //        throw;
+       //    }
+       //}
+       /// <summary>
+       /// them thanh vien cho nhom cong viec
+       /// </summary>
+       /// <param name="objIData"></param>
+       /// <param name="objWorksSupportStatus"></param>
+       /// 
+       protected virtual void Insert(IData objIData, int intWS_tGroupId, string strMemberUserName, int intWP_MemberRoleId, int intIsAutoGroup, string strUser)
+       {
+           try
+           {
+               objIData.CreateNewStoredProcedure(SpAdd);
+               objIData.AddParameter("@WORKSSUPPORTPROJECTID", intWS_tGroupId);
+               objIData.AddParameter("@MEMBERUSERNAME", strMemberUserName);
+               objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", intWP_MemberRoleId);
+               objIData.AddParameter("@ISAUTOADDMEMBERTOWORKSGROUP", intIsAutoGroup);
+               objIData.AddParameter("@CREATEDUSER", strUser);
+               objIData.ExecNonQuery();
+           }
+           catch (Exception)
+           {
+               objIData.RollBackTransaction();
+               throw;
+           }
+       }
+       /// <summary>
+       /// Xoa thanh vien cua du an
+       /// </summary>
+       /// <param name="objIData"></param>
+       /// <param name="objWorksSupportStatus"></param>
+       protected void Delete_GroupMember(IData objIData, string DeleteUser, int intGroupId, string strUserName)
+       {
+           try
+           {
+               objIData.CreateNewStoredProcedure(SpDel);
+               objIData.AddParameter("@WORKSSUPPORTGROUPID", intGroupId);
+               objIData.AddParameter("@MEMBERUSERNAME", strUserName);
+               objIData.AddParameter("@DELETEDUSER", DeleteUser);
+
+               objIData.ExecNonQuery();
+           }
+           catch (Exception)
+           {
+               objIData.RollBackTransaction();
+               throw;
+           }
+       }
+       /// Cập nhật trạng thái dự án cần hỗ trợ
+       /// </summary>
+       /// <param name="objIData"></param>
+       /// <param name="objWorksSupportProject"></param>
+       protected virtual void Update_MemberGroup(IData objIData, WorksSupportGroup_Member objGroupMember, ref WorksSupportGroup_Member obj)
+       {
+           try
+           {
+               objIData.CreateNewStoredProcedure(SpUpdate);
+               objIData.AddParameter("@WORKSSUPPORTGROUPID", objGroupMember.WorksSupportGroupId);
+               objIData.AddParameter("@MEMBERUSERNAME", objGroupMember.MemberUserName);
+               objIData.AddParameter("@UPDATEDUSER", objGroupMember.UpdatedUser);
+               objIData.AddParameter("@WORKSSUPPORTMEMBERROLEID", objGroupMember.WorksSupportMemberRoleId);
+               objIData.AddParameter("@ISAUTOADDMEMBER", objGroupMember.IsAutoaddMemberToWorksSupport);
+
+               objIData.ExecNonQuery();
+
+           }
+           catch (Exception)
+           {
+               objIData.RollBackTransaction();
+               throw;
+           }
+       }
+       #endregion
+
+       #region Stored Procedure Names
+       public const string SpSelectBy = "WORKSSUPPORT_V2_SHRMEMBER";
+       public const string SpAdd = "WORKS_GROUP_MEMBER_V2_ADD";
+       //public const string SpUpdate = "WORKSSUPPORTSTATUS_V2_UPD";
+       public const string SpAddMember = "WS_GROUP_MEMBER_V2_ADD";
+       public const string SpDel = "WSGROUP_MEMBER_V2_DEL";
+       public const string SpUpdate = "WSGROUP_MEMBER_V2_UPD";
+       #endregion
+    }
+}

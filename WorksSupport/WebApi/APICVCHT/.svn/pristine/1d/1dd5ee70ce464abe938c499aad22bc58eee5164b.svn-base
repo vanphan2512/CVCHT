@@ -1,0 +1,109 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Web;
+using Nc.Erp.WorksSupport.Api.Common;
+
+namespace Nc.Erp.WorksSupport.Api.Providers
+{
+    public class MultipartFormDataMemoryStreamProvider : MultipartMemoryStreamProvider
+    {
+        public class FileInfo
+        {
+            public Byte[] Content { get; set; }
+            public string ContentType { get; internal set; }
+            public string FileName { get; set; }
+            public long FileSize { get; internal set; }
+            public FileInfo()
+            {
+                this.ContentType = FileContentType.Png;
+                this.FileSize = 0;
+            }
+        }
+
+        private readonly Collection<bool> isFormData = new Collection<bool>();
+        private readonly NameValueCollection formData = new NameValueCollection(StringComparer.OrdinalIgnoreCase);
+        private readonly List<FileInfo> fileData = new List<FileInfo>();
+
+        public NameValueCollection FormData
+        {
+            get { return formData; }
+        }
+
+        public List<FileInfo> FileData
+        {
+            get { return fileData; }
+        }
+
+        public override Stream GetStream(HttpContent parent, HttpContentHeaders headers)
+        {
+            if (null == parent)
+            {
+                throw new ArgumentNullException("parent");
+            }
+
+            if (null == headers)
+            {
+                throw new ArgumentNullException("headers");
+            }
+
+            ContentDispositionHeaderValue contentDisposition = headers.ContentDisposition;
+            if (null == contentDisposition)
+            {
+                throw new InvalidOperationException("Did not find required 'Content-Disposition' header field in MIME multipart body part.");
+            }
+
+            isFormData.Add(String.IsNullOrEmpty(contentDisposition.FileName));
+            return base.GetStream(parent, headers);
+        }
+
+        public override async Task ExecutePostProcessingAsync()
+        {
+            for (int index = 0; index < Contents.Count; ++index)
+            {
+                HttpContent formContent = Contents[index];
+                if (isFormData[index])
+                {
+                    // Field
+                    string formFieldName = UnquoteToken(formContent.Headers.ContentDisposition.Name) ?? string.Empty;
+                    string formFieldValue = await formContent.ReadAsStringAsync();
+                    FormData.Add(formFieldName, formFieldValue);
+                }
+                else
+                {
+                    // File
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.FileName = UnquoteToken(formContent.Headers.ContentDisposition.FileName);
+                    fileInfo.Content = await formContent.ReadAsByteArrayAsync();
+                    fileInfo.FileSize = (long)formContent.Headers.ContentLength;
+                    fileInfo.ContentType = formContent.Headers.ContentType.MediaType;
+
+                    FileData.Add(fileInfo);
+                }
+            }
+        }
+
+        private static string UnquoteToken(string token)
+        {
+            if (true == String.IsNullOrWhiteSpace(token))
+            {
+                return token;
+            }
+
+            if ((true == token.StartsWith("\"", StringComparison.Ordinal))
+                && (true == token.EndsWith("\"", StringComparison.Ordinal))
+                && (token.Length > 1))
+            {
+                return token.Substring(1, token.Length - 2);
+            }
+
+            return token;
+        }
+    }
+}

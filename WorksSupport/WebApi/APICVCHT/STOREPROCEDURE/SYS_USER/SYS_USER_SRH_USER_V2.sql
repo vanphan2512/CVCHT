@@ -1,0 +1,29 @@
+create or replace PROCEDURE SYS_USER_SRH_USER_V2
+/*
+	Created by	:	Trýõng Hoàng Nhi
+	Date		:	04/07/2017
+	Description	:	N?p danh sách Ngý?i dùng theo userName
+*/
+(
+    v_Out OUT SYS_REFCURSOR,
+    v_USERNAME NVARCHAR2 DEFAULT NULL
+) 
+AS
+BEGIN
+    OPEN v_Out FOR
+	SELECT
+	USERNAME,		
+    FULLNAME,
+    FIRSTNAME,
+    LASTNAME,		
+    DEPARTMENTID,
+    POSITIONID,
+    WORKSTOREID,
+    DEFAULTPICTUREURL,		
+    DEFAULTPICTUREFILEID
+	FROM SYS_USER
+	WHERE 
+    ISDELETED = 0 and
+    (v_USERNAME IS NULL OR SYS_USER.FULLNAME LIKE '%' || v_USERNAME || '%'   OR  UPPER(SYS_USER.FULLNAME) LIKE '%'||UPPER(v_USERNAME)||'%')
+;
+END;

@@ -1,0 +1,59 @@
+﻿using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models;
+using Nc.Erp.WorksSupport.Api.Providers;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using Library.Common;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    [RoutePrefix("api/v2/files")]
+    public class FileController : ApiController
+    {
+        [HttpPost]
+        [Route("")]
+        public async Task<Response<FileUpload>> UploadFile()
+        {
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+            var strFileId = "";
+            var strFilePath = "";
+            var ret = new Response<FileUpload>();
+            try
+            {
+                var objUploadFile = new Library.Common.ERPFMSServices_WSFileManager.UploadFile();
+                objUploadFile.BufferFile = provider.FileData[0].Content;
+                objUploadFile.FileName = provider.FileData[0].FileName;
+                objUploadFile.FMSApplicationID =
+                    System.Configuration.ConfigurationManager.AppSettings["FMSAplication_WorksSupport_Document"];
+
+                var objR = new PlcFileManager().UploadFile(objUploadFile, ref strFileId, ref strFilePath);
+
+                var fileInfo = new FileUpload
+                                   {
+                                       FileId = strFileId,
+                                       FilePath = strFilePath,
+                                       FileName = provider.FileData[0].FileName
+                                   };
+                if (!objR.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = fileInfo;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objR.Message;
+                }
+            }
+            catch (ValidationException ex)
+            {
+                ret.Success = false;
+                ret.Message = ex.Value.ToString();
+            }
+            return ret;
+        }
+    }
+}

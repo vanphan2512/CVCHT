@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FD4AEB35-73D9-4835-8D72-8C7F5B81647F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nc.Erp.WorksSupport.Da</RootNamespace>
+    <AssemblyName>Nc.Erp.WorksSupport.Da</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Library.DataAccess">
+      <HintPath>..\Libs\Library.DataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Library.WebCore">
+      <HintPath>..\Libs\Library.WebCore.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\Libs\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MyUtils, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\MyUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\Account\DaAccount.cs" />
+    <Compile Include="Configuration\MemberRole\DaWorksSupportMemberRole.cs" />
+    <Compile Include="Configuration\Priority\DaWorksSupportPriority.cs" />
+    <Compile Include="Configuration\Group\DaWorksSupportGroup.cs" />
+    <Compile Include="Configuration\Project\DaWorksSupportProject.cs" />
+    <Compile Include="Configuration\Project\DaWorksSupportProject_Member.cs" />
+    <Compile Include="Configuration\Project\DaProject.cs" />
+    <Compile Include="Configuration\Quality\DaWorksSupportQuality.cs" />
+    <Compile Include="Configuration\ReportProces\DaReportProcess.cs" />
+    <Compile Include="Configuration\ReportProces\DaWorksSupportGroup_Member.cs" />
+    <Compile Include="Configuration\Status\DaWorksSupportStatus.cs" />
+    <Compile Include="Configuration\SupportType\DaWorksSupportType.cs" />
+    <Compile Include="Configuration\Sys\Da_Sys.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_Attachment.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_CMT_Attachment.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_Comment.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_Member.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_Progress.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_WorkFlow.cs" />
+    <Compile Include="Configuration\WorksSupport\DaWorksSupport_WorksSupportTypePeriod.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorksSupportProject_Permis.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorksSupportType.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorksSupportType_MemberRole.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorksSupportType_WF_NX.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorksSupportType_WF_NXPermis.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorksSupportType_WF_Permis.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorkSupportType_Priority.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorkSupportType_Quality.cs" />
+    <Compile Include="Configuration\WorkSupportType\DaWorkSupportType_WorkFlow.cs" />
+    <Compile Include="Configuration\Works\DaWorks.cs" />
+    <Compile Include="Configuration\Works\DaWorksSupport_Works.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DO\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do\Nc.Erp.WorksSupport.Do.csproj">
+      <Project>{fcc31dcc-124c-4175-9eeb-4f19cf74d9fa}</Project>
+      <Name>Nc.Erp.WorksSupport.Do</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Nc.Erp.WorksSupport.Da.sln" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".vs\Nc.Erp.WorksSupport.Da\v15\.suo" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration\Status\NewFolder1\" />
+    <Folder Include="Configuration\WorkSupportGroup\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,453 @@
+﻿using System;
+using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration;
+using System.Data;
+using MyUtils;
+using System.Collections.Generic;
+using Nc.Erp.WorksSupport.Do.Configuration.Priority;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Priority
+{
+    /// <summary>
+    /// Created by      : Truong Hoang Nhi
+    /// Created date    : 25/05/2017
+    /// Xử lý nghiệp vụ đối tượng ERP.EO.WORKSSUPPORTPRIORITY.
+    /// </summary>
+    public class DaWorksSupportPriority
+    {
+
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+
+        #endregion
+
+        #region Public Methods
+        public ResultMessage GetAll_WorksSupportPriority(ref List<WorksSupportPriority> lstPriority, string strKeywords, int intDelete, int intPageIndex, int intPageSize)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+               
+                SearchData_WorksSupportPriority(ref lstPriority, strKeywords, intDelete, intPageIndex, intPageSize);
+                
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách hệ thống", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaSystemError -> GetAll", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage GetAll(ref List<WorksSupportPriority> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                //DataTable dtb = objIData.ExecStoreToDataTable();
+                //list = MyUtils.DataTableExtensions.ToList<WorksSupportPriority>(dtb);
+                WorksSupportPriority objWorksSupportPriority;
+                while (reader.Read())
+                {
+                    objWorksSupportPriority = new WorksSupportPriority();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupportPriority.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYNAME"])) objWorksSupportPriority.WorksSupportPriorityName = Convert.ToString(reader["WORKSSUPPORTPRIORITYNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportPriority.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportPriority.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportPriority.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportPriority.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportPriority.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupportPriority.CreatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupportPriority.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupportPriority.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupportPriority.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    list.Add(objWorksSupportPriority);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportPriority", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportPriority -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Get WorksSupportPriority by Id
+        /// </summary>
+        /// <param name="objWorksSupportPriority"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        public ResultMessage GetById(ref WorksSupportPriority objWorksSupportPriority, int WorksSupportPriorityid)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSel);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYID", WorksSupportPriorityid);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objWorksSupportPriority = new WorksSupportPriority();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupportPriority.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WorksSupportPriorityName"])) objWorksSupportPriority.WorksSupportPriorityName = Convert.ToString(reader["workssupportpriorityname"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportPriority.IconUrl = Convert.ToString(reader["ICONURL"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportPriority.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportPriority.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportPriority.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportPriority.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupportPriority.UpdatedUser = Convert.ToString(reader["CREATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupportPriority.UpdatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupportPriority.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupportPriority.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+
+                }
+                else
+                {
+                    objWorksSupportPriority = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportPriority", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportPriority -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// check values existed
+        /// </summary>
+        /// <param name="objPrioValidate"></param>
+        /// <param name="intId"></param>
+        /// <param name="strName"></param>
+        /// <param name="inOrderIndex"></param>
+        /// <returns></returns>
+        public ResultMessage CheckValuesExisted(ref PrioritiesValidation objPrioValidate,int intId, string strName, int inOrderIndex)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpCheck);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYID", intId);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYNAME", strName);
+                objIData.AddParameter("@ORDERINDEX", inOrderIndex);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objPrioValidate = new PrioritiesValidation();
+                    if (!Convert.IsDBNull(reader["PRIORITYNAME"])) objPrioValidate.CountName = Convert.ToInt32(reader["PRIORITYNAME"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objPrioValidate.CountOrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    
+
+                }
+                else
+                {
+                    objPrioValidate = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi kiểm tra thuoc tinh trùng nhau của độ ưu tiên", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportPriority -> CheckNameExisted", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="objWorksSupportPriority"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorksSupportPriority objWorksSupportPriority, ref WorksSupportPriority obj)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                if (objWorksSupportPriority.WorksSupportPriorityId > 0)
+                {
+                    Update(objIData, objWorksSupportPriority, ref obj);
+                }
+                else
+                {
+                    Insert(objIData, objWorksSupportPriority);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportPriority", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportPriority -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Xóa WorksSupportPriority
+        /// </summary>
+        /// <param name="objWorksSupportPriority"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string userDelete, string ids)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                //foreach (var item in ids.Split(','))
+                //{
+                //    if (string.IsNullOrEmpty(item))
+                //        continue;
+                //    int PriorityID = Convert.ToInt32(item);
+                //    DeletePriority(objIData, userDelete, PriorityID);
+                //}
+
+                var lstString = ids.Split(',');
+                for (var i = 0; i < lstString.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(lstString[i]))
+                        continue;
+                    var ID = lstString[i];
+                    int PriorityID = Convert.ToInt32(ID);
+                    DeletePriority(objIData, userDelete, PriorityID);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSuportPriority", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportPriority -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Protected Methods
+
+        public ResultMessage SearchData_WorksSupportPriority(ref List<WorksSupportPriority> dtbData, string strKeywords, int intDelete, int intPageIndex, int intPageSize)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@Keywords", strKeywords);
+                objIData.AddParameter("@PAGEINDEX", intPageIndex);
+                objIData.AddParameter("@PAGESIZE", intPageSize);
+                objIData.AddParameter("@ISDELETED", intDelete);              
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupportPriority objWorksSupportPriority;
+                while (reader.Read())
+                {
+                    objWorksSupportPriority = new WorksSupportPriority();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupportPriority.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYNAME"])) objWorksSupportPriority.WorksSupportPriorityName = Convert.ToString(reader["WORKSSUPPORTPRIORITYNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportPriority.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportPriority.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportPriority.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportPriority.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportPriority.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    if (!Convert.IsDBNull(reader["ISDELETED"])) objWorksSupportPriority.IsDeleted = Convert.ToBoolean(reader["ISDELETED"]);
+                    dtbData.Add(objWorksSupportPriority);
+                }
+
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin nhóm nội dung web", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_CMS_WebContentGroup -> SearchData_WebContentGroup", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data to table WorksSupportPriority
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected virtual void Insert(IData objIData, WorksSupportPriority objWorksSupportPriority)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYNAME", objWorksSupportPriority.WorksSupportPriorityName);
+                objIData.AddParameter("@ICONURL", objWorksSupportPriority.IconUrl);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportPriority.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportPriority.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportPriority.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportPriority.IsSystem);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupportPriority.CreatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                objWorksSupportPriority.WorksSupportPriorityId = Convert.ToInt32(objIData.ExecStoreToString());
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        /// <summary>
+        /// Insert +Update data to table WorksSupportPriority
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected virtual void UpdateWorksSupportPriority(IData objIData, WorksSupportPriority objWorksSupportPriority)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYNAME", objWorksSupportPriority.WorksSupportPriorityName);
+                objIData.AddParameter("@ICONURL", objWorksSupportPriority.IconUrl);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportPriority.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportPriority.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportPriority.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportPriority.IsSystem);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupportPriority.CreatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                // Add more columns to insert data here.
+
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật data
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected virtual void Update(IData objIData, WorksSupportPriority objWorksSupportPriority, ref WorksSupportPriority listWorksSupportPriority)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYID", objWorksSupportPriority.WorksSupportPriorityId);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYNAME", objWorksSupportPriority.WorksSupportPriorityName);
+                objIData.AddParameter("@ICONURL", objWorksSupportPriority.IconUrl);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportPriority.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportPriority.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportPriority.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportPriority.IsSystem);
+                objIData.AddParameter("@UPDATEDUSER", objWorksSupportPriority.UpdatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                DataTable dtb = objIData.ExecStoreToDataTable();
+                List<WorksSupportPriority> list = new List<WorksSupportPriority>();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportPriority>(dtb);
+                if (list != null && list.Count > 0)
+                {
+                    listWorksSupportPriority = list[0];
+                }
+                else
+                {
+                    listWorksSupportPriority = null;
+                }
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa data
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportPriority"></param>
+        protected void DeletePriority(IData objIData, string deletedUser, int id)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYID", id);
+                objIData.AddParameter("@DELETEDUSER", deletedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID",ObjLogObject.LoginLogID);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+        public const string SpSelect = "WORKSSUPPORTPRIORITY_V2_SEL";
+        public const string SpAdd = "WORKSSUPPORTPRIORITY_V2_ADD";
+        public const string SpUpdate = "WORKSSUPPORTPRIORITY_V2_UPD";
+        public const string SpDelete = "WORKSSUPPORTPRIORITY_V2_DEL";
+        public const string SpSelectAll = "WORKSSUPPORTPRIORITY_V2_GETALL";
+        public const string SpSel = "WORKSSUPPORTPRIORITY_V2_SElHR";
+        public const string SpCheck = "WORKSSUPPORTPRIORITY_V2_CHECK";
+        #endregion
+    }
+}

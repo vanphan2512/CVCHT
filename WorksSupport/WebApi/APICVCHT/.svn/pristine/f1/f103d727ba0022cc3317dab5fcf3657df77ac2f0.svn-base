@@ -1,0 +1,62 @@
+﻿using Library.WebCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Nc.Erp.WorksSupport.Da.Configuration.Project;
+using Nc.Erp.WorksSupport.Do.Configuration.Project;
+using Library.DataAccess;
+using System.Data;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Project
+{
+     public class DaProject
+    {
+        /// <summary>
+        /// GetAlll Eo_Project
+        /// </summary>
+        /// <param name="objWorksProjects"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+         public ResultMessage GetAll(ref List<Projects> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    Projects objWorksProjects = new Projects();
+                    if (!Convert.IsDBNull(reader["PROJECTID"])) objWorksProjects.ProjectId = Convert.ToString(reader["PROJECTID"]).Trim();
+                    if (!Convert.IsDBNull(reader["PROJECTNAME"])) objWorksProjects.ProjectName = Convert.ToString(reader["PROJECTNAME"]).Trim();
+                    list.Add(objWorksProjects);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách Projects", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaProjects -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+         #region Stored Procedure Names
+
+         public const string SpSelectAll = "EO_Project_V2_SHR";
+
+         #endregion
+    }
+
+
+}

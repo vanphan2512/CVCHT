@@ -1,0 +1,130 @@
+﻿using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models.Work;
+using Nc.Erp.WorksSupport.Da.Configuration.Works;
+using Nc.Erp.WorksSupport.Do.Configuration.Work;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : NGUYEN THI KIM NGAN
+    /// Created date    : 06.07.22017
+    /// Api cong viec "ERP.EO.WORKS"
+    /// </summary>
+    [RoutePrefix("api/v2/works")]
+    public class WorkController : ApiController
+    {
+        /// <summary>
+        /// Tìm kiếm cong viec theo keyword
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Search")]
+        public Response<List<Work>> Search([FromUri] SearchParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<Work>>();
+            try
+            {
+                // Definition object return
+                var listWork = new List<Work>();
+
+                //object param
+                object[] objKeywords = new object[]
+                {
+                    "@PROJECTID", objparam.ProjectIds,
+                    "@KEYWORDS",objparam.Keywords,
+                    "@STARTDATE", objparam.StartDate,
+                    "@ENDDATE", objparam.EndDate,
+                    "@PAGEINDEX", objparam.PageIndex,
+                    "@PAGESIZE", objparam.PageSize
+                };
+                //string projectId = objparam.ProjectIds =  ? "-1" : objparam.ProjectIds;
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorks().SearchData(ref listWork, objparam.ProjectIds,objparam.TypeSearch, objparam.Keywords, objparam.StartDate, objparam.EndDate, objparam.PageIndex, objparam.PageSize);
+
+                if (listWork != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWork;
+                    ret.TotalRecord = listWork.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("insertBy")]
+        public Response<WorksSupport_Works> SaveDataBy([FromBody] SaveWS_Works objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupport_Works>();
+            try
+            {
+                // Definition object return
+                var listWork = new List<WorksSupport_Works>();
+                var obj = new WorksSupport_Works()
+                {
+                    WorksSupportId = objparam.WorksSupportId,
+                    WorksId = objparam.WorksId,
+                    Note = objparam.Note
+                };
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupport_Works().Insert(obj, ref listWork);
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = string.Empty;
+                if (e.InnerException != null)
+                {
+                    desc = e.InnerException.ToString();
+                }
+                else
+                {
+                    desc = e.Message;
+                }
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+    }
+}

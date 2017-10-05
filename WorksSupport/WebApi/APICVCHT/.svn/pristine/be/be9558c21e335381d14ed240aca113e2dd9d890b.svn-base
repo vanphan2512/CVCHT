@@ -1,0 +1,744 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    /// <summary>
+    /// Created by 		: Luong Trung Nhan
+    /// Created date 	: 17/06/2017
+    /// 
+    /// </summary>	
+    public partial class DaWorksSupport_Comment
+    {
+        #region Methods			
+		
+
+		/// <summary>
+		/// Nạp thông tin 
+		/// </summary>
+		/// <param name="objWorksSupport_Comment">Đối tượng trả về</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage LoadInfo(ref List<WorksSupport_Comment> lstWorksSupport_Comment, int intWorksSupportID, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+				objIData.CreateNewStoredProcedure(SP_SELECT);
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, intWorksSupportID);
+				IDataReader reader = objIData.ExecStoreToDataReader();
+                WorksSupport_Comment objWorksSupport_Comment;
+				while (reader.Read())
+ 				{
+ 				    objWorksSupport_Comment = new WorksSupport_Comment();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentID])) objWorksSupport_Comment.CommentId = Convert.ToDecimal(reader[WorksSupport_Comment.colCommentID]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colWorksSupportID])) objWorksSupport_Comment.WorksSupportID = Convert.ToDecimal(reader[WorksSupport_Comment.colWorksSupportID]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentDate])) objWorksSupport_Comment.CommentDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCommentDate]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentContent])) objWorksSupport_Comment.CommentContent = Convert.ToString(reader[WorksSupport_Comment.colCommentContent]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentUser])) objWorksSupport_Comment.CommentUser = Convert.ToString(reader[WorksSupport_Comment.colCommentUser]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colOrderIndex])) objWorksSupport_Comment.OrderIndex = Convert.ToDecimal(reader[WorksSupport_Comment.colOrderIndex]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsActive])) objWorksSupport_Comment.IsActive = Convert.ToBoolean(reader[WorksSupport_Comment.colIsActive]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsSystem])) objWorksSupport_Comment.IsSystem = Convert.ToBoolean(reader[WorksSupport_Comment.colIsSystem]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedUser])) objWorksSupport_Comment.CreatedUser = Convert.ToString(reader[WorksSupport_Comment.colCreatedUser]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedDate])) objWorksSupport_Comment.CreatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCreatedDate]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedUser])) objWorksSupport_Comment.UpdatedUser = Convert.ToString(reader[WorksSupport_Comment.colUpdatedUser]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedDate])) objWorksSupport_Comment.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colUpdatedDate]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsDeleted])) objWorksSupport_Comment.IsDeleted = Convert.ToBoolean(reader[WorksSupport_Comment.colIsDeleted]);
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedUser])) objWorksSupport_Comment.DeletedUser = Convert.ToString(reader[WorksSupport_Comment.colDeletedUser]).Trim();
+ 					if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedDate])) objWorksSupport_Comment.DeletedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colDeletedDate]);
+                    if (!Convert.IsDBNull(reader["FULLNAME"]))
+                        objWorksSupport_Comment.FullName = Convert.ToString(reader["FULLNAME"]);
+                    if (!Convert.IsDBNull(reader["POSITIONNAME"]))
+                        objWorksSupport_Comment.PositionName = Convert.ToString(reader["POSITIONNAME"]);
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"]))
+                        objWorksSupport_Comment.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]);
+                    if (!Convert.IsDBNull(reader["DEFAULTPICTUREURL"]))
+                        objWorksSupport_Comment.DefaultPictureUrl = Convert.ToString(reader["DEFAULTPICTUREURL"]);
+ 					objWorksSupport_Comment.IsExist = true;
+                    objWorksSupport_Comment.ListCommentAttachment = new DaWorksSupport_CMT_Attachment().GetListCommentAttachment(objIData, Convert.ToString(objWorksSupport_Comment.CommentId));
+                    lstWorksSupport_Comment.Add(objWorksSupport_Comment);
+ 				}
+ 			
+				reader.Close();
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport_Comment -> LoadInfo", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+        public List<WorksSupport_Comment> SearchDataToList(  decimal workSupportID)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            List<WorksSupport_Comment> list = new List<WorksSupport_Comment>();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SP_SEARCH);
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, workSupportID);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorksSupport_Comment objWorksSupport_Comment = new WorksSupport_Comment();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentID]))
+                        objWorksSupport_Comment.CommentId = Convert.ToDecimal(reader[WorksSupport_Comment.colCommentID]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colWorksSupportID]))
+                    {
+                        objWorksSupport_Comment.WorksSupportID =
+                            Convert.ToDecimal(reader[WorksSupport_Comment.colWorksSupportID]);
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentDate]))
+                        objWorksSupport_Comment.CommentDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCommentDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentContent]))
+                    {
+                        objWorksSupport_Comment.CommentContent =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentContent]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentUser]))
+                    {
+                        objWorksSupport_Comment.CommentUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colOrderIndex]))
+                        objWorksSupport_Comment.OrderIndex = Convert.ToDecimal(reader[WorksSupport_Comment.colOrderIndex]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsActive]))
+                        objWorksSupport_Comment.IsActive = Convert.ToBoolean(reader[WorksSupport_Comment.colIsActive]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsSystem]))
+                        objWorksSupport_Comment.IsSystem = Convert.ToBoolean(reader[WorksSupport_Comment.colIsSystem]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedUser]))
+                    {
+                        objWorksSupport_Comment.CreatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCreatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedDate]))
+                        objWorksSupport_Comment.CreatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCreatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedUser]))
+                    {
+                        objWorksSupport_Comment.UpdatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colUpdatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedDate]))
+                        objWorksSupport_Comment.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colUpdatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsDeleted]))
+                        objWorksSupport_Comment.IsDeleted = Convert.ToBoolean(reader[WorksSupport_Comment.colIsDeleted]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedUser]))
+                    {
+                        objWorksSupport_Comment.DeletedUser = Convert.ToString(reader[WorksSupport_Comment.colDeletedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedDate])) objWorksSupport_Comment.DeletedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colDeletedDate]);
+                    if (!Convert.IsDBNull(reader["FULLNAME"])) objWorksSupport_Comment.FullName = Convert.ToString(reader["FULLNAME"]);
+                    if (!Convert.IsDBNull(reader["DEFAULTPICTUREURL"])) objWorksSupport_Comment.DefaultPictureUrl = Convert.ToString(reader["DEFAULTPICTUREURL"]);
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"])) objWorksSupport_Comment.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]);
+                    list.Add(objWorksSupport_Comment);
+                }
+               
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                throw new Exception("Lỗi nạp thông tin bình luận công việc cần hỗ trợ !",objEx.InnerException);
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return list;
+        }
+        public List<WorksSupport_Comment> GetNewComment(decimal workSupportID,string arrOldCommentID)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            List<WorksSupport_Comment> list = new List<WorksSupport_Comment>();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure("EO_WORKSSUPPORT_GETNEWCOMMENT");
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, workSupportID);
+                objIData.AddParameter("@arrOldCommentID" , arrOldCommentID);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorksSupport_Comment objWorksSupport_Comment = new WorksSupport_Comment();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentID]))
+                        objWorksSupport_Comment.CommentId = Convert.ToDecimal(reader[WorksSupport_Comment.colCommentID]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colWorksSupportID]))
+                    {
+                        objWorksSupport_Comment.WorksSupportID =
+                            Convert.ToDecimal(reader[WorksSupport_Comment.colWorksSupportID]);
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentDate]))
+                        objWorksSupport_Comment.CommentDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCommentDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentContent]))
+                    {
+                        objWorksSupport_Comment.CommentContent =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentContent]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentUser]))
+                    {
+                        objWorksSupport_Comment.CommentUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colOrderIndex]))
+                        objWorksSupport_Comment.OrderIndex = Convert.ToDecimal(reader[WorksSupport_Comment.colOrderIndex]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsActive]))
+                        objWorksSupport_Comment.IsActive = Convert.ToBoolean(reader[WorksSupport_Comment.colIsActive]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsSystem]))
+                        objWorksSupport_Comment.IsSystem = Convert.ToBoolean(reader[WorksSupport_Comment.colIsSystem]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedUser]))
+                    {
+                        objWorksSupport_Comment.CreatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCreatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedDate]))
+                        objWorksSupport_Comment.CreatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCreatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedUser]))
+                    {
+                        objWorksSupport_Comment.UpdatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colUpdatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedDate]))
+                        objWorksSupport_Comment.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colUpdatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsDeleted]))
+                        objWorksSupport_Comment.IsDeleted = Convert.ToBoolean(reader[WorksSupport_Comment.colIsDeleted]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedUser]))
+                    {
+                        objWorksSupport_Comment.DeletedUser = Convert.ToString(reader[WorksSupport_Comment.colDeletedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedDate])) objWorksSupport_Comment.DeletedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colDeletedDate]);
+                    if (!Convert.IsDBNull(reader["FULLNAME"])) objWorksSupport_Comment.FullName = Convert.ToString(reader["FULLNAME"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport_Comment.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]);
+                    if (!Convert.IsDBNull(reader["departmentname"])) objWorksSupport_Comment.DepartmentName = Convert.ToString(reader["departmentname"]);
+                    if (!Convert.IsDBNull(reader["defaultpictureurl"])) objWorksSupport_Comment.DefaultPictureUrl = Convert.ToString(reader["defaultpictureurl"]);
+
+                    list.Add(objWorksSupport_Comment);
+                }
+
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                throw new Exception("Lỗi nạp thông tin bình luận công việc cần hỗ trợ !", objEx.InnerException);
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return list;
+        }
+        ///// <summary>
+        ///// Thêm thông tin 
+        ///// </summary>
+        ///// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+        ///// <returns>Kết quả trả về</returns>
+        //public ResultMessage Insert(WorksSupport_Comment objWorksSupport_Comment, ref decimal decWSID)
+        //{
+        //    //ERP.Notification.BO.Notification objNotification = new Notification.BO.Notification();
+        //    //string strNoID = System.Guid.NewGuid().ToString();
+        //    //bool bolIsSendMail = false;
+        //    ResultMessage objResultMessage = new ResultMessage();
+        //    IData objIData = Library.DataAccess.Data.CreateData();
+        //    try
+        //    {
+        //    //    objIData.Connect();
+        //    //    decWSID = Insert(objIData, objWorksSupport_Comment);
+        //    //    objNotification.NotificationID =strNoID;
+
+        //    //    objNotification.NotificationTypeID = 4;
+        //    //    objNotification.NotificationName = "Bình luận trên yêu cầu hỗ trợ";
+        //    //    objNotification.Content = objWorksSupport_Comment.WorksSupportName;
+        //    //    objNotification.ContentSendMail = objWorksSupport_Comment.CommentContent;
+        //    //    objNotification.CreatedUser = objWorksSupport_Comment.CreatedUser;
+        //    //    objNotification.CreatedUserFullName = objWorksSupport_Comment.FullName;
+        //    //    objNotification.TaskParameters = "{\"ID\": \"" + objWorksSupport_Comment.WorksSupportID + "\",\"CommentID\": \"" + decWSID + "\", \"Title\": \"" + objWorksSupport_Comment.WorksSupportName + "\"}";
+        //    //    objNotification.CreatedDate = DateTime.Now;
+        //    //    objNotification.Notification_UserList = new DaWorksSupport().GetUserEmailByWSID(objIData, objWorksSupport_Comment.WorksSupportID, objWorksSupport_Comment.CreatedUser, strNoID, ref bolIsSendMail);
+        //    //    objNotification.ISSendEmail = bolIsSendMail;
+        //    //    objNotification.StartDate = DateTime.Now;
+        //    //    //objNotification.LinkURL = System.Configuration.ConfigurationManager.AppSettings["WebHostURL"] + "/eoffice/workssupport/detail/" + objWorksSupport_Comment.WorksSupportID;
+        //    //    objNotification.LinkURL = ConfigurationManager.AppSettings["WebHostURL"] + "/van-phong-dien-tu/cvc-ho-tro/ho-tro/chi-tiet/" + objWorksSupport_Comment.WorksSupportID;
+        //    }
+        //    catch (Exception objEx)
+        //    {
+        //        objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin ", objEx.ToString());
+        //        ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport_Comment -> Insert", Globals.ModuleName);
+        //        return objResultMessage;
+        //    }
+        //    finally
+        //    {
+        //        objIData.Disconnect();
+        //    }
+        //    return SysErrorDA.Current.BroadcastNotification(objNotification); ;
+        //}
+
+
+		/// <summary>
+		/// Thêm thông tin 
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public decimal Insert(IData objIData, WorksSupport_Comment objWorksSupport_Comment)
+		{
+			try
+			{
+				objIData.CreateNewStoredProcedure(SP_ADD);
+				objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, objWorksSupport_Comment.WorksSupportID);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentContent, objWorksSupport_Comment.CommentContent);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentUser, objWorksSupport_Comment.CommentUser);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCreatedUser, objWorksSupport_Comment.CreatedUser);
+                return Convert.ToDecimal(objIData.ExecStoreToString());
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+        /// <summary>
+        /// Thêm thông tin 
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        public decimal Insert_New(IData objIData, WorksSupport_Comment objWorksSupport_Comment)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure("EO_WORKSSUPPORT_CM_INSERT_BETA");
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, objWorksSupport_Comment.WorksSupportID);
+                objIData.AddParameter("@" + WorksSupport_Comment.colCommentContent, objWorksSupport_Comment.CommentContent);
+                objIData.AddParameter("@" + WorksSupport_Comment.colCommentUser, objWorksSupport_Comment.CommentUser);
+                objIData.AddParameter("@" + WorksSupport_Comment.colCreatedUser, objWorksSupport_Comment.CreatedUser);
+                objIData.AddParameter("@" + WorksSupport_Comment.colOrderIndex, objWorksSupport_Comment.OrderIndex);
+                objIData.AddParameter("@" + WorksSupport_Comment.colIsActive, objWorksSupport_Comment.IsActive);
+                objIData.AddParameter("@" + WorksSupport_Comment.colIsSystem, objWorksSupport_Comment.IsSystem);
+                return Convert.ToDecimal(objIData.ExecStoreToString());
+            }
+            catch (Exception objEx)
+            {
+                objIData.RollBackTransaction();
+                throw (objEx);
+            }
+        }
+
+		/// <summary>
+		/// Cập nhật thông tin 
+		/// </summary>
+		/// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+		/// <param name="lstOrderIndex">Danh sách OrderIndex</param>
+		/// <returns>Kết quả trả về</returns>
+		public ResultMessage Update(WorksSupport_Comment objWorksSupport_Comment, List<object> lstOrderIndex)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+			IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+				objIData.Connect();
+				objIData.BeginTransaction();
+				Update(objIData, objWorksSupport_Comment);
+				if (lstOrderIndex != null && lstOrderIndex.Count > 0)
+				{
+					for (int i = 0; i < lstOrderIndex.Count; i++)
+					{
+						UpdateOrderIndex(objIData, Convert.ToInt32(lstOrderIndex[i]), i);
+					}
+				}
+				objIData.CommitTransaction();
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Update, "Lỗi cập nhật thông tin ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport_Comment -> Update", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+        		objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Cập nhật thông tin 
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public void Update(IData objIData, WorksSupport_Comment objWorksSupport_Comment)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_UPDATE);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentID, objWorksSupport_Comment.CommentId);
+				objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, objWorksSupport_Comment.WorksSupportID);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentDate, objWorksSupport_Comment.CommentDate);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentContent, objWorksSupport_Comment.CommentContent);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentUser, objWorksSupport_Comment.CommentUser);
+				objIData.AddParameter("@" + WorksSupport_Comment.colOrderIndex, objWorksSupport_Comment.OrderIndex);
+				objIData.AddParameter("@" + WorksSupport_Comment.colIsActive, objWorksSupport_Comment.IsActive);
+				objIData.AddParameter("@" + WorksSupport_Comment.colIsSystem, objWorksSupport_Comment.IsSystem);
+				objIData.AddParameter("@" + WorksSupport_Comment.colUpdatedUser, objWorksSupport_Comment.UpdatedUser);
+                objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+
+		/// <summary>
+		/// Cập nhật thông tin 
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="intOrderIndex">Thứ tự</param>
+		/// <returns>Kết quả trả về</returns>
+		public void UpdateOrderIndex(IData objIData, decimal decCommentID, int intOrderIndex)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_UPDATEINDEX);
+				objIData.AddParameter("@" + WorksSupport_Comment.colCommentID, decCommentID);
+                objIData.AddParameter("@OrderIndex", intOrderIndex);
+                objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+
+		/// <summary>
+		/// Xóa thông tin 
+		/// </summary>
+		/// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage Delete(WorksSupport_Comment objComment, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+                Delete(objIData, objComment);
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Delete, "Lỗi xóa thông tin ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport_Comment -> Delete", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Xóa thông tin 
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Comment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+        private void Delete(IData objIData, WorksSupport_Comment obj)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_DELETE);
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, obj.WorksSupportID);
+                objIData.AddParameter("@" + WorksSupport_Comment.colDeletedUser, obj.DeletedUser);
+ 				objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+
+        /// <summary>
+        /// Tìm kiếm thông tin 
+        /// </summary>
+        /// <param name="dtbData">Dữ liệu trả về</param>
+        /// <param name="objKeywords">Điều kiện tìm kiếm truyền vào</param>
+        /// <returns>Kết quả trả về</returns>
+        public ResultMessage SearchData(ref DataTable dtbData, params object[] objKeywords)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SP_SEARCH);
+                objIData.AddParameter(objKeywords);
+                dtbData = objIData.ExecStoreToDataTable();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport_Comment -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+		#endregion
+
+		
+		#region Constructor
+
+		public DaWorksSupport_Comment()
+		{
+		}
+		#endregion
+
+
+		#region Stored Procedure Names
+
+        public const String SP_ADD = "EWORKSSUPPORT_CM_V2_ADD_BETA";
+        public const String SP_UPDATE = "WORKSSUPPORT_CM_V2_UPD_BETA";
+        public const String SP_DELETE = "WORKSSUPPORT_CM_DEL_BETA";
+        public const String SP_SELECT = "WORKSSUPPORT_COMMENT_V2_SEL";
+        public const String SP_SEARCH = "WORKSSUPPORT_CM_V2_SRH_BETA";
+		public const String SP_UPDATEINDEX = "WorksSupport_Comment_UPDINDEX";
+        const string SP_GetByWSID = "WORKSSUPPORT_CM_V2_GETID_BETA";
+        public const String SP_SELECTBYWorksSupportID = "WORKSSUPPORT_CM_V2_SEWSID_BETA";
+
+		#endregion
+
+
+        #region DaWorksSupport_Comment's Members
+
+        /// <summary>
+        /// Author          : Byrs
+        /// Date created    : Apr 18, 2013
+        /// Description     : Get list of comments by work support identify
+        /// </summary>
+        /// <param name="decWSID"></param>
+        /// <returns></returns>
+        public List<WorksSupport_Comment> GetByWorksSupportId(decimal decWSID, int intPageIdx, int intPageSize)
+        {
+            IData objIData = Library.DataAccess.Data.CreateData();
+            List<WorksSupport_Comment> list = new List<WorksSupport_Comment>();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SP_GetByWSID);
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, decWSID);
+                objIData.AddParameter("@PageIdx", intPageIdx);
+                objIData.AddParameter("@PageSize", intPageSize);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorksSupport_Comment objWorksSupport_Comment = new WorksSupport_Comment();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentID]))
+                        objWorksSupport_Comment.CommentId = Convert.ToDecimal(reader[WorksSupport_Comment.colCommentID]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colWorksSupportID]))
+                    {
+                        objWorksSupport_Comment.WorksSupportID =
+                            Convert.ToDecimal(reader[WorksSupport_Comment.colWorksSupportID]);
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentDate]))
+                        objWorksSupport_Comment.CommentDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCommentDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentContent]))
+                    {
+                        objWorksSupport_Comment.CommentContent =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentContent]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentUser]))
+                    {
+                        objWorksSupport_Comment.CommentUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colOrderIndex]))
+                        objWorksSupport_Comment.OrderIndex = Convert.ToDecimal(reader[WorksSupport_Comment.colOrderIndex]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsActive]))
+                        objWorksSupport_Comment.IsActive = Convert.ToBoolean(reader[WorksSupport_Comment.colIsActive]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsSystem]))
+                        objWorksSupport_Comment.IsSystem = Convert.ToBoolean(reader[WorksSupport_Comment.colIsSystem]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedUser]))
+                    {
+                        objWorksSupport_Comment.CreatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCreatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedDate]))
+                        objWorksSupport_Comment.CreatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCreatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedUser]))
+                    {
+                        objWorksSupport_Comment.UpdatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colUpdatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedDate]))
+                        objWorksSupport_Comment.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colUpdatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsDeleted]))
+                        objWorksSupport_Comment.IsDeleted = Convert.ToBoolean(reader[WorksSupport_Comment.colIsDeleted]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedUser]))
+                    {
+                        objWorksSupport_Comment.DeletedUser = Convert.ToString(reader[WorksSupport_Comment.colDeletedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedDate]))
+                        objWorksSupport_Comment.DeletedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colDeletedDate]);
+
+                     if (!Convert.IsDBNull(reader["FULLNAME"]))
+                        objWorksSupport_Comment.FullName = Convert.ToString(reader["FULLNAME"]).Trim();
+
+                     if (!Convert.IsDBNull(reader["POSITIONNAME"]))
+                         objWorksSupport_Comment.PositionName = Convert.ToString(reader["POSITIONNAME"]).Trim();
+
+                      if (!Convert.IsDBNull(reader["DEPARTMENTNAME"]))
+                        objWorksSupport_Comment.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]).Trim();
+
+                     if (!Convert.IsDBNull(reader["DEFAULTPICTUREURL"]))
+                        objWorksSupport_Comment.DefaultPictureUrl = Convert.ToString(reader["DEFAULTPICTUREURL"]).Trim();
+
+                    list.Add(objWorksSupport_Comment);
+                }
+
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                throw new Exception("Lỗi nạp thông tin bình luận công việc cần hỗ trợ !", objEx.InnerException);
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Author          : hoc.lenho
+        /// Date created    : 7/23 2013
+        /// Description     : Get list of comments by work support identify
+        /// </summary>
+        /// <param name="decWSID"></param>
+        /// <returns></returns>
+        public ResultMessage LoadInfoCommentByWorksSupportID(ref List<CommentView> lstobjCommentView, decimal decWSID, int intPageIdx, int intPageSize)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SP_SELECTBYWorksSupportID);
+                objIData.AddParameter("@" + WorksSupport_Comment.colWorksSupportID, decWSID);
+                objIData.AddParameter("@PageIndex", intPageIdx);
+                objIData.AddParameter("@PageSize", intPageSize);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                lstobjCommentView = new List<CommentView>();
+                CommentView objCommentView;
+                while (reader.Read())
+                {
+                    objCommentView = new CommentView();
+                    objCommentView.WorksSupport_comment = new WorksSupport_Comment();
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentID]))
+                        objCommentView.WorksSupport_comment.CommentId = Convert.ToDecimal(reader[WorksSupport_Comment.colCommentID]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colWorksSupportID]))
+                    {
+                        objCommentView.WorksSupport_comment.WorksSupportID =
+                            Convert.ToDecimal(reader[WorksSupport_Comment.colWorksSupportID]);
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentDate]))
+                        objCommentView.WorksSupport_comment.CommentDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCommentDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentContent]))
+                    {
+                        objCommentView.WorksSupport_comment.CommentContent =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentContent]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCommentUser]))
+                    {
+                        objCommentView.WorksSupport_comment.CommentUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCommentUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colOrderIndex]))
+                        objCommentView.WorksSupport_comment.OrderIndex = Convert.ToDecimal(reader[WorksSupport_Comment.colOrderIndex]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsActive]))
+                        objCommentView.WorksSupport_comment.IsActive = Convert.ToBoolean(reader[WorksSupport_Comment.colIsActive]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsSystem]))
+                        objCommentView.WorksSupport_comment.IsSystem = Convert.ToBoolean(reader[WorksSupport_Comment.colIsSystem]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedUser]))
+                    {
+                        objCommentView.WorksSupport_comment.CreatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colCreatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colCreatedDate]))
+                        objCommentView.WorksSupport_comment.CreatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colCreatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedUser]))
+                    {
+                        objCommentView.WorksSupport_comment.UpdatedUser =
+                            Convert.ToString(reader[WorksSupport_Comment.colUpdatedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colUpdatedDate]))
+                        objCommentView.WorksSupport_comment.UpdatedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colUpdatedDate]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colIsDeleted]))
+                        objCommentView.WorksSupport_comment.IsDeleted = Convert.ToBoolean(reader[WorksSupport_Comment.colIsDeleted]);
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedUser]))
+                    {
+                        objCommentView.WorksSupport_comment.DeletedUser = Convert.ToString(reader[WorksSupport_Comment.colDeletedUser]).Trim();
+                    }
+                    if (!Convert.IsDBNull(reader[WorksSupport_Comment.colDeletedDate]))
+                        objCommentView.WorksSupport_comment.DeletedDate = Convert.ToDateTime(reader[WorksSupport_Comment.colDeletedDate]);
+
+                    if (!Convert.IsDBNull(reader["FULLNAME"]))
+                        objCommentView.WorksSupport_comment.FullName = Convert.ToString(reader["FULLNAME"]).Trim();
+
+                    if (!Convert.IsDBNull(reader["POSITIONNAME"]))
+                        objCommentView.WorksSupport_comment.PositionName = Convert.ToString(reader["POSITIONNAME"]).Trim();
+
+                    if (!Convert.IsDBNull(reader["DEPARTMENTNAME"]))
+                        objCommentView.WorksSupport_comment.DepartmentName = Convert.ToString(reader["DEPARTMENTNAME"]).Trim();
+
+                    if (!Convert.IsDBNull(reader["DEFAULTPICTUREURL"]))
+                        objCommentView.WorksSupport_comment.DefaultPictureUrl = Convert.ToString(reader["DEFAULTPICTUREURL"]).Trim();
+
+                    if (!Convert.IsDBNull(reader["TOTALROWS"])) objCommentView.TotalRows = Convert.ToInt32(reader["TOTALROWS"]);
+                    if (!Convert.IsDBNull(reader["STT"])) objCommentView.Stt = Convert.ToString(reader["STT"]);
+                    lstobjCommentView.Add(objCommentView);
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin bình luận công việc cần hổ trợ LoadInfoByID", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_EO_EForm_Comment -> LoadInfoByEFormID", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        #endregion
+    }
+}

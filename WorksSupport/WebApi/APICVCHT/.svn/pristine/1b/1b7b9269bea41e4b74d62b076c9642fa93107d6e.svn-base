@@ -1,0 +1,206 @@
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web.Http;
+using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models.Account;
+using Nc.Erp.WorksSupport.Da.Configuration.Account;
+using Nc.Erp.WorksSupport.Do.Configuration.Account;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : Lương Trung Nhân
+    /// Created date    : 30/05/2017
+    /// Api tài khoản
+    /// </summary>
+    [RoutePrefix("api/v2/account")]
+    public class AccountController : BaseController
+    {
+        ///// <summary>
+        ///// Đăng nhập
+        ///// </summary>
+        ///// <param name="objparam"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[Route("signin")]
+        //public Response<WebClientAuthen.AccountBO> Login([FromBody] LoginParam objparam)
+        //{
+        //    // Definition object to return.
+        //    var ret = new Response<AccountBO>();
+        //    try
+        //    {
+        //        // Validate param
+        //        ValidateParams(objparam);
+        //        AuthenticationToken token;
+        //        token = new AuthenticationToken(Guid.NewGuid(), DateTimeHelper.GetAuthenticationTokenExpiredUtcDateTime(120));
+        //        Account user = new Account();
+        //        user.LastLoggedInDate = DateTime.Now;
+        //        token = new AuthenticationToken(Guid.NewGuid(), DateTimeHelper.GetAuthenticationTokenExpiredUtcDateTime(120));
+        //        user.Token = token.Value;
+        //        user.TokenExpiredAfter = token.ExpiredAfter;
+        //        WebSessionUser objWebSessionUser = null;
+        //        WebClientAuthen.AccountBO objAccountBO = new WebClientAuthen.AccountBO();
+        //        if (RDAuthorize.Login(ref objWebSessionUser, objparam.UserName, objparam.PassWord, false, false))
+        //        {
+        //            if (objWebSessionUser != null)
+        //            {
+        //                WebClientAuthen.Profile objSessionBO = new WebClientAuthen.Profile()
+        //                {
+        //                    UserName = objWebSessionUser.UserName,
+        //                    TokenString = objWebSessionUser.TokenString,
+        //                    StorePermission = objWebSessionUser.StorePermission,
+        //                    SecurityLevelID = objWebSessionUser.SecurityLevelID,
+        //                    ReviewLevelID = objWebSessionUser.ReviewLevelID,
+        //                    PositionName = objWebSessionUser.PositionName,
+        //                    PositionID = objWebSessionUser.PositionID,
+        //                    PhoneNumber = objWebSessionUser.PhoneNumber,
+        //                    Password = objWebSessionUser.Password,
+        //                    MainGroupPermission = objWebSessionUser.MainGroupPermission,
+        //                    LoginLogID = objWebSessionUser.LoginLogID,
+        //                    IsLogin = objWebSessionUser.IsLogin,
+        //                    IsCertificate = objWebSessionUser.IsCertificate,
+        //                    hstbPermission = objWebSessionUser.hstbPermission,
+        //                    FunctionID = objWebSessionUser.FunctionID,
+        //                    Function = objWebSessionUser.Function,
+        //                    FullName = objWebSessionUser.FullName,
+        //                    DepartmentID = objWebSessionUser.DepartmentID,
+        //                    Department = objWebSessionUser.Department,
+        //                    Address = objWebSessionUser.Address,
+        //                    CompanyPermission = objWebSessionUser.CompanyPermission,
+        //                    DefaultPictureURL = objWebSessionUser.DefaultPictureURL != "" ? GetAvatar(objWebSessionUser.DefaultPictureURL) : ""
+        //                };
+        //                objAccountBO.Profile = objSessionBO;
+        //                objAccountBO.LsUserFunction = objWebSessionUser.LsUserFunction;
+        //            }
+        //            user.UserName = objWebSessionUser.UserName;
+        //            ret.Success = true;
+        //            ret.Data = objAccountBO;
+        //            ret.TotalRecord = 1;
+        //        }
+        //        else
+        //        {
+        //            ret.Success = false;
+        //            ret.Message = "Lỗi đăng nhập !";
+        //        }
+        //        return ret;
+        //    }
+        //    catch (Exception e)
+        //    {
+
+        //        var desc = string.Empty;
+        //        if (e.InnerException != null)
+        //        {
+        //            desc = e.InnerException.ToString();
+        //        }
+        //        else
+        //        {
+        //            desc = e.Message;
+        //        }
+        //        var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+        //        throw new HttpResponseException(msg);
+        //    }
+        //}
+        public static string GetAvatar(string strUrlAvatar)
+        {
+            if (string.IsNullOrEmpty(strUrlAvatar))
+            {
+                return System.Configuration.ConfigurationManager.AppSettings["UserImageDefault"];
+            }
+
+            ////ICached iCached = CachedFactory.Create(Library.Common.Cached.CacheDSN);
+            //string strCacheKey = Library.Common.CacheHelper.GenKeyCache("Library.Common", "GetAvatar", strUrlAvatar);
+
+            var strResult = string.IsNullOrEmpty(strUrlAvatar) ? System.Configuration.ConfigurationManager.AppSettings["UserImageDefault"] : System.Configuration.ConfigurationManager.AppSettings[(strUrlAvatar.IndexOf("UserImages/", StringComparison.Ordinal) > -1) ? "UserImageHostUrl" : "WebAlbumUrl"] + strUrlAvatar;
+            strResult = strResult.Replace('\\', '/');
+            return strResult;
+        }
+        /// <summary>
+        /// Đăng nhập test
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("signin")]
+        public Response<AccountBO> Login([FromBody] LoginParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<AccountBO>();
+            try
+            {
+                // Validate param
+                ValidateParams(objparam);
+              
+                //WebSessionUser objWebSessionUser = null;
+                var objAccountBo = new AccountBO();
+                var objUser = new User();
+                var da = new DaAccount();
+                da.LoadInfo(ref objUser, objparam.UserName, MaHoaMd5(objparam.PassWord));
+                if (!string.IsNullOrEmpty(objUser.UserName))
+                {
+                    var objSessionBo = new Profile
+                    {
+                        UserName = objUser.UserName,
+                        TokenString = "",
+                        StorePermission = null,
+                        SecurityLevelID = 0,
+                        ReviewLevelID = 0,
+                        PositionName = "",
+                        PositionID = objUser.PositionID,
+                        PhoneNumber = objUser.PhoneNumber,
+                        Password = objUser.Password,
+                        MainGroupPermission = null,
+                        LoginLogID = "",
+                        IsLogin = true,
+                        hstbPermission = null,
+                        FullName = objUser.FullName,
+                        DepartmentID = objUser.DepartmentID,
+                        Address = objUser.Address,
+                        DefaultPictureURL = objUser.DefaultPictureURL != "" ? GetAvatar(objUser.DefaultPictureURL) : ""
+                    };
+                    objAccountBo.Profile = objSessionBo;
+                    objAccountBo.LsUserFunction = objUser.LsUserFunction;
+                    ret.Success = true;
+                    ret.Data = objAccountBo;
+                    ret.TotalRecord = 1;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = "Lỗi đăng nhập !";
+                }
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+        private string MaHoaMd5(string pass)
+        {
+            try
+            {
+
+                MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                byte[] data = Encoding.UTF8.GetBytes(pass);
+                data = md5.ComputeHash(data);
+                StringBuilder buider = new StringBuilder();
+                foreach (byte b in data)
+                {
+                    buider.Append(b.ToString("x2"));
+                }
+                return buider.ToString();
+            }
+            catch
+            {
+                return pass;
+            }
+        }
+
+
+    }
+}

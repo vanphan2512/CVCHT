@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Library.Common.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Library_Common_SSOTransac_WSError_Error" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://ssoservice.egovsams.com/Common/Error.asmx</Value>
+    </Setting>
+    <Setting Name="Library_Common_ERPFMSServices_WSFileManager_WSFileManager" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://samsfmsservices.egovsams.com/WSFileManager.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

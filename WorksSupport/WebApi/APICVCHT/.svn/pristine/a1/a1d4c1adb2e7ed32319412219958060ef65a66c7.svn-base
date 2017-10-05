@@ -1,0 +1,312 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models.WorkSuportPriority;
+using Nc.Erp.WorksSupport.Da.Configuration.Priority;
+using Nc.Erp.WorksSupport.Do.Configuration;
+using Nc.Erp.WorksSupport.Do.Configuration.Priority;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : Truong Hoang Nhi
+    /// Created date    : 25/05/2017
+    /// Api độ ưu tiên "ERP.EO.WORKSSUPPORTPRIORITY"
+    /// </summary>
+    /// 
+    [RoutePrefix("api/v2/priorities")]
+    public class PriorityController : BaseController
+    {
+
+        /// <summary>
+        /// Tìm kiếm o uu tien yêu cầu công việc cần hỗ trợ theo keyword, isdeleted
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SearchKey")]
+        public Response<List<WorksSupportPriority>> Searchkey([FromUri] SearchKeyParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportPriority>>();
+            try
+            {
+                if (objparam.Keywords == null)
+                {
+                    objparam.Keywords = "";
+                }
+                // Definition object return
+                var listWorksSupportPriority = new List<WorksSupportPriority>();
+                var objResultMessage = new DaWorksSupportPriority().GetAll_WorksSupportPriority(ref listWorksSupportPriority, objparam.Keywords, objparam.IsDeleted, objparam.PageIndex, objparam.PageSize);
+
+                if (listWorksSupportPriority != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportPriority;
+                    ret.TotalRecord = listWorksSupportPriority.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách do uu tien công việc cần hỗ trợ
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("")]
+        public Response<List<WorksSupportPriority>> GetPriorities()
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportPriority>>();
+            try
+            {
+
+                // Definition object return
+                var listWorksSupportPriority = new List<WorksSupportPriority>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportPriority().GetAll(ref listWorksSupportPriority);
+
+                if (listWorksSupportPriority != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportPriority;
+                    ret.TotalRecord = listWorksSupportPriority.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpGet]
+        [Route("worksTypeActived")]
+        public Response<List<WorksSupportPriority>> GetPrioritiesIsActive()
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportPriority>>();
+            try
+            {
+
+                // Definition object return
+                var listWorksSupportPriority = new List<WorksSupportPriority>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportPriority().GetPrioritiesActived(ref listWorksSupportPriority);
+
+                if (listWorksSupportPriority != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportPriority;
+                    ret.TotalRecord = listWorksSupportPriority.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy do uu tien công việc cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}")]
+        public Response<WorksSupportPriority> GetById([FromUri] GetByParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportPriority>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new WorksSupportPriority();
+
+                // Call DaWorksSupportPriority to search data.
+                var objResultMessage = new DaWorksSupportPriority().GetById(ref obj, objparam.Id);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Xóa do uu tien công việc cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Del")]
+        public Response<WorksSupportPriority> Delete([FromBody] DeleteParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportPriority>();
+            try
+            {
+                //Validate param
+                ValidateParams(objparam);
+                // Definition object return
+
+                var objResultMessage = new DaWorksSupportPriority().Delete(objparam.User, objparam.Id);
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+        [HttpPost]
+        [Route("insertBy")]
+        public Response<WorksSupportPriority> SaveDataBy([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportPriority>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // check name is existed in database
+                var objCheck = new PrioritiesValidation();
+                var listError = new List<ValidationError>();
+                new DaWorksSupportPriority().CheckValuesExisted(ref objCheck, objparam.Id, objparam.WorksSupportPriorityName, objparam.OrderIndex);
+                if (objCheck.CountName >= 1)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "WorksSupportPriorityName",
+                        Message = "NCS-000001: Tên độ ưu tiên đã tồn tại!"
+                    };
+                    listError.Add(error);
+                }
+                if (objCheck.CountOrderIndex == 0)
+                {
+                    var error = new ValidationError();
+                    error.Key = "OrderIndex";
+                    error.Message = "NCS-000002: Thứ tự độ ưu tiên không tồn tại!";
+                    listError.Add(error);
+                }
+                if (listError.Count > 0)
+                {
+                    ret.Success = false;
+                    ret.Errors = listError;
+                    return ret;
+                }
+                var obj = new WorksSupportPriority()
+                {
+                    WorksSupportPriorityId = objparam.Id,
+                    WorksSupportPriorityName = objparam.WorksSupportPriorityName,
+                    IconUrl = objparam.IconUrl,
+                    Description = objparam.Description,
+                    OrderIndex = objparam.OrderIndex,
+                    IsActived = objparam.IsActived,
+                    IsSystem = objparam.IsSystem,
+                    CreatedUser = objparam.User,
+                    UpdatedUser = objparam.User
+                };
+                var objResultMessage = new DaWorksSupportPriority().Insert(obj, ref obj);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("save")]
+        public ResponseV1<WorksSupportPriority> SaveData([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var result = new ResponseV1<WorksSupportPriority>();
+            var ret = SaveDataBy(objparam);
+            if (ret != null)
+            {
+                result.data = new List<WorksSupportPriority> { ret.Data };
+            }
+            return result;
+        }
+
+
+    }
+}

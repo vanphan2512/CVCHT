@@ -1,0 +1,752 @@
+﻿using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Controllers;
+using Nc.Erp.WorksSupport.Api.Models.Project;
+using Nc.Erp.WorksSupport.Da.Configuration.Project;
+using Nc.Erp.WorksSupport.Do.Configuration.Account;
+using Nc.Erp.WorksSupport.Do.Configuration.Department;
+using Nc.Erp.WorksSupport.Do.Configuration.MemberRole;
+using Nc.Erp.WorksSupport.Do.Configuration.Project;
+using Nc.Erp.WorksSupport.Do.Configuration.SuportType;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : Nguyen Thi Kim Ngan
+    /// Created date    : 30/05/2017
+    /// Api độ trạng thái "ERP.EO.EO_WORKSSUPPORTPROJECT_MEMBER"
+    /// </summary>
+    [RoutePrefix("api/v2/ProjectMember")]
+    public class ProjectController : BaseController
+    {
+
+        /// <summary>
+        /// Tìm kiếm chất lượng yêu cầu công việc cần hỗ trợ theo keyword
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Search")]
+        public Response<List<WorksSupportProject_Member>> Search([FromUri] SearchKeyParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportProject_Member>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportProjectMember = new List<WorksSupportProject_Member>();
+
+                //object param
+                var objKeywords = new object[]
+                {
+                    "@KEYWORDS", objparam.Keywords
+                };
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportProjectMember().SearchData(ref listWorksSupportProjectMember, objKeywords);
+
+                if (listWorksSupportProjectMember != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportProjectMember;
+                    ret.TotalRecord = listWorksSupportProjectMember.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+
+        /// <summary>
+        /// Tìm kiếm o uu tien yêu cầu công việc cần hỗ trợ theo keyword, isdeleted
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("SearchKey")]
+        public Response<List<WorksSupportProject>> Searchkey([FromUri] SearchKeyParamProject objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportProject>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportProject = new List<WorksSupportProject>();
+                //object param
+                object[] objKeywords = {
+                    "@KEYWORDS", objparam.Keywords,
+                    "@ISDELETED", objparam.IsDeleted,
+                    "@PAGEINDEX", objparam.PageIndex,
+                    "@PAGESIZE", objparam.PageSize
+                };
+               
+                var objResultMessage = new DaWorksSupportProject().SearchData(ref listWorksSupportProject, objKeywords);
+
+                if (listWorksSupportProject != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportProject;
+                    ret.TotalRecord = listWorksSupportProject.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Tìm kiếm chất lượng yêu cầu dự án cần hỗ trợ theo keyword
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("SearchProject")]
+        public Response<List<WorksSupportProject>> SearchProject([FromUri] SearchParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportProject>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportProject = new List<WorksSupportProject>();
+
+                //object param
+                object[] objKeywords = {
+                    "@KEYWORDS", objparam.Keywords,
+                    "@ISDELETED",objparam.IsDeleted,
+                    "@PAGEINDEX", objparam.PageIndex,
+                    "@PAGESIZE", objparam.PageSize
+                };
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportProject().SearchData(ref listWorksSupportProject, objKeywords);
+
+                if (listWorksSupportProject != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportProject;
+                    ret.TotalRecord = listWorksSupportProject.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách trạng thái dự án cần hỗ trợ
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("getProjects/{user}")] 
+        public Response<List<WorksSupportProject>> GetProjectByUserName([FromUri] string user)
+
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportProject>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportProject = new List<WorksSupportProject>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportProject().GetAll(ref listWorksSupportProject, user);
+
+                if (listWorksSupportProject != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportProject;
+                    ret.TotalRecord = listWorksSupportProject.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy cong viec theo Id du an
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("getProject/{id}")]
+        public Response<WorksSupportProject> GetById([FromUri] GetByParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportProject>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new WorksSupportProject();
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportProject().GetById(ref obj, objparam.Id);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        [Route("Del")]
+        public Response<WorksSupportProject> Delete([FromBody] DeleteParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportProject>();
+            try
+            {
+                //Validate param
+                ValidateParams(objparam);
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportProject().Delete(objparam.User, objparam.Id);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("insertBy")]
+        public Response<WorksSupportProject> SaveDataBy([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportProject>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var listProjectMember = new List<WorksSupportProject_Member>();
+                var listError = new List<ValidationError>();
+                var objCheck = new ProjectValidation();
+                new DaWorksSupportProject().CheckValuesExisted(ref objCheck, objparam.Id, objparam.WorksSupportProjectName, objparam.OrderIndex);
+                if (objCheck.CountName >= 1)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "WorksSupportProjectName",
+                        Message = "NCS-000001: Tên đã tồn tại"
+                    };
+                    listError.Add(error);
+                }
+
+                if (listError.Count > 0)
+                {
+                    ret.Success = false;
+                    ret.Errors = listError;
+                    return ret;
+                }
+                if (objparam.LstNewMember.Count > 0)
+                {
+                    listProjectMember.AddRange(objparam.LstNewMember.Select(item => new WorksSupportProject_Member()
+                    {
+                        MemberUserName = item.UserName,
+                        WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                        IsAutoAddMemberToWorksGroup = item.IsAutoAddMemberToWorksGroup
+                    }));
+                }
+                var worksSupportTypeId = 0;
+                if (!string.IsNullOrEmpty(objparam.WorksSupportTypeId))
+                {
+                    worksSupportTypeId = int.Parse(objparam.WorksSupportTypeId);
+                }
+                var objProject = new WorksSupportProject
+                {
+                    WorksSupportProjectId = objparam.Id,
+                    WorksSupportProjectName = objparam.WorksSupportProjectName,
+                    WorksSupportTypeId = worksSupportTypeId,
+                    Description = objparam.Description,
+                    IsActived = objparam.IsActived ? 1 : 0,
+                    IsSystem = objparam.IsSystem ? 1 : 0,
+                    IconUrl = objparam.IconUrl,
+                    ListProjectMember = listProjectMember
+                };
+                
+                var objResultMessage = new DaWorksSupportProject().Insert(objProject, objparam.User);
+               
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = objProject;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateProject")]
+        public Response<WorksSupportProject> UpdateProject([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportProject>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var listProjectMember = new List<WorksSupportProject_Member>();
+                var listDeletedMember = new List<WorksSupportProject_Member>();
+                var listEditedMember = new List<WorksSupportProject_Member>();
+                var listError = new List<ValidationError>();
+                var objCheck = new ProjectValidation();
+                new DaWorksSupportProject().CheckValuesExisted(ref objCheck, objparam.Id, objparam.WorksSupportProjectName, objparam.OrderIndex);
+                if (objCheck.CountName >= 1)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "WorksSupportProjectName",
+                        Message = "NCS-000001: Tên đã tồn tại"
+                    };
+                    listError.Add(error);
+                }
+
+                if (listError.Count > 0)
+                {
+                    ret.Success = false;
+                    ret.Errors = listError;
+                    return ret;
+                }
+
+                // 1.Xoa danh sach thanh vien trong du an
+                if (objparam.LstDeleteMember.Count > 0)
+                {
+                    listDeletedMember.AddRange(objparam.LstDeleteMember.Select(item => new WorksSupportProject_Member
+                    {
+                        WorksSupportProjectId = objparam.Id,
+                        MemberUserName = item.UserName,
+                        WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                        IsAutoAddMemberToWorksGroup = item.IsAutoAddMemberToWorksGroup,
+                    }));
+                }
+                // 2.Them thanh vien vao du an
+
+                if (objparam.LstNewMember.Count > 0)
+                {
+                    listProjectMember.AddRange(objparam.LstNewMember.Select(item => new WorksSupportProject_Member
+                    {
+                        WorksSupportProjectId = objparam.Id,
+                        MemberUserName = item.UserName,
+                        WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                        IsAutoAddMemberToWorksGroup = item.IsAutoAddMemberToWorksGroup,
+                        CreatedUser = objparam.User
+                    }));
+                }
+                if (objparam.LstEditMember.Count > 0)
+                {
+                    listEditedMember.AddRange(objparam.LstEditMember.Select(item => new WorksSupportProject_Member()
+                    {
+                        WorksSupportProjectId = objparam.Id,
+                        MemberUserName = item.UserName,
+                        WorksSupportMemberRoleId = item.WorksSupportMemberRoleId,
+                        IsAutoAddMemberToWorksGroup = item.IsAutoAddMemberToWorksGroup,
+                        CreatedUser = objparam.User
+                    }));
+                }
+
+                var worksSupportTypeId = 0;
+                if (!string.IsNullOrEmpty(objparam.WorksSupportTypeId))
+                {
+                    worksSupportTypeId = int.Parse(objparam.WorksSupportTypeId);
+                }
+
+                //var objectProject = new WorksSupportProject();
+                var objProject = new WorksSupportProject
+                {
+                    WorksSupportProjectId = objparam.Id,
+                    WorksSupportProjectName = objparam.WorksSupportProjectName,
+                    WorksSupportTypeId = worksSupportTypeId,
+                    Description = objparam.Description,
+                    IsActived = objparam.IsActived ? 1 : 0,
+                    IsSystem = objparam.IsSystem ? 1 : 0,
+                    IconUrl = objparam.IconUrl,
+                    ListProjectMember = listProjectMember,
+                    ListDeletedMember = listDeletedMember,
+                    ListEditedMember = listEditedMember
+                };
+
+                var objResultMessage = new DaWorksSupportProject().Update(objProject, ref objProject, objparam.User);
+                
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = objProject;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("save")]
+        public ResponseV1<WorksSupportProject> SaveData([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var result = new ResponseV1<WorksSupportProject>();
+            var ret = SaveDataBy(objparam);
+            if (ret != null)
+            {
+                result.data = new List<WorksSupportProject> { ret.Data };
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Lấy danh sách phòng ban
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Department")]
+        public Response<List<WorksSupportDepartment>> GetAllDepartment()
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportDepartment>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportDepartment = new List<WorksSupportDepartment>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportProject().GetAllDepartment(ref listWorksSupportDepartment);
+
+                if (listWorksSupportDepartment != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportDepartment;
+                    ret.TotalRecord = listWorksSupportDepartment.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("SearchUser")]
+        public Response<List<User>> SearchUser([FromBody] SearchParamUser objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<User>>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var listWorksSupportUser = new List<User>();
+
+                //object param
+                var objKeywords = new object[]
+                {
+                    "@DEPARTMENTID",objparam.DepartmentId,
+                    "@KEYWORDS", objparam.Keywords,
+                    "@WORKSSUPPORTTYPEID", objparam.WorksSupportTypeId
+                };
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportProject().SearchDataUser(ref listWorksSupportUser, objKeywords);
+
+                if (listWorksSupportUser != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportUser;
+                    ret.TotalRecord = listWorksSupportUser.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách dự án EO_WORKS
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("projectInvole")]
+        public Response<List<Projects>> GetAll_WorksInvole()
+        {
+            // Definition object to return.
+            var ret = new Response<List<Projects>>();
+            try
+            {
+                // Definition object return
+                var listProject = new List<Projects>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaProject().GetAll(ref listProject);
+
+                if (listProject != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listProject;
+                    ret.TotalRecord = listProject.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sach thanh vien thuoc du an 
+        /// </summary>
+        /// <param name="projectid"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getProjectMember/{projectid}")]
+        public Response<List<User>> GetById_ProjectMember([FromUri] int projectid)
+        {
+            // Definition object to return.
+            var ret = new Response<List<User>>();
+            try
+            {
+                // Definition object return
+                var listProjectMember = new List<User>();
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportProject().GetById_ProjectMember(ref listProjectMember, projectid);
+                
+                if (listProjectMember != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listProjectMember;
+                    ret.TotalRecord = listProjectMember.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// load vai tro cua thanh vien thuoc du an 
+        /// </summary>
+        /// <param name="worksTypeId"></param>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("memberRoles/{worksTypeId}")]
+        public Response<List<WorksSupportMemberRole>> LoadMemberRoleByWorksTypeId([FromUri] int worksTypeId)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportMemberRole>>();
+            try
+            {
+                // Definition object return
+                var listProjectMember = new List<WorksSupportMemberRole>();
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportProject().LoadMemberRoleByWorksTypeId(ref listProjectMember, worksTypeId);
+
+                if (listProjectMember != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listProjectMember;
+                    ret.TotalRecord = listProjectMember.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+        /// <summary>
+        /// Lấy danh sách loại công việc yêu cầu cần hỗ trợ
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetWorksSupportType/{userName}")]
+        public Response<List<WorksSupportType>> GetWorksSupportType(string userName)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportType>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportType = new List<WorksSupportType>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportProject().GetWorksSupportType(ref listWorksSupportType, userName);
+
+                if (!objResultMessage.IsError && listWorksSupportType != null && listWorksSupportType.Count > 0)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportType;
+                    ret.TotalRecord = listWorksSupportType.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                    // ret.Error = "";
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+    }
+}

@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Nc.Erp.WorksSupport.Api.Models.Project
+{
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SaveProjectMBParam
+    {
+        public int WorksSupportProjectId  { get; set; }
+        public string UserName { get; set; }
+        public int WorksSupportMemberRoleId { get; set; }
+        //public int IsActive { get; set; }
+        //public int IsSystem { get; set; }
+        public int IsAutoAddMemberToWorksGroup { get; set; }
+        public string User { get; set; }
+        
+    }
+
+    public class ClassUser {
+        public string Username { get; set; }
+        public string Name { get; set; }
+    }
+}

@@ -1,0 +1,83 @@
+﻿using System;
+using System.Configuration;
+
+namespace Library.Common
+{
+    public static class CacheHelper
+    {
+        public static String GenKeyCache(params object[] args)
+        {
+            if (args.Length > 0)
+            {
+                string tmp = "cvcht.vpdt.com";
+                foreach (var item in args)
+                {
+                    if (item == null)
+                        tmp += "_null";
+                    else
+                        tmp += "_" + item.ToString().Trim();
+                }
+
+                return tmp;
+            }
+            return null;
+        }
+    }
+
+    public static class Cached
+    {
+        static int defaultCacheTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["Page:Cached:Timeout:Default"]);
+        static int maxTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["Page:Cached:Timeout:Max"]);
+        static int minTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["Page:Cached:Timeout:Min"]);
+        static int monoTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["Page:Cached:Timeout:Mono"]);
+        static string cachedDSN = ConfigurationManager.AppSettings["Page:Cached:SV"];
+
+        public static int DefaultTimeoutCached
+        {
+            get
+            {
+                return defaultCacheTimeout;
+            }
+        }
+
+        public static int CacheMintime
+        {
+            get
+            {
+                return minTimeout;
+            }
+        }
+
+        public static int CacheMonotime
+        {
+            get
+            {
+                return monoTimeout;
+            }
+        }
+
+        public static int CacheMaxtime
+        {
+            get
+            {
+                return maxTimeout;
+            }
+        }
+
+        public static string CacheDSN
+        {
+            get
+            {
+                return cachedDSN;
+            }
+        }
+
+        public static string CacheIIS
+        {
+            get
+            {
+                return "iis";
+            }
+        }
+    }
+}

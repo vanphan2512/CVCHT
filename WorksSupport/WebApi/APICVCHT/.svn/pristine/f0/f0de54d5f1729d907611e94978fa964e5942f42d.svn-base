@@ -1,0 +1,887 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    public partial class DaWorksSupport
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+       
+        
+        #region Public Methods
+
+        /// Tìm kiếm thông tin công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorkSupport> list, string KeyWorks, int IsDeleted, int PageIndex, int PageSize)
+        {
+            ResultMessage objResultMessage = new ResultMessage();
+            IData objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter("@KEYWORDS", KeyWorks);
+                objIData.AddParameter("@ISDELETED", IsDeleted);
+                objIData.AddParameter("@PAGEINDEX", PageIndex);
+                objIData.AddParameter("@PAGESIZE", PageSize);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["CONTENT"])) objWorksSupport.Content = Convert.ToString(reader["CONTENT"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupport.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["EXPECTEDCOMPLETEDDATE"])) objWorksSupport.ExpectedCompletedDate = Convert.ToDateTime(reader["EXPECTEDCOMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["COMPLETEDDATE"])) objWorksSupport.CompletedDate = Convert.ToDateTime(reader["COMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorksSupport.Currentprogress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupport.CreatedUser = Convert.ToString(reader["CREATEDUSER"]).Trim();
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupport.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupport.CreateDate = String.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["CREATEDDATE"]));
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupport.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupport.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["ISDELETED"])) objWorksSupport.IsDeleted = Convert.ToBoolean(reader["ISDELETED"]);
+                    if (!Convert.IsDBNull(reader["DELETEDUSER"])) objWorksSupport.DeletedUser = Convert.ToString(reader["DELETEDUSER"]);
+                    if (!Convert.IsDBNull(reader["DELETEDDATE"])) objWorksSupport.DeletedDate = Convert.ToDateTime(reader["DELETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["LASTCOMMENTTIME"])) objWorksSupport.LastCommentTime = Convert.ToDateTime(reader["LASTCOMMENTTIME"]);
+                    if (!Convert.IsDBNull(reader["LASTACTIONTIME"])) objWorksSupport.LastActionTime = Convert.ToDateTime(reader["LASTACTIONTIME"]);
+                    if (!Convert.IsDBNull(reader["LASTCOMMENTID"])) objWorksSupport.LastCommentId = Convert.ToString(reader["LASTCOMMENTID"]);
+                    if (!Convert.IsDBNull(reader["ATTACHMENTFILECOUNT"])) objWorksSupport.AttachmentFileCount = Convert.ToInt32(reader["ATTACHMENTFILECOUNT"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTGROUPID"])) objWorksSupport.WorksSupportGroupId = Convert.ToInt32(reader["WORKSSUPPORTGROUPID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupport.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupport.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["SOLUTIONCONTENT"])) objWorksSupport.SolutionContent = Convert.ToString(reader["SOLUTIONCONTENT"]);
+                    list.Add(objWorksSupport);
+                }
+                
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Load công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="dtbData"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage GetAll(ref List<WorkSupport> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                //DataTable dtb = objIData.ExecStoreToDataTable();
+                //list = MyUtils.DataTableExtensions.ToList<WorksSupportPriority>(dtb);
+                WorkSupport objWorksSupport;
+                while (reader.Read())
+                {
+                    objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"] + "");
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["CONTENT"])) objWorksSupport.Content = Convert.ToString(reader["CONTENT"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupport.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSNAME"])) objWorksSupport.WorksSupportStatusName = Convert.ToString(reader["WORKSSUPPORTSTATUSNAME"]);
+                    if (!Convert.IsDBNull(reader["COMPLETEDDATE"])) objWorksSupport.CompletedDate = Convert.ToDateTime(reader["COMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorksSupport.Currentprogress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupport.CreatedUser = Convert.ToString(reader["CREATEDUSER"]).Trim();               
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupport.CreateDate = String.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["CREATEDDATE"]));
+
+                    list.Add(objWorksSupport);
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupport", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupport -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Get WorksSupport by Id
+        /// </summary>
+        /// <param name="objWorksSupport"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        //public ResultMessage GetById(ref DO.WorkSupport objWorksSupport, int intWorksSupportID)
+        //{
+        //    var objResultMessage = new ResultMessage();
+        //    var objIData = Data.CreateData();
+        //    try
+        //    {
+        //        objIData.Connect();
+        //        objIData.CreateNewStoredProcedure(SpSelect);
+        //        objIData.AddParameter("@WORKSSUPPORTID", intWorksSupportID);
+        //        var reader = objIData.ExecStoreToDataReader();
+        //        List<DA.WorksSupport> list = new List<DA.WorksSupport>();
+        //        while (reader.Read())
+        //        {
+        //            //objWorksSupport = new DA.WorksSupport();
+        //            //if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportID = Convert.ToInt32(reader["WORKSSUPPORTID"] + "");
+        //            //if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeID = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+        //            //if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]).Trim();
+        //            //if (!Convert.IsDBNull(reader["CONTENT"])) objWorksSupport.Content = Convert.ToString(reader["CONTENT"]);
+        //            //if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupport.WorksSupportStatusID = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+        //            //if (!Convert.IsDBNull(reader["COMPLETEDDATE"])) objWorksSupport.CompletedDate = Convert.ToDateTime(reader["COMPLETEDDATE"]);
+        //            //if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorksSupport.CurrentProgress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+        //            //if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupport.CreatedUser = Convert.ToString(reader["CREATEDUSER"]).Trim();
+        //            //if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupport.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+
+        //            list.Add(objWorksSupport);
+        //        }
+
+        //    }
+        //    catch (Exception objEx)
+        //    {
+        //        objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+        //            "Lỗi nạp thông tin danh sách WorksSupport", objEx.ToString());
+        //        ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+        //            "DaWorksSupport -> GetById", "");
+        //        return objResultMessage;
+        //    }
+        //    finally
+        //    {
+        //        objIData.Disconnect();
+        //    }
+        //    return objResultMessage;
+        //}
+        /// <summary>
+        /// Get WorksSupportType by Id
+        /// </summary>
+        /// <param name="objWorksSupport"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref WorkSupport objWorksSupport, int intWorkSupportID)
+        {
+            var objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                objIData.CreateNewStoredProcedure("EO_WORKSSUPPORT_SEL_V2");
+                objIData.AddParameter("@WORKSSUPPORTID", intWorkSupportID);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupport.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupport.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupport.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTGROUPID"])) objWorksSupport.WorksSupportGroupId = Convert.ToInt32(reader["WORKSSUPPORTGROUPID"]);
+                    if (!Convert.IsDBNull(reader["SOLUTIONCONTENT"])) objWorksSupport.SolutionContent = Convert.ToString(reader["SOLUTIONCONTENT"]).Trim();
+                    if (!Convert.IsDBNull(reader["LASTCOMMENTTIME"])) objWorksSupport.LastCommentTime = Convert.ToDateTime(reader["LASTCOMMENTTIME"]);
+                    if (!Convert.IsDBNull(reader["LASTCOMMENTID"])) objWorksSupport.LastCommentId = Convert.ToString(reader["LASTCOMMENTID"]).Trim();
+                    if (!Convert.IsDBNull(reader["LASTACTIONTIME"])) objWorksSupport.LastActionTime = Convert.ToDateTime(reader["LASTACTIONTIME"]);
+                    if (!Convert.IsDBNull(reader["EXPECTEDCOMPLETEDDATE"])) objWorksSupport.ExpectedCompletedDate = Convert.ToDateTime(reader["EXPECTEDCOMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorksSupport.Currentprogress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["CONTENT"])) objWorksSupport.Content = Convert.ToString(reader["CONTENT"]);
+                    if (!Convert.IsDBNull(reader["COMPLETEDDATE"])) objWorksSupport.CompletedDate = Convert.ToDateTime(reader["COMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["ATTACHMENTFILECOUNT"])) objWorksSupport.AttachmentFileCount = Convert.ToInt32(reader["ATTACHMENTFILECOUNT"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupport.CreatedUser = Convert.ToString(reader["CREATEDUSER"]).Trim();
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupport.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupport.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupport.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["ISDELETED"])) objWorksSupport.IsDeleted = Convert.ToBoolean(reader["ISDELETED"]);
+                    if (!Convert.IsDBNull(reader["DELETEDUSER"])) objWorksSupport.DeletedUser = Convert.ToString(reader["DELETEDUSER"]).Trim();
+                    if (!Convert.IsDBNull(reader["DELETEDDATE"])) objWorksSupport.DeletedDate = Convert.ToDateTime(reader["DELETEDDATE"]);
+                }
+                ////Nạp thông tin Bảng liên kết loại công việc và độ ưu tiên
+                DaWorksSupport_Attachment DaSupport_Attachment = new DaWorksSupport_Attachment();
+                List<WorksSupport_Attachment> lstWorksSupport_Attachment = new List<WorksSupport_Attachment>();
+                objResultMessage = DaSupport_Attachment.LoadInfo(ref lstWorksSupport_Attachment, intWorkSupportID, objIData);
+                if (lstWorksSupport_Attachment != null && lstWorksSupport_Attachment.Count > 0)
+                {
+                    objWorksSupport.lstWorksSupport_Attachment = lstWorksSupport_Attachment;
+                }
+                ////Nạp thông tin Bảng liên kết loại công việc và độ ưu tiên
+                DaWorksSupport_Comment DaWorksSupport_Comment = new DaWorksSupport_Comment();
+                List<WorksSupport_Comment> lstWorksSupport_Comment = new List<WorksSupport_Comment>();
+                objResultMessage = DaWorksSupport_Comment.LoadInfo(ref lstWorksSupport_Comment, intWorkSupportID, objIData);
+                if (lstWorksSupport_Comment != null && lstWorksSupport_Comment.Count > 0)
+                {
+                    objWorksSupport.lstWorksSupport_Comment = lstWorksSupport_Comment;
+                }
+                ////Nạp thông tin Bảng liên kết loại công việc và độ ưu tiên
+                DaWorksSupport_Member DaWorksSupport_Member = new DaWorksSupport_Member();
+                List<WorksSupport_Member> lstWorksSupport_Member = new List<WorksSupport_Member>();
+                objResultMessage = DaWorksSupport_Member.LoadInfo(ref lstWorksSupport_Member, intWorkSupportID, objIData);
+                if (lstWorksSupport_Comment != null && lstWorksSupport_Comment.Count > 0)
+                {
+                    objWorksSupport.lstWorksSupport_Member = lstWorksSupport_Member;
+                }
+                ////Nạp thông tin Bảng liên kết loại công việc và chất lượng công việc
+                DaWorksSupport_Progress DaWorksSupport_Progress = new DaWorksSupport_Progress();
+                List<WorksSupport_Progress> lstWorksSupport_Progress = new List<WorksSupport_Progress>();
+                objResultMessage = DaWorksSupport_Progress.LoadInfo(ref lstWorksSupport_Progress, intWorkSupportID, objIData);
+                if (lstWorksSupport_Progress != null && lstWorksSupport_Progress.Count > 0)
+                {
+                    objWorksSupport.lstWorksSupport_Progress = lstWorksSupport_Progress;
+                }
+                ////Nạp thông tin Bảng chứa các thuộc tính bước xử lý
+                DaWorksSupport_Workflow DaWorkFlow = new DaWorksSupport_Workflow();
+                List<WorksSupport_Workflow> lstWorksSupport_WorkFlow = new List<WorksSupport_Workflow>();
+                //WorksSupport_WorkFlow objWorksSupport_WorkFlow = new WorksSupport_WorkFlow();
+                objResultMessage = DaWorkFlow.LoadInfo(ref lstWorksSupport_WorkFlow, intWorkSupportID, objIData);
+                {
+                    objWorksSupport.lstWorksSupport_Workflow = lstWorksSupport_WorkFlow;
+                }
+                //////Nạp thông tin Bảng chứa các thuộc tính bước xử lý
+                //DaWorksSupportType_MemberRole DaMemberRole = new DaWorksSupportType_MemberRole();
+                //List<WorksSupportType_MemberRole> lstWorksSupportType_MemberRole = new List<WorksSupportType_MemberRole>();
+                ////WorksSupportType_WorkFlow objWorksSupport_WorkFlow = new WorksSupportType_WorkFlow();
+                //objResultMessage = DaMemberRole.GetById(ref lstWorksSupportType_MemberRole, intWorkSupportTypeID, objIData);
+                //if (!objResultMessage.IsError && lstWorksSupportType_MemberRole != null && lstWorksSupportType_MemberRole.Count > 0)
+                //{
+                //    objWorksSupport.lstWorksSupportType_MemberRole = lstWorksSupportType_MemberRole;
+                //}
+                //////Nạp thông tin Bảng chứa các thuộc tính bước xử lý
+                //DaWorksSupportProject_Permis DaProject_Permi = new DaWorksSupportProject_Permis();
+                //List<WorksSupportProject_Permis> lstWorksSupportProject_Permis = new List<WorksSupportProject_Permis>();
+                ////WorksSupportType_WorkFlow objWorksSupport_WorkFlow = new WorksSupportType_WorkFlow();
+                //objResultMessage = DaProject_Permi.GetById(ref lstWorksSupportProject_Permis, intWorkSupportTypeID, objIData);
+                //if (!objResultMessage.IsError && lstWorksSupportProject_Permis != null && lstWorksSupportProject_Permis.Count > 0)
+                //{
+                //    objWorksSupport.lstWorksSupportProject_Permis = lstWorksSupportProject_Permis;
+                //}
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportType", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportType -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Xóa công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupport"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string DeleteUer, int[] strWorksSupportID)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                var lstStatusID = strWorksSupportID;
+                for (int i = 0; i < lstStatusID.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(lstStatusID[i].ToString()))
+                        continue;
+                    var ID = lstStatusID[i];
+                    int WorkID = Convert.ToInt32(ID);
+                    DeleteWorkSupport(objIData, DeleteUer, WorkID);
+                    DaWorksSupport_Attachment daAttachment = new DaWorksSupport_Attachment();
+                    WorksSupport_Attachment objAttachment = new WorksSupport_Attachment();
+                    objAttachment.WorksSupportID = WorkID;
+                    objAttachment.DeletedUser = DeleteUer;
+                    daAttachment.Delete(objAttachment, objIData);
+
+                    DaWorksSupport_Comment daComment = new DaWorksSupport_Comment();
+                    WorksSupport_Comment objComment = new WorksSupport_Comment();
+                    objComment.WorksSupportID = WorkID;
+                    objComment.DeletedUser = DeleteUer;
+                    daComment.Delete(objComment, objIData);
+
+                    DaWorksSupport_Member daMember = new DaWorksSupport_Member();
+                    WorksSupport_Member objMember = new WorksSupport_Member();
+                    objMember.WorksSupportId = WorkID;
+                    objMember.DeletedUser = DeleteUer;
+                    daMember.Delete(objMember, objIData);
+
+                    DaWorksSupport_Progress daProgress = new DaWorksSupport_Progress();
+                    WorksSupport_Progress objProgress = new WorksSupport_Progress();
+                    objProgress.WorksSupportID = WorkID;
+                    daProgress.Delete(objProgress, objIData);
+
+
+                    DaWorksSupport_Workflow daWorkflow = new DaWorksSupport_Workflow();
+                    WorksSupport_Workflow objWorkflow = new WorksSupport_Workflow();
+                    objWorkflow.WorksSupportId = WorkID;
+                    objWorkflow.DeletedUser = DeleteUer;
+                    daWorkflow.Delete(objWorkflow, objIData);
+
+                    objIData.CommitTransaction();
+                    
+                }
+                
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSuportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="WorksSupportProject"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorkSupport objWorksSupport, ref WorkSupport obj)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            int intWorksSupportID = 0;
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                //  Insert(objIData, objWorksSupportProject);
+                if (objWorksSupport.WorksSupportId > 0)
+                {
+                   Update(objIData, objWorksSupport, ref obj);
+                   // Insert WorksSupport_Attachment
+                   DaWorksSupport_Attachment DaWorksSupport_Attachment = new DaWorksSupport_Attachment();
+                   if (objWorksSupport.lstWorksSupport_Attachment != null && objWorksSupport.lstWorksSupport_Attachment.Count > 0)
+                   {
+                       foreach (var itemWorksSupport_Attachment in objWorksSupport.lstWorksSupport_Attachment)
+                       {
+                           DaWorksSupport_Attachment.Update(objIData, itemWorksSupport_Attachment);
+                       }
+                   }
+                   // Insert WorksSupport_Comment
+                   DaWorksSupport_Comment DaWorksSupport_Comment = new DaWorksSupport_Comment();
+                   if (objWorksSupport.lstWorksSupport_Comment != null && objWorksSupport.lstWorksSupport_Comment.Count > 0)
+                   {
+                       foreach (var itemWorksSupport_Comment in objWorksSupport.lstWorksSupport_Comment)
+                       {
+                           DaWorksSupport_Comment.Update(objIData, itemWorksSupport_Comment);
+                       }
+                   }
+                   // Insert WorksSupport_Member
+                   DaWorksSupport_Member DaWorksSupport_Member = new DaWorksSupport_Member();
+                   if (objWorksSupport.lstWorksSupport_Member != null && objWorksSupport.lstWorksSupport_Member.Count > 0)
+                   {
+                       foreach (var itemWorksSupport_Member in objWorksSupport.lstWorksSupport_Member)
+                       {
+                           DaWorksSupport_Member.Update(itemWorksSupport_Member, objIData);
+                       }
+                   }
+                   // Insert WorksSupport_Progress
+                   DaWorksSupport_Progress DaWorksSupport_Progress = new DaWorksSupport_Progress();
+                   if (objWorksSupport.lstWorksSupport_Progress != null && objWorksSupport.lstWorksSupport_Progress.Count > 0)
+                   {
+                       foreach (var objWorksSupport_Progress in objWorksSupport.lstWorksSupport_Progress)
+                       {
+                           DaWorksSupport_Progress.Update(objWorksSupport_Progress, objIData);
+                       }
+                   }
+                   // Insert WorksSupport_Progress
+                   DaWorksSupport_Workflow DaWorksSupport_Workflow = new DaWorksSupport_Workflow();
+                   if (objWorksSupport.lstWorksSupport_Workflow != null && objWorksSupport.lstWorksSupport_Workflow.Count > 0)
+                   {
+                       DaWorksSupport_Workflow.Update(objWorksSupport.lstWorksSupport_Workflow, objIData);
+                   }
+                }
+                else
+                {
+                    Insert(objIData, objWorksSupport, ref intWorksSupportID);
+        
+                    if(intWorksSupportID > 0)
+                    {
+                        // Insert WorksSupport_Attachment
+                        DaWorksSupport_Attachment DaWorksSupport_Attachment = new DaWorksSupport_Attachment();
+                        if (objWorksSupport.lstWorksSupport_Attachment != null && objWorksSupport.lstWorksSupport_Attachment.Count > 0)
+                        {
+                            foreach (var itemWorksSupport_Attachment in objWorksSupport.lstWorksSupport_Attachment)
+                            {
+                                DaWorksSupport_Attachment.Insert(objIData, itemWorksSupport_Attachment);
+                            }
+                        }
+                        // Insert WorksSupport_Comment
+                        DaWorksSupport_Comment DaWorksSupport_Comment = new DaWorksSupport_Comment();
+                        if (objWorksSupport.lstWorksSupport_Comment != null && objWorksSupport.lstWorksSupport_Comment.Count > 0)
+                        {
+                            foreach (var itemWorksSupport_Comment in objWorksSupport.lstWorksSupport_Comment)
+                            {
+                                DaWorksSupport_Comment.Insert(objIData, itemWorksSupport_Comment);
+                            }
+                        }
+                        // Insert WorksSupport_Member
+                        DaWorksSupport_Member DaWorksSupport_Member = new DaWorksSupport_Member();
+                        if (objWorksSupport.lstWorksSupport_Member != null && objWorksSupport.lstWorksSupport_Member.Count > 0)
+                        {
+                            foreach (var itemWorksSupport_Member in objWorksSupport.lstWorksSupport_Member)
+                            {
+                                DaWorksSupport_Member.Insert(itemWorksSupport_Member, objIData);
+                            }
+                        }
+                        // Insert WorksSupport_Progress
+                        DaWorksSupport_Progress DaWorksSupport_Progress = new DaWorksSupport_Progress();
+                        if (objWorksSupport.lstWorksSupport_Progress != null && objWorksSupport.lstWorksSupport_Progress.Count > 0)
+                        {
+                            DaWorksSupport_Progress.Insert(objWorksSupport.lstWorksSupport_Progress, objIData);
+                        }
+                        // Insert WorksSupport_Progress
+                        DaWorksSupport_Workflow DaWorksSupport_Workflow = new DaWorksSupport_Workflow();
+                        if (objWorksSupport.lstWorksSupport_Workflow != null && objWorksSupport.lstWorksSupport_Workflow.Count > 0)
+                        {
+                            DaWorksSupport_Workflow.Insert(objWorksSupport.lstWorksSupport_Workflow, objIData);
+                        }
+                    }
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportProject", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportProject -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Load danh sach buoc xu ly ke tiep bang workssupportId
+        /// </summary>
+        /// <param name="objWorksSupport"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        //ref WorkSupport objWorksSupport
+        //ref DataTable dtbData
+        public ResultMessage LoadWorksSupport_WF_NX(ref List<WorkSupport> list, int intWorkSupportID)
+        {
+            var objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            DataTable dtb = new DataTable();
+            try
+            {
+                objIData.Connect();
+                //objIData.BeginTransaction();
+                objIData.CreateNewStoredProcedure(SpLoad_WF_NX);
+                objIData.AddParameter("@WORKSSUPPORTID", intWorkSupportID);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTEPID"])) objWorksSupport.WorksSupportStepId = Convert.ToInt32(reader["WORKSSUPPORTSTEPID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTEPNAME"])) objWorksSupport.WorksSupportStepName = Convert.ToString(reader["WORKSSUPPORTSTEPNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTEPID"])) objWorksSupport.WorksSupportStepId = Convert.ToInt32(reader["WORKSSUPPORTSTEPID"]);
+                    if (!Convert.IsDBNull(reader["NEXTWORKSSUPPORTSTEPID"])) objWorksSupport.NextWorksSupportStepId = Convert.ToInt32(reader["NEXTWORKSSUPPORTSTEPID"]);
+                   // if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]);
+                    if (!Convert.IsDBNull(reader["PROCESSUSER"])) objWorksSupport.ProcessUser = Convert.ToString(reader["PROCESSUSER"]).Trim();
+                    if (!Convert.IsDBNull(reader["NOTE"])) objWorksSupport.Note = Convert.ToString(reader["NOTE"]).Trim();
+                    list.Add(objWorksSupport);
+                }
+                //else
+                //{
+                //    objWorksSupport = null;
+                //}
+                //reader.Close();
+
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupport", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupport -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                  objIData.Disconnect();
+            }
+             return objResultMessage;
+        }
+        /// <summary>
+        /// Load Danh sach cong viec tu nhom cong viec
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ResultMessage GetById_Group(ref List<WorkSupport> lstWork, int intWorkSupportGroupId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpLoad_Group);
+                objIData.AddParameter("@WORKSSUPPORTGROUPID", intWorkSupportGroupId);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorkSupport objWorksSupport = new WorkSupport();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupport.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTTYPEID"])) objWorksSupport.WorksSupportTypeId = Convert.ToInt32(reader["WORKSSUPPORTTYPEID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTNAME"])) objWorksSupport.WorksSupportName = Convert.ToString(reader["WORKSSUPPORTNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["CONTENT"])) objWorksSupport.Content = Convert.ToString(reader["CONTENT"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupport.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["EXPECTEDCOMPLETEDDATE"])) objWorksSupport.ExpectedCompletedDate = Convert.ToDateTime(reader["EXPECTEDCOMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["COMPLETEDDATE"])) objWorksSupport.CompletedDate = Convert.ToDateTime(reader["COMPLETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["CURRENTPROGRESS"])) objWorksSupport.Currentprogress = Convert.ToInt32(reader["CURRENTPROGRESS"]);
+                    if (!Convert.IsDBNull(reader["CREATEDUSER"])) objWorksSupport.CreatedUser = Convert.ToString(reader["CREATEDUSER"]).Trim();
+                    if (!Convert.IsDBNull(reader["CREATEDDATE"])) objWorksSupport.CreatedDate = Convert.ToDateTime(reader["CREATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDUSER"])) objWorksSupport.UpdatedUser = Convert.ToString(reader["UPDATEDUSER"]);
+                    if (!Convert.IsDBNull(reader["UPDATEDDATE"])) objWorksSupport.UpdatedDate = Convert.ToDateTime(reader["UPDATEDDATE"]);
+                    if (!Convert.IsDBNull(reader["ISDELETED"])) objWorksSupport.IsDeleted = Convert.ToBoolean(reader["ISDELETED"]);
+                    if (!Convert.IsDBNull(reader["DELETEDUSER"])) objWorksSupport.DeletedUser = Convert.ToString(reader["DELETEDUSER"]);
+                    if (!Convert.IsDBNull(reader["DELETEDDATE"])) objWorksSupport.DeletedDate = Convert.ToDateTime(reader["DELETEDDATE"]);
+                    if (!Convert.IsDBNull(reader["LASTCOMMENTTIME"])) objWorksSupport.LastCommentTime = Convert.ToDateTime(reader["LASTCOMMENTTIME"]);
+                    if (!Convert.IsDBNull(reader["LASTACTIONTIME"])) objWorksSupport.LastActionTime = Convert.ToDateTime(reader["LASTACTIONTIME"]);
+                    if (!Convert.IsDBNull(reader["LASTCOMMENTID"])) objWorksSupport.LastCommentId = Convert.ToString(reader["LASTCOMMENTID"]);
+                    if (!Convert.IsDBNull(reader["ATTACHMENTFILECOUNT"])) objWorksSupport.AttachmentFileCount = Convert.ToInt32(reader["ATTACHMENTFILECOUNT"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTGROUPID"])) objWorksSupport.WorksSupportGroupId = Convert.ToInt32(reader["WORKSSUPPORTGROUPID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTPRIORITYID"])) objWorksSupport.WorksSupportPriorityId = Convert.ToInt32(reader["WORKSSUPPORTPRIORITYID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTQUALITYID"])) objWorksSupport.WorksSupportQualityId = Convert.ToInt32(reader["WORKSSUPPORTQUALITYID"]);
+                    if (!Convert.IsDBNull(reader["SOLUTIONCONTENT"])) objWorksSupport.SolutionContent = Convert.ToString(reader["SOLUTIONCONTENT"]);
+                    lstWork.Add(objWorksSupport);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupport", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupport -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// THEM CONG VIEC CAN HO TRO
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ResultMessage Insert_WorksSupport(WorkSupport objWorksSupport, ref WorkSupport obj)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+           // int intWorksSupportID = 0;
+            try
+            {
+                objIData.Connect();
+                objIData.BeginTransaction();
+                //  Insert(objIData, objWorksSupportProject);
+                if (objWorksSupport.WorksSupportId > 0)
+                {
+                   
+                }
+                else
+                {
+                    // Insert WorksSupport
+                    Insert_WorksSupport(objIData, objWorksSupport);
+                    // Insert WorksSupport_Member
+
+                    // Insert WorksSupport_Attachment
+                    DaWorksSupport_Attachment DaWorksSupport_Attachment = new DaWorksSupport_Attachment();
+                    if (objWorksSupport.lstWorksSupport_Attachment != null && objWorksSupport.lstWorksSupport_Attachment.Count > 0)
+                    {
+                        foreach (var itemWorksSupport_Attachment in objWorksSupport.lstWorksSupport_Attachment)
+                        {
+                            DaWorksSupport_Attachment.Insert(objIData, itemWorksSupport_Attachment);
+                        }
+                    }
+                }
+                objIData.CommitTransaction();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupport", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupport -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Load danh sach buoc xu ly ke tiep bang workssupportId
+        /// </summary>
+        /// <param name="objWorksSupport"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        //ref WorkSupport objWorksSupport
+        //ref DataTable dtbData
+        public ResultMessage LoadProcessUserBy_StepID(ref List<WorksSupport_Member> list, int intStepId)
+        {
+            var objResultMessage = new ResultMessage();
+            IData objIData = Library.DataAccess.Data.CreateData();
+            DataTable dtb = new DataTable();
+            try
+            {
+                objIData.Connect();
+                //objIData.BeginTransaction();
+                objIData.CreateNewStoredProcedure(SpLoad_ProcessUser);
+                objIData.AddParameter("@WORKSSUPPORTSTEPID", intStepId);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    WorksSupport_Member objWorksSupport = new WorksSupport_Member();
+                    if (!Convert.IsDBNull(reader["MEMBERUSERNAME"])) objWorksSupport.MemberUserName = Convert.ToString(reader["MEMBERUSERNAME"]).Trim();
+                    list.Add(objWorksSupport);
+                }
+                //else
+                //{
+                //    objWorksSupport = null;
+                //}
+                //reader.Close();
+
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupport", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupport -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+       
+        #region Protected Methods
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupport"></param>
+        protected void DeleteWorksSupport(IData objIData, string DeleteUser, int intWorksSupportID)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTID", intWorksSupportID);
+                objIData.AddParameter("@DELETEDUSER", DeleteUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Thêm trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupport"></param>
+        protected virtual void Insert(IData objIData, WorkSupport objWorksSupport, ref int intWorksSupportId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WorksSupportId", objWorksSupport.WorksSupportId);
+                objIData.AddParameter("@WorksSupportTypeId", objWorksSupport.WorksSupportTypeId);
+                objIData.AddParameter("@WorksSupportName", objWorksSupport.WorksSupportName);
+                objIData.AddParameter("@Content", objWorksSupport.Content);
+                objIData.AddParameter("@WorksSupportStatusId", objWorksSupport.WorksSupportStatusId);
+                objIData.AddParameter("@ExpectedCompletedDate", objWorksSupport.ExpectedCompletedDate);
+                objIData.AddParameter("@CompletedDate", objWorksSupport.CompletedDate);
+                objIData.AddParameter("@Currentprogress", objWorksSupport.Currentprogress);
+                objIData.AddParameter("@CreatedUser", objWorksSupport.CreatedUser);
+                objIData.AddParameter("@LastCommentTime", objWorksSupport.LastCommentTime);
+                objIData.AddParameter("@LastActionTime", objWorksSupport.LastActionTime);
+                objIData.AddParameter("@LastCommentId", objWorksSupport.LastCommentId);
+                objIData.AddParameter("@AttachmentFileCount", objWorksSupport.AttachmentFileCount);
+                objIData.AddParameter("@WorksSupportGroupId", objWorksSupport.WorksSupportGroupId);
+                objIData.AddParameter("@WorksSupportPriorityId", objWorksSupport.WorksSupportPriorityId);
+                objIData.AddParameter("@WorksSupportQualityId", objWorksSupport.WorksSupportQualityId);
+                objIData.AddParameter("@SolutionContent", objWorksSupport.SolutionContent);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                intWorksSupportId = Convert.ToInt32(objIData.ExecStoreToString());
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        /// <summary>
+        /// Cập nhật trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupport"></param>
+        protected virtual void Update(IData objIData, WorkSupport objWorksSupport, ref WorkSupport lstWorksSupport)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTID", objWorksSupport.WorksSupportId);
+                objIData.AddParameter("@WORKSSUPPORTTYPEID", objWorksSupport.WorksSupportTypeId);
+                objIData.AddParameter("@WORKSSUPPORTNAME", objWorksSupport.WorksSupportName);
+                objIData.AddParameter("@CONTENT", objWorksSupport.Content);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSID", objWorksSupport.WorksSupportStatusId);
+                objIData.AddParameter("@EXPECTEDCOMPLETEDDATE", objWorksSupport.ExpectedCompletedDate);
+                objIData.AddParameter("@COMPLETEDDATE", objWorksSupport.CompletedDate);
+                objIData.AddParameter("@CURRENTPROGRESS", objWorksSupport.Currentprogress);
+                objIData.AddParameter("@UPDATEDUSER", objWorksSupport.UpdatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                DataTable dtb = objIData.ExecStoreToDataTable();
+                List<WorkSupport> list = new List<WorkSupport>();
+                list = MyUtils.DataTableExtensions.ToList<WorkSupport>(dtb);
+                if (list != null && list.Count > 0)
+                {
+                    lstWorksSupport = list[0];
+                }
+                else
+                {
+                    lstWorksSupport = null;
+                }
+
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        protected void DeleteWorkSupport(IData objIData, string DeleteUser, int intWorksSupportId)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTID", intWorksSupportId);
+                objIData.AddParameter("@DELETEDUSER", DeleteUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                string ab = objIData.ExecStoreToString();
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        /// <summary>
+        /// THEM CONG VIEC CAN HO TRO
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        protected virtual void Insert_WorksSupport(IData objIData, WorkSupport objWorksSupport)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@WORKSSUPPORTNAME", objWorksSupport.WorksSupportName);
+                objIData.AddParameter("@CONTENT", objWorksSupport.Content);
+                objIData.AddParameter("@WORKSSUPPORTGROUPID", objWorksSupport.WorksSupportGroupId);
+                objIData.AddParameter("@WORKSSUPPORTPRIORITYID", objWorksSupport.WorksSupportPriorityId);
+                objIData.AddParameter("@EXPECTEDCOMPLETEDDATE", objWorksSupport.ExpectedCompletedDate);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupport.CreatedUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                var id = Convert.ToInt32(objIData.ExecStoreToString());
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelectAll = "WORKSSUPPORT_V2_GETALL";
+        public const string SpSelect = "WORKSSUPPORT_V2_GETBYID";
+        public const string SpAdd = "WORKSSUPPORT_V2_ADD";
+        public const string SpUpdate = "WORKS_SUPPORT_V2_UPD";
+        public const string SpDelete = "WORKSSUPPORT_V2_DELETE";
+        public const string SpSearch = "EO_WORKSSUPPORT_SEARCH";
+        public const string SpLoad_WF_NX = "WORKSSUPPORT_WFNX_V2_GETBY";
+        public const string SpLoad_Group = "WORKSSUPPORT_GROUP_V2_SHR";
+        public const string SpLoad_ProcessUser = "WORKSSUPPORT_WFNX_V2_MEMBER";
+        
+
+        #endregion
+
+        #region Constructor
+
+        public DaWorksSupport()
+		{
+		}
+		#endregion
+    }
+}

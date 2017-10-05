@@ -1,0 +1,12 @@
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\WebClientAuthen.dll.config
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\WebClientAuthen.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\WebClientAuthen.pdb
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\CachedClient.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\DiffieHellman.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\ICSharpCode.SharpZipLib.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\Library.WebCore.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\log4net.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\bin\Library.DataAccess.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\obj\Debug\WebClientAuthen.dll
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\obj\Debug\WebClientAuthen.pdb
+F:\Project\WorksSupport\WebApi\APICVCHT\API\WebClientAuthen\obj\Debug\WebClientAuthen.csprojResolveAssemblyReference.cache

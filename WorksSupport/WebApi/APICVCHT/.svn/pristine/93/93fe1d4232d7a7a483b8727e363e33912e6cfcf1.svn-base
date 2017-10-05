@@ -1,0 +1,441 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration;
+using Nc.Erp.WorksSupport.Do.Configuration.Status;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.Status
+{
+    /// <summary>
+    /// Created by      : Lương Trung Nhân
+    /// Created date    : 29/05/2017
+    /// Xử lý nghiệp vụ đối tượng ERP.EO.WORKSSUPPORTSTATUS.
+    /// Khai báo trạng thái công việc cần hỗ trợ
+    /// </summary>
+    public class DaWorksSupportStatus
+    {
+        #region Log Property
+        public LogObject ObjLogObject = new LogObject();
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Tìm kiếm thông tin trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="objKeywords"></param>
+        /// <returns></returns>
+        public ResultMessage SearchData(ref List<WorksSupportStatus> list, params object[] objKeywords)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSearch);
+                objIData.AddParameter(objKeywords);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportStatus = new WorksSupportStatus();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupportStatus.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSNAME"])) objWorksSupportStatus.WorksSupportStatusName = Convert.ToString(reader["WORKSSUPPORTSTATUSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportStatus.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ISCLOSESTATUS"])) objWorksSupportStatus.IsCloseStatus = Convert.ToBoolean(reader["ISCLOSESTATUS"]);
+                    if (!Convert.IsDBNull(reader["ISCOMPLETESTATUS"])) objWorksSupportStatus.IsCompleteStatus = Convert.ToBoolean(reader["ISCOMPLETESTATUS"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportStatus.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ISINITSTATUS"])) objWorksSupportStatus.IsInitStatus = Convert.ToBoolean(reader["ISINITSTATUS"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportStatus.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportStatus.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportStatus.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);                   
+                    list.Add(objWorksSupportStatus);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.SearchData, "Lỗi tìm kiếm thông tin trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupportStatus -> SearchData", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        /// <summary>
+        /// GetAlll WorksSupportStatus 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public ResultMessage GetAll(ref List<WorksSupportStatus> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAll);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportStatus = new WorksSupportStatus();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupportStatus.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSNAME"])) objWorksSupportStatus.WorksSupportStatusName = Convert.ToString(reader["WORKSSUPPORTSTATUSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportStatus.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ISCLOSESTATUS"])) objWorksSupportStatus.IsCloseStatus = Convert.ToBoolean(reader["ISCLOSESTATUS"]);
+                    if (!Convert.IsDBNull(reader["ISCOMPLETESTATUS"])) objWorksSupportStatus.IsCompleteStatus = Convert.ToBoolean(reader["ISCOMPLETESTATUS"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportStatus.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ISINITSTATUS"])) objWorksSupportStatus.IsInitStatus = Convert.ToBoolean(reader["ISINITSTATUS"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportStatus.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["isactive"])) objWorksSupportStatus.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportStatus.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    list.Add(objWorksSupportStatus);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportStatus -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage GetStatusActived(ref List<WorksSupportStatus> list)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectAllActived);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportStatus = new WorksSupportStatus();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupportStatus.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSNAME"])) objWorksSupportStatus.WorksSupportStatusName = Convert.ToString(reader["WORKSSUPPORTSTATUSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportStatus.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ISCLOSESTATUS"])) objWorksSupportStatus.IsCloseStatus = Convert.ToBoolean(reader["ISCLOSESTATUS"]);
+                    if (!Convert.IsDBNull(reader["ISCOMPLETESTATUS"])) objWorksSupportStatus.IsCompleteStatus = Convert.ToBoolean(reader["ISCOMPLETESTATUS"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportStatus.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ISINITSTATUS"])) objWorksSupportStatus.IsInitStatus = Convert.ToBoolean(reader["ISINITSTATUS"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportStatus.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["isactive"])) objWorksSupportStatus.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportStatus.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    list.Add(objWorksSupportStatus);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportStatus -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+
+        /// <summary>
+        /// Get WorksSupportStatus by Id
+        /// </summary>
+        /// <param name="listWorksSupportStatus"></param>
+        /// <param name="workSupportStatusId"></param>
+        /// <returns></returns
+        public ResultMessage GetById(ref WorksSupportStatus listWorksSupportStatus, int workSupportStatusId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSID", workSupportStatusId);
+                var reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    var objWorksSupportStatus = new WorksSupportStatus();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSID"])) objWorksSupportStatus.WorksSupportStatusId = Convert.ToInt32(reader["WORKSSUPPORTSTATUSID"]);
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTSTATUSNAME"])) objWorksSupportStatus.WorksSupportStatusName = Convert.ToString(reader["WORKSSUPPORTSTATUSNAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["ICONURL"])) objWorksSupportStatus.IconUrl = Convert.ToString(reader["ICONURL"]).Trim();
+                    if (!Convert.IsDBNull(reader["ISCLOSESTATUS"])) objWorksSupportStatus.IsCloseStatus = Convert.ToBoolean(reader["ISCLOSESTATUS"]);
+                    if (!Convert.IsDBNull(reader["ISCOMPLETESTATUS"])) objWorksSupportStatus.IsCompleteStatus = Convert.ToBoolean(reader["ISCOMPLETESTATUS"]);
+                    if (!Convert.IsDBNull(reader["DESCRIPTION"])) objWorksSupportStatus.Description = Convert.ToString(reader["DESCRIPTION"]);
+                    if (!Convert.IsDBNull(reader["ISINITSTATUS"])) objWorksSupportStatus.IsInitStatus = Convert.ToBoolean(reader["ISINITSTATUS"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorksSupportStatus.OrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+                    if (!Convert.IsDBNull(reader["ISACTIVE"])) objWorksSupportStatus.IsActived = Convert.ToBoolean(reader["ISACTIVE"]);
+                    if (!Convert.IsDBNull(reader["ISSYSTEM"])) objWorksSupportStatus.IsSystem = Convert.ToBoolean(reader["ISSYSTEM"]);
+                    listWorksSupportStatus = objWorksSupportStatus;
+                }
+                else
+                {
+                    listWorksSupportStatus = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách WorksSupportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportStatus -> GetById", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Insert data
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <returns></returns>
+        public ResultMessage Insert(WorksSupportStatus objWorksSupportStatus, ref WorksSupportStatus data)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                if (objWorksSupportStatus.WorksSupportStatusId > 0)
+                {
+                    Update(objIData, objWorksSupportStatus, ref data);
+                }
+                else
+                {
+                    Insert(objIData, objWorksSupportStatus);
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin WorksSupportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Insert", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objWorksSupportStatus"></param>
+        /// <returns></returns>
+        public ResultMessage Delete(string DeleteUer, string strWorksSupportStatusID)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                var lstStatusID = strWorksSupportStatusID.Split(',');
+                for (int i = 0; i < lstStatusID.Length; i++)
+			    {
+			        if(string.IsNullOrEmpty(lstStatusID[i]))
+                        continue;
+                     var ID = lstStatusID[i];
+                    int StatusID = Convert.ToInt32(ID);
+                    DeleteStatus(objIData, DeleteUer, StatusID);
+			    }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa WorksSuportStatus", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DaWorksSupportStatus -> Delete", Globals.ModuleName);
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Thêm trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        protected virtual void Insert(IData objIData, WorksSupportStatus objWorksSupportStatus)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                //objIData.AddParameter("@WORKSSUPPORTSTATUSID", objWorksSupportStatus.WorksSupportStatusId);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSNAME", objWorksSupportStatus.WorksSupportStatusName);
+                objIData.AddParameter("@ICONURL", objWorksSupportStatus.IconUrl);
+                objIData.AddParameter("@ISINITSTATUS", objWorksSupportStatus.IsInitStatus);
+                objIData.AddParameter("@ISCOMPLETESTATUS", objWorksSupportStatus.IsCompleteStatus);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportStatus.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportStatus.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportStatus.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportStatus.IsSystem);
+                objIData.AddParameter("@CREATEDUSER", objWorksSupportStatus.CreatedUser);
+                objIData.AddParameter("@ISCLOSESTATUS", objWorksSupportStatus.IsCloseStatus);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+
+                objWorksSupportStatus.WorksSupportStatusId = Convert.ToInt32(objIData.ExecStoreToString());
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        protected virtual void Update(IData objIData, WorksSupportStatus objWorksSupportStatus, ref WorksSupportStatus lstWorksSupportStatus)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpUpdate);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSID", objWorksSupportStatus.WorksSupportStatusId);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSNAME", objWorksSupportStatus.WorksSupportStatusName);
+                objIData.AddParameter("@ICONURL", objWorksSupportStatus.IconUrl);
+                objIData.AddParameter("@ISINITSTATUS", objWorksSupportStatus.IsInitStatus);
+                objIData.AddParameter("@ISCOMPLETESTATUS", objWorksSupportStatus.IsCompleteStatus);
+                objIData.AddParameter("@DESCRIPTION", objWorksSupportStatus.Description);
+                objIData.AddParameter("@ORDERINDEX", objWorksSupportStatus.OrderIndex);
+                objIData.AddParameter("@ISACTIVE", objWorksSupportStatus.IsActived);
+                objIData.AddParameter("@ISSYSTEM", objWorksSupportStatus.IsSystem);
+                objIData.AddParameter("@UPDATEDUSER", objWorksSupportStatus.UpdatedUser);
+                objIData.AddParameter("@ISCLOSESTATUS", objWorksSupportStatus.IsCloseStatus);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID", ObjLogObject.LoginLogID);
+                DataTable dtb = objIData.ExecStoreToDataTable();
+                List<WorksSupportStatus> list = new List<WorksSupportStatus>();
+                list = MyUtils.DataTableExtensions.ToList<WorksSupportStatus>(dtb);
+                if (list != null && list.Count > 0)
+                {
+                    lstWorksSupportStatus = list[0];
+                }
+                else
+                {
+                    lstWorksSupportStatus = null;
+                }
+
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData"></param>
+        /// <param name="objWorksSupportStatus"></param>
+        protected void DeleteStatus(IData objIData, string DeleteUser, int intWorksSupportStatusID)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpDelete);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSID", intWorksSupportStatusID);
+                objIData.AddParameter("@DELETEDUSER", DeleteUser);
+                objIData.AddParameter("@CERTIFICATESTRING", ObjLogObject.CertificateString);
+                objIData.AddParameter("@USERHOSTADDRESS", ObjLogObject.UserHostAddress);
+                objIData.AddParameter("@LOGINLOGID",ObjLogObject.LoginLogID);
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// check values existed
+        /// </summary>
+        /// <param name="objWorkStatus"></param>
+        /// <param name="intId"></param>
+        /// <param name="strName"></param>
+        /// <param name="inOrderIndex"></param>
+        /// <returns></returns>
+        public ResultMessage CheckValuesExisted(ref StatusValidation objWorkStatus, int intId, string strName, int inOrderIndex)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpCheck);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSID", intId);
+                objIData.AddParameter("@WORKSSUPPORTSTATUSNAME", strName);
+                objIData.AddParameter("@ORDERINDEX", inOrderIndex);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                if (reader.Read())
+                {
+                    objWorkStatus = new StatusValidation();
+                    if (!Convert.IsDBNull(reader["STATUSNAME"])) objWorkStatus.CountName = Convert.ToInt32(reader["STATUSNAME"]);
+                    if (!Convert.IsDBNull(reader["ORDERINDEX"])) objWorkStatus.CountOrderIndex = Convert.ToInt32(reader["ORDERINDEX"]);
+
+
+                }
+                else
+                {
+                    objWorkStatus = null;
+                }
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi kiểm tra thuộc tính trùng nhau của trạng trạng thái công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail,
+                    "DaWorksSupportPriority -> CheckNameExisted", "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpSelectAll = "WORKSSUPPORTSTATUS_V2_GETALL";
+        public const string SpSelectAllActived = "WORKSSUPPORTSTATUS_V2_ACTIVED";
+        public const string SpSelect = "WORKSSUPPORTSTATUS_V2_SEL";
+        public const string SpAdd = "WORKSSUPPORTSTATUS_V2_ADD";
+        public const string SpUpdate = "WORKSSUPPORTSTATUS_V2_UPD";
+        public const string SpDelete = "WORKSSUPPORTSTATUS_V2_DEL";
+        public const string SpSearch = "WORKSSUPPORTSTATUS_V2_SRH";
+        public const string SpCheck = "WORKSSUPPORTSTATUS_V2_CHECK";
+        #endregion
+    }
+}

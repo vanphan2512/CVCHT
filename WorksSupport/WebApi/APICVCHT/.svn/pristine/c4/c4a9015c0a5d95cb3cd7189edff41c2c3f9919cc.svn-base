@@ -1,0 +1,431 @@
+﻿using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.IO;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+using WebLibs.Cached;
+
+namespace WebClientAuthen
+{
+    public class RDAuthorize : ActionFilterAttribute
+    {
+        private static Object thisLock = new Object();
+        //public static Hashtable hstWSUser = new Hashtable();
+        public const string hstWSUser = "hst_WSUser";
+        public const string _USR_IS_AUTH_ = "rd_atr";
+        public const string _USR_COM_ = "rd_com";
+        public const string _USR_STORE_ = "rd_st";
+        public const string _USR_USR_ID_ = "rd_id";
+        public const string _USR_DEPAR_ = "rd_depar";
+        public const string _USR_DEPARID_ = "rd_deparid";
+        public const string _USR_FULLNAME_ = "rd_fullname";
+        public const string _USR_AVATAR_ = "rd_Avatar";
+        public const string _USR_ADDRESS__ = "rd_Address";
+        public const string _USR_PHONENUMBER__ = "rd_PhoneNumber";
+        public const string _USR_POSITIONNAME__ = "rd_PositionName";
+
+        /// <summary>
+        /// (A & B) ^ (C & D) ^ En
+        /// </summary>
+        public string Permission { get; set; }
+
+        /// <summary>
+        /// Specific log in Url
+        /// </summary>
+        public string SignInUrl { get; set; }
+
+        /// <summary>
+        /// Signed in user
+        /// </summary>
+        public static string Username
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_USR_ID_]);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string Department
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_DEPAR_]);
+            }
+        }
+
+        public static int DepartmentID
+        {
+            get
+            {
+                return Convert.ToInt32(HttpContext.Current.Session[_USR_DEPARID_]);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string FullName
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_FULLNAME_]);
+            }
+        }
+
+        public static string Address
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_ADDRESS__]);
+            }
+        }
+
+        public static string PhoneNumber
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_PHONENUMBER__]);
+            }
+        }
+
+        public static string PositionName
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_POSITIONNAME__]);
+            }
+        }
+
+        public static string Avatar
+        {
+            get
+            {
+                return Convert.ToString(HttpContext.Current.Session[_USR_AVATAR_]);
+            }
+            set
+            {
+                HttpContext.Current.Session[_USR_AVATAR_] = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the current session is loged in or not.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsLogedIn()
+        {
+            string Username = Convert.ToString(HttpContext.Current.Session[_USR_USR_ID_]);
+            return
+                Convert.ToBoolean(HttpContext.Current.Session[_USR_IS_AUTH_]) &&
+                !string.IsNullOrEmpty(Username)
+                //&& hstWSUser.ContainsKey(Username)
+                ;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="function"></param>
+        /// <returns></returns>
+        public static bool IsPermission(string function)
+        {
+            if (string.IsNullOrWhiteSpace(function))
+                return false;
+
+            if (RDAuthorize.IsLogedIn())
+            {
+                //Administrator full quyền
+                if (RDAuthorize.Username == "administrator")
+                    return true;
+                var WSUsr = HttpContext.Current.Session[hstWSUser] as WebSessionUser;
+                return WSUsr.IsPermission(function.Trim());
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="WSHostName"></param>
+        public static void SetUnhandshake(string WSHostName)
+        {
+            {
+                WebServiceHost objWebServiceHost = Globals.GetWebServiceHost(WSHostName);
+                if (objWebServiceHost != null)
+                {
+                    CacheHelper.iCached.Remove(ConfigurationManager.AppSettings["_LST_SV_HOST_CACHED_KEY_"]);
+                    objWebServiceHost.IsHandShake = false;
+                    // HttpContext.Current.Session[WSHostName] = objWebServiceHost;
+                    CacheHelper.iCached.Remove(WSHostName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="WSHostName"></param>
+        /// <returns></returns>
+        public static string GetAuthenData(string WSHostName)
+        {
+            DateTime dt = DateTime.Now;
+            WebServiceHost objWebServiceHost = Globals.GetWebServiceHost(WSHostName);
+            Library.WebCore.FileLogger.LogAction("RDAuthorize(GetAuthenData) | Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+            dt = DateTime.Now;
+            if (objWebServiceHost != null)
+            {
+                string Username = Convert.ToString(HttpContext.Current.Session[_USR_USR_ID_]);
+                //string Username = WebSessionUser.Current.UserName;
+
+                if (objWebServiceHost.HandShake(WSHostName))
+                {
+                    //if (hstWSUser.ContainsKey(Username))
+                    {
+                        Library.WebCore.FileLogger.LogAction("RDAuthorize(GetAuthenData objWebServiceHost) | Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+                        //return objWebServiceHost.CreateAuthenticateData(hstWSUser[Username] as WebSessionUser);
+                        return objWebServiceHost.CreateAuthenticateData(HttpContext.Current.Session[hstWSUser] as WebSessionUser);
+                    }
+                }
+            } // if (objWebServiceHost != null)
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="WSHostName"></param>
+        /// <returns></returns>
+        public static string GetGUID(string WSHostName)
+        {
+            WebServiceHost objWebServiceHost = CacheHelper.iCached.Get<WebServiceHost>(WSHostName);
+            //WebServiceHost objWebServiceHost = HttpContext.Current.Session[WSHostName] as WebServiceHost;
+            if (objWebServiceHost != null)
+            {
+                if (objWebServiceHost.HandShake(WSHostName))
+                {
+                    return objWebServiceHost.GUID;
+                }
+
+            }
+            //Library.WebCore.FileLogger.LogAction("GUID: " + objWebServiceHost.GUID);
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string GetWSHostUrl(string WSHostName)
+        {
+            WebServiceHost objWebServiceHost = Globals.GetWebServiceHost(WSHostName);
+            if (objWebServiceHost != null)
+                return objWebServiceHost.HostURL;
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strUsr"></param>
+        /// <param name="strPwd"></param>
+        /// <param name="bolCertificate"></param>
+        /// <returns></returns>
+        public static bool Login(string strUsr, string strPwd, bool bolCertificate, bool bolPassMD5 = false)
+        {
+            //Library.WebCore.FileLogger.LogPath = Path.Combine(HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["LogFilePath"]), "LogInternalServerError.log");
+            Library.WebCore.FileLogger.LogPath = Path.Combine(System.Configuration.ConfigurationManager.AppSettings["LogFilePath"], "LogInternalServerError.log");
+
+            //if (string.IsNullOrWhiteSpace(Library.WebCore.SystemConfig.SSOServiceHostURL))
+            //    Library.WebCore.SystemConfig.SSOServiceHostURL = ConfigurationManager.AppSettings["WSHost_SSOService"];
+            DateTime dt = DateTime.Now;
+            Globals.LoadWebServiceHostList2();
+            Library.WebCore.FileLogger.LogAction("RDAuthorize Login(LoadWebServiceHostList2)-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+            WebSessionUser objWebSessionUser = new WebSessionUser(strUsr, strPwd, bolCertificate);
+            Library.WebCore.FileLogger.LogAction("RDAuthorize Login(WebSessionUser(strUsr, strPwd, bolCertificate))-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            dt = DateTime.Now;
+            objWebSessionUser.Login(bolPassMD5);
+            Library.WebCore.FileLogger.LogAction("RDAuthorize Login( objWebSessionUser.Login(bolPassMD5))-| Time:" + DateTime.Now.Subtract(dt).TotalMilliseconds);
+
+            return objWebSessionUser.IsLogin;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strPwd"></param>
+        /// <param name="strNewPass"></param>
+        /// <param name="strUsr"></param>
+        /// <returns></returns>
+        public static int changePass(ref int intResult, string strPwd, string strNewPass, string strUsr, bool bolIsCertificate)
+        {
+            string strIPAddress = GetVisitorIPAddress(false);
+            string strIPAddressLAN = GetVisitorIPAddress(true);
+            //if (hstWSUser.ContainsKey(strUsr))
+            {
+                (HttpContext.Current.Session[hstWSUser] as WebSessionUser).ChangPass(strPwd, strNewPass, ref intResult);
+            }
+            return intResult;
+        }
+
+        public static string GetVisitorIPAddress(bool GetLan = false)
+        {
+            string visitorIPAddress = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+            if (String.IsNullOrEmpty(visitorIPAddress))
+                visitorIPAddress = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
+
+            if (string.IsNullOrEmpty(visitorIPAddress))
+                visitorIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+            if (string.IsNullOrEmpty(visitorIPAddress) || visitorIPAddress.Trim() == "::1")
+            {
+                GetLan = true;
+                visitorIPAddress = string.Empty;
+            }
+
+            if (GetLan)
+            {
+                if (string.IsNullOrEmpty(visitorIPAddress))
+                {
+                    //This is for Local(LAN) Connected ID Address
+                    string stringHostName = Dns.GetHostName();
+                    //Get Ip Host Entry
+                    IPHostEntry ipHostEntries = Dns.GetHostEntry(stringHostName);
+                    //Get Ip Address From The Ip Host Entry Address List
+                    IPAddress[] arrIpAddress = ipHostEntries.AddressList;
+
+                    try
+                    {
+                        visitorIPAddress = arrIpAddress[arrIpAddress.Length - 2].ToString();
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            visitorIPAddress = arrIpAddress[0].ToString();
+                        }
+                        catch
+                        {
+                            try
+                            {
+                                arrIpAddress = Dns.GetHostAddresses(stringHostName);
+                                visitorIPAddress = arrIpAddress[0].ToString();
+                            }
+                            catch
+                            {
+                                visitorIPAddress = "127.0.0.1";
+                            }
+                        }
+                    }
+                }
+            }
+            return visitorIPAddress;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void LogOut()
+        {
+            string Username = Convert.ToString(HttpContext.Current.Session[_USR_USR_ID_]);
+            //if (hstWSUser.ContainsKey(Username))
+            {
+                //(hstWSUser[Username] as WebSessionUser).LogOut();
+                if (HttpContext.Current.Session[hstWSUser] != null)
+                    (HttpContext.Current.Session[hstWSUser] as WebSessionUser).LogOut();
+                //hstWSUser.Remove(Username);
+            }
+            HttpContext.Current.Session.Remove(_USR_IS_AUTH_);
+            HttpContext.Current.Session.Remove(_USR_USR_ID_);
+
+            ICached iCached = CachedFactory.Create(WebClientAuthen.Cached.CacheDSN);
+            iCached.Remove(Convert.ToString(ConfigurationManager.AppSettings["WSHostName"]));
+            HttpContext.Current.Session.Abandon();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (!RDAuthorize.IsLogedIn())
+            {
+                //if (string.IsNullOrEmpty(SignInUrl))
+                SignInUrl = "/dang-nhap?continue=" + context.HttpContext.Request.Url.ToString().TrimEnd('/');
+                context.HttpContext.Response.Redirect(SignInUrl, true);
+                context.Result = new RedirectResult(SignInUrl, true);
+            } // if (!RDAuthorize.IsLogedIn())
+            else
+            {
+                //Check Link Accept IP
+                //string strLinkAceptIP = System.Configuration.ConfigurationSettings.AppSettings.Get("LinkAceptIP");
+
+                //if (string.IsNullOrEmpty(strLinkAceptIP) == false)
+                //{
+                //    string controllerName = context.RouteData.Values["controller"].ToString();
+                //    string  actionName = context.RouteData.Values["action"].ToString();
+
+                //    if (controllerName == "ReportDocumentPupil" && actionName == "ReportDocumentPupil") {
+
+                //        if (strLinkAceptIP.IndexOf(HttpContext.Current.Request.UserHostAddress) >= 0)
+                //        {
+                //            context.HttpContext.Response.Redirect("/", true);
+                //            context.Result = new RedirectResult("/", true);
+                //        }
+                //    }
+                //}
+
+
+                var cookie = context.HttpContext.Request.Cookies["RefreshFilter"];
+                context.RouteData.Values["IsRefreshed"] = cookie != null && cookie.Value == context.HttpContext.Request.Url.ToString();
+
+                // Parse permission string
+                //  Structure: (A & B) ^ (C & D) ^ E
+                if (!string.IsNullOrEmpty(Permission))
+                {
+                    var existsPers = Permission.Split(new char[] { '^' }, StringSplitOptions.RemoveEmptyEntries);
+                    //var WSUsr = hstWSUser[Convert.ToString(HttpContext.Current.Session[_USR_USR_ID_])] as WebSessionUser;
+                    var WSUsr = HttpContext.Current.Session[hstWSUser] as WebSessionUser;
+                    foreach (var per in existsPers)
+                    {
+                        bool isPer = false;
+                        var bothPers = per.Trim()
+                                          .TrimStart('(')
+                                          .TrimEnd(')')
+                                          .Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var item in bothPers)
+                        {
+                            isPer = WSUsr.IsPermission(item.Trim());
+                            if (!isPer) break;
+                        } // foreach (var item in bothPers)
+                        if (isPer) return;
+                    } // foreach (var per in existsPers)
+
+                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new
+                    {
+                        controller = "error",
+                        action = "err_permission",
+                        message = "không có quyền",
+                        refer = HttpUtility.UrlEncode(context.HttpContext.Request.Url.ToString().TrimEnd('/')),
+                    }));
+                } // if (!string.IsNullOrEmpty(Permission))
+            } // else if (!RDAuthorize.IsLogedIn())
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        {
+            filterContext.HttpContext.Response.SetCookie(new HttpCookie("RefreshFilter", filterContext.HttpContext.Request.Url.ToString()));
+        }
+    }
+}

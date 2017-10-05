@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Nc.Erp.WorksSupport.Api.Models.ReportProces
+{
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SearchParam
+    {
+        public string Keywords { get; set; }
+        public int WorksSupportGroupId { get; set; }
+        public int WorksSupportProjectId { get; set; }
+        public string MemberUerName { get; set; }
+        public int KeyStatus { get; set; }
+    }
+    /// <summary>
+    ///Report by project
+    public class ReportbyProject
+    {
+        public int WorksSupportProjectId { get; set; }
+    }
+}

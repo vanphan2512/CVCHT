@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace Library.Common
+{
+    public class LogFile
+    {
+        public static void WriteLogFile(String strFileName, String strContent)
+        {
+            System.IO.File.AppendAllText(strFileName, strContent);
+        }
+        public static void WriteLogFile(String strContent)
+        {
+            string strLogFilePath = System.Configuration.ConfigurationManager.AppSettings["LogFilePath"];
+            if (strLogFilePath.Length == 0) {
+                strLogFilePath = "~/Content/Files/FilesContent/";
+            }
+            string strFileLogPath = Path.Combine(System.Web.HttpContext.Current.Server.MapPath(strLogFilePath), "WebErrorLog.log");  
+            WriteLogFile(strLogFilePath, strContent);
+        }
+    }
+}

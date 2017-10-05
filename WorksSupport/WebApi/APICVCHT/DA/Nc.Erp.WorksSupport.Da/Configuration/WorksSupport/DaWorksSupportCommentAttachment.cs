@@ -1,0 +1,223 @@
+﻿using Library.DataAccess;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    using Library.WebCore;
+
+    public class DaWorksSupportCommentAttachment
+    {
+        public LogObject ObjLogObject = new LogObject();
+
+        #region Methods
+
+        /// <summary>
+        /// Thêm file đính kèm cho bình luận công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="objWorksSupportCommentAttachment"></param>
+        /// <param name="user"></param>
+        /// <returns>Kết quả trả về</returns>
+        public void InsertCommentAttachment(IData objIData, WorksSupportCommentAttachment objWorksSupportCommentAttachment, string user)
+        {
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpAdd);
+                objIData.AddParameter("@COMMENTID", objWorksSupportCommentAttachment.CommentId);
+                objIData.AddParameter("@FILEPATH", objWorksSupportCommentAttachment.FilePath);
+                objIData.AddParameter("@FILENAME", objWorksSupportCommentAttachment.FileName);
+                objIData.AddParameter("@FILEID", objWorksSupportCommentAttachment.FileId);
+                objIData.AddParameter("@CREATEDUSER", user);
+                
+                objIData.ExecNonQuery();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Nạp danh sách file đính kèm của bình luận công việc cần hỗ trợ
+        /// </summary>
+        /// <returns>Kết quả trả về</returns>
+        public List<WorksSupportCommentAttachment> GetListCommentAttachment(IData objIData, string commentId)
+        {
+            var lstCommentAttachment = new List<WorksSupportCommentAttachment>();
+            try
+            {
+                objIData.CreateNewStoredProcedure(SpSelect);
+                objIData.AddParameter("@COMMENTID" , commentId);
+                var readerComment = objIData.ExecStoreToDataReader();
+                while (readerComment.Read())
+                {
+                    var objWorksSupportCommentAttachment = new WorksSupportCommentAttachment();
+                    if (!Convert.IsDBNull(readerComment["ATTACHMENTID"])) objWorksSupportCommentAttachment.AttachmentId = Convert.ToString(readerComment["ATTACHMENTID"]);
+                    if (!Convert.IsDBNull(readerComment["COMMENTID"])) objWorksSupportCommentAttachment.CommentId = Convert.ToInt32(readerComment["COMMENTID"]);
+                    if (!Convert.IsDBNull(readerComment["COMMENTDATE"])) objWorksSupportCommentAttachment.CommentDate = Convert.ToDateTime(readerComment["COMMENTDATE"]);
+                    if (!Convert.IsDBNull(readerComment["FILEPATH"])) objWorksSupportCommentAttachment.FilePath = Convert.ToString(readerComment["FILEPATH"]).Trim();
+                    if (!Convert.IsDBNull(readerComment["FILENAME"])) objWorksSupportCommentAttachment.FileName = Convert.ToString(readerComment["FILENAME"]).Trim();
+                    if (!Convert.IsDBNull(readerComment["FILEID"])) objWorksSupportCommentAttachment.FileId = Convert.ToString(readerComment["FILEID"]).Trim();
+                    lstCommentAttachment.Add(objWorksSupportCommentAttachment);
+                }
+                readerComment.Close();
+                return lstCommentAttachment;
+            }
+            catch (Exception)
+            {
+                return lstCommentAttachment;
+            }
+        }
+
+        /// <summary>
+        /// Get WorksSupportSolutionAttachment by fileId
+        /// </summary>
+        /// <param name="worksSupportSolutionAttachment"></param>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        public ResultMessage GetById(ref WorksSupportSolutionAttachment worksSupportSolutionAttachment, string fileId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectByFileId);
+                objIData.AddParameter("@FILEID", fileId);
+                var reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    if (!Convert.IsDBNull(reader["ATTACHMENTID"]))
+                        worksSupportSolutionAttachment.AttachmentId = Convert.ToString(reader["ATTACHMENTID"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEPATH"]))
+                        worksSupportSolutionAttachment.FilePath = Convert.ToString(reader["FILEPATH"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILENAME"]))
+                        worksSupportSolutionAttachment.FileName = Convert.ToString(reader["FILENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEID"]))
+                        worksSupportSolutionAttachment.FileId = Convert.ToString(reader["FILEID"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEID"]))
+                        worksSupportSolutionAttachment.FileId = Convert.ToString(reader["FILEID"]);
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(
+                    true,
+                    SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách file đính kèm của công việc cần hỗ trợ",
+                    objEx.ToString());
+                ErrorLog.Add(
+                    objIData,
+                    objResultMessage.Message,
+                    objResultMessage.MessageDetail,
+                    "DA_WorksSupport_Attachment -> LoadInfo",
+                    "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage DeleteWorkCommentAttachmentByAttachment(string user, string attachmentId)
+        {
+            var objResultMessage = new ResultMessage();
+            try
+            {
+                this.DeleteById(attachmentId, user);
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+                return objResultMessage;
+            }
+            return objResultMessage;
+        }
+
+        public ResultMessage GetById(ref WorksSupportCommentAttachment worksSupportCommentAttachment, string fileId)
+        {
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure(SpSelectByFileId);
+                objIData.AddParameter("@FILEID", fileId);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    if (!Convert.IsDBNull(reader["ATTACHMENTID"]))
+                        worksSupportCommentAttachment.AttachmentId = Convert.ToString(reader["ATTACHMENTID"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEPATH"]))
+                        worksSupportCommentAttachment.FilePath = Convert.ToString(reader["FILEPATH"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILENAME"]))
+                        worksSupportCommentAttachment.FileName = Convert.ToString(reader["FILENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEID"]))
+                        worksSupportCommentAttachment.FileId = Convert.ToString(reader["FILEID"]).Trim();
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(
+                    true,
+                    SystemError.ErrorTypes.LoadInfo,
+                    "Lỗi nạp thông tin danh sách file đính kèm của công việc cần hỗ trợ",
+                    objEx.ToString());
+                ErrorLog.Add(
+                    objIData,
+                    objResultMessage.Message,
+                    objResultMessage.MessageDetail,
+                    "DA_WorksSupport_Attachment -> LoadInfo",
+                    "");
+                return objResultMessage;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objResultMessage;
+        }
+
+        private void DeleteById(string attachmentId, string user)
+        {
+            var objIData = Data.CreateData();
+            objIData.Connect();
+            try
+            {
+                objIData.BeginTransaction();
+                objIData.CreateNewStoredProcedure(SpDeleteByAttachmentId);
+                objIData.AddParameter("@ATTACHMENTID", attachmentId);
+                objIData.AddParameter("@DELETEDUSER", user);
+                objIData.ExecNonQuery();
+                objIData.CommitTransaction();
+            }
+            catch (Exception)
+            {
+                objIData.RollBackTransaction();
+                throw;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+        }
+        #endregion
+
+        #region Stored Procedure Names
+
+        public const string SpAdd = "WS_CMT_ATTACHMENT_V2_ADD";
+        public const string SpSelect = "WS_CMT_ATTACHMENT_V2_SRH";
+        public const string SpDeleteByAttachmentId = "EO_WORKSSUPPORT_CMT_ATMENT_DEL";
+        public const string SpSelectByFileId = "EO_WORKSSUPPORT_CMT_AMENT_ID";
+
+        #endregion
+    }
+}

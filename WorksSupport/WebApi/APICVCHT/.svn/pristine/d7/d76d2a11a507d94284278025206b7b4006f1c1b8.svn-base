@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Nc.Erp.WorksSupport.Api.Models.ReportProces
+{
+    /// <summary>
+    /// Search param
+    /// </summary>
+    public class SearchParam
+    {
+        public string Keywords { get; set; }
+        public int WorksSupportGroupId { get; set; }
+        public int WorksSupportProjectId { get; set; }
+        public string MemberUerName { get; set; }
+        public int KeyStatus { get; set; }
+    }
+    /// <summary>
+    ///Report by project
+    public class ReportbyProject
+    {
+        public int WorksSupportProjectId { get; set; }
+    }
+    public class SearchReportParam
+    {
+        public int ProjectId { get; set; }
+        public int? WorkGroupId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public string ProjectName { get; set; }
+        public string WorkGroupName { get; set; }
+    }
+    public class SearchWorkGroupParam
+    {
+        public int ProjectId { get; set; }
+        public int? WorkGroupId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public int StatusId { get; set; }
+    }
+    public class SearchWorkGroupStateParam
+    {
+        public int ProjectId { get; set; }
+        public int? WorkGroupId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public int type { get; set; }
+    }
+    public class DownExcelReportParam
+    {
+        public int ProjectId { get; set; }
+        public int? WorkGroupId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public string ProjectName { get; set; }
+        public string WorkGroupName { get; set; }
+    }
+}

@@ -1,0 +1,274 @@
+﻿using Library.DataAccess;
+using Library.WebCore;
+using Nc.Erp.WorksSupport.Do.Configuration.WorksSupport;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nc.Erp.WorksSupport.Da.Configuration.WorksSupport
+{
+    /// <summary>
+    /// Created by 		: Luong Trung Nhan  
+    /// Created date 	: 15/06/2017
+    /// Danh sách file đính kèm của công việc cần hỗ trợ
+    /// </summary>	
+    public class DaWorksSupport_Attachment
+    {
+        #region Methods			
+		
+
+		/// <summary>
+		/// Nạp thông tin danh sách file đính kèm của công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Attachment">Đối tượng trả về</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage LoadInfo(ref List<WorksSupportAttachment> listWorksSupportAttachment, int intWorksSupportID, IData objIData)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+				objIData.CreateNewStoredProcedure(SP_SELECT);
+                objIData.AddParameter("@WORKSSUPPORTID", intWorksSupportID);
+				IDataReader reader = objIData.ExecStoreToDataReader();
+			    while (reader.Read())
+ 				{
+				     var objWorksSupportAttachment = new WorksSupportAttachment();
+				     if (!Convert.IsDBNull(reader["ATTACHMENTID"])) objWorksSupportAttachment.AttachmentId = Convert.ToString(reader["ATTACHMENTID"]).Trim();
+				     if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupportAttachment.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+				     if (!Convert.IsDBNull(reader["FILEPATH"])) objWorksSupportAttachment.FilePath = Convert.ToString(reader["FILEPATH"]).Trim();
+				     if (!Convert.IsDBNull(reader["FILENAME"])) objWorksSupportAttachment.FileName = Convert.ToString(reader["FILENAME"]).Trim();
+				     if (!Convert.IsDBNull(reader["FILEID"])) objWorksSupportAttachment.FileId = Convert.ToString(reader["FILEID"]).Trim();
+				     if (!Convert.IsDBNull(reader["FILEID"])) objWorksSupportAttachment.FileId = Convert.ToString(reader["FILEID"]);
+				     listWorksSupportAttachment.Add(objWorksSupportAttachment);
+                }
+				reader.Close();
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Attachment -> LoadInfo", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+                //objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+		/// <summary>
+		/// Thêm thông tin danh sách file đính kèm của công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Attachment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+        public ResultMessage Insert(WorksSupportAttachment objWorksSupport_Attachment, IData objIData, string user)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+                //objIData.Connect();
+                Insert(objIData, objWorksSupport_Attachment, user);
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Insert, "Lỗi thêm thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Attachment -> Insert", Globals.ModuleName);
+				return objResultMessage;
+			}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Thêm thông tin danh sách file đính kèm của công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupport_Attachment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public void Insert(IData objIData, WorksSupportAttachment objWorksSupport_Attachment, string user)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_ADD);
+                objIData.AddParameter("@WORKSSUPPORTID" , objWorksSupport_Attachment.WorksSupportId);
+                objIData.AddParameter("@FILEPATH", objWorksSupport_Attachment.FilePath);
+                objIData.AddParameter("@FILENAME" , objWorksSupport_Attachment.FileName);
+                objIData.AddParameter("@CREATEDUSER", user);
+                objIData.AddParameter("@FILEID", objWorksSupport_Attachment.FileId);
+                objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw (objEx);
+			}
+		}
+
+
+		/// <summary>
+		/// Cập nhật thông tin danh sách file đính kèm của công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objWorksSupport_Attachment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public ResultMessage Update(WorksSupportAttachment objWorksSupport_Attachment)
+		{
+			ResultMessage objResultMessage = new ResultMessage();
+			IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+				objIData.Connect();
+				Update(objIData, objWorksSupport_Attachment);
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.Update, "Lỗi cập nhật thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Attachment -> Update", Globals.ModuleName);
+				return objResultMessage;
+			}
+			finally
+    		{
+        		objIData.Disconnect();
+    		}
+    		return objResultMessage;
+		}
+
+
+		/// <summary>
+		/// Cập nhật thông tin danh sách file đính kèm của công việc cần hỗ trợ
+		/// </summary>
+		/// <param name="objIData">Đối tượng Kết nối CSDL</param>
+		/// <param name="objWorksSupportAttachment">Đối tượng truyền vào</param>
+		/// <returns>Kết quả trả về</returns>
+		public void Update(IData objIData, WorksSupportAttachment objWorksSupportAttachment)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_UPDATE);
+				objIData.AddParameter("@ATTACHMENTID" , objWorksSupportAttachment.AttachmentId);
+                objIData.AddParameter("@WORKSSUPPORTID" , objWorksSupportAttachment.WorksSupportId);
+                objIData.AddParameter("@FILEPATH" , objWorksSupportAttachment.FilePath);
+                objIData.AddParameter("@FILENAME" , objWorksSupportAttachment.FileName);
+                objIData.AddParameter("@FILEID", objWorksSupportAttachment.FileId);
+			    
+                objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw objEx;
+			}
+		}
+
+        /// <summary>
+        /// Xóa thông tin danh sách file đính kèm của công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="worksSupportId">Đối tượng truyền vào</param>
+        /// <param name="objIData"></param>
+        /// <param name="user"></param>
+        /// <returns>Kết quả trả về</returns>
+        public ResultMessage Delete(int worksSupportId, IData objIData, string user)
+		{
+			var objResultMessage = new ResultMessage();
+            //IData objIData = Library.DataAccess.Data.CreateData();
+			try 
+			{
+			    this.DeleteWorkSupportAttachment(objIData, worksSupportId, user);
+			}
+			catch (Exception objEx)
+			{
+				objResultMessage = new ResultMessage(true, SystemError.ErrorTypes.Delete, "Lỗi xóa thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+				ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Attachment -> Delete", Globals.ModuleName);
+				return objResultMessage;
+			}
+    		return objResultMessage;
+		}
+
+        /// <summary>
+        /// Xóa thông tin danh sách file đính kèm của công việc cần hỗ trợ
+        /// </summary>
+        /// <param name="objIData">Đối tượng Kết nối CSDL</param>
+        /// <param name="worksSupportId">Đối tượng truyền vào</param>
+        /// <param name="user"></param>
+        /// <returns>Kết quả trả về</returns>
+        private void DeleteWorkSupportAttachment(IData objIData, int worksSupportId, string user)
+		{
+			try 
+			{
+				objIData.CreateNewStoredProcedure(SP_DELETE);
+                objIData.AddParameter("@WORKSSUPPORTID", worksSupportId);
+                objIData.AddParameter("@DELETEDUSER" , user);
+ 				objIData.ExecNonQuery();
+			}
+			catch (Exception objEx)
+			{
+				objIData.RollBackTransaction();
+				throw objEx;
+			}
+		}
+
+        public List<WorksSupportAttachment> GetWSAttachmentByWSID(int worksSupportId)
+        {
+            var objWorksSupportAttachmentLst = new List<WorksSupportAttachment>();
+            var objResultMessage = new ResultMessage();
+            var objIData = Data.CreateData();
+            try
+            {
+                objIData.Connect();
+                objIData.CreateNewStoredProcedure("EO_WORKSSUPPORT_AT_BYWSID_BETA");
+                objIData.AddParameter("@WORKSSUPPORTID" , worksSupportId);
+                IDataReader reader = objIData.ExecStoreToDataReader();
+                while (reader.Read())
+                {
+                    var objWorksSupportAttachment = new WorksSupportAttachment();
+                    if (!Convert.IsDBNull(reader["ATTACHMENTID"])) objWorksSupportAttachment.AttachmentId = Convert.ToString(reader["ATTACHMENTID"]).Trim();
+                    if (!Convert.IsDBNull(reader["WORKSSUPPORTID"])) objWorksSupportAttachment.WorksSupportId = Convert.ToInt32(reader["WORKSSUPPORTID"]);
+                    if (!Convert.IsDBNull(reader["FILEPATH"])) objWorksSupportAttachment.FilePath = Convert.ToString(reader["FILEPATH"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILENAME"])) objWorksSupportAttachment.FileName = Convert.ToString(reader["FILENAME"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEID"])) objWorksSupportAttachment.FileId = Convert.ToString(reader["FILEID"]).Trim();
+                    if (!Convert.IsDBNull(reader["FILEID"])) objWorksSupportAttachment.FileId = Convert.ToString(reader["FILEID"]);
+
+                    objWorksSupportAttachmentLst.Add(objWorksSupportAttachment);
+                }
+                reader.Close();
+            }
+            catch (Exception objEx)
+            {
+                objResultMessage = new ResultMessage(true, Library.WebCore.SystemError.ErrorTypes.LoadInfo, "Lỗi nạp thông tin danh sách file đính kèm của công việc cần hỗ trợ", objEx.ToString());
+                ErrorLog.Add(objIData, objResultMessage.Message, objResultMessage.MessageDetail, "DA_WorksSupport_Attachment -> GetWSAttachmentByWSID", Globals.ModuleName);
+                return null;
+            }
+            finally
+            {
+                objIData.Disconnect();
+            }
+            return objWorksSupportAttachmentLst;
+        }
+
+
+		#endregion
+
+		#region Constructor
+
+		public DaWorksSupport_Attachment()
+		{
+		}
+		#endregion
+
+		#region Stored Procedure Names
+
+        public const String SP_ADD = "EO_WORKSSUPPORT_V2_ATT_ADD";
+		public const String SP_UPDATE = "WORKSSUPPORT_ATTACHMENT_UPD";
+        public const String SP_DELETE = "WORKSSUPPORT_ATTACHMENT_DEL";
+        public const String SP_SELECT = "WORKSSUPPORT_ATTACHMENT_SEL";
+		public const String SP_SEARCH = "WORKSSUPPORT_ATTACHMENT_SRH";
+		public const String SP_UPDATEINDEX = "WORKSSUPPORT_ATTACHMENT_UPDINDEX";
+		#endregion
+
+    }
+}

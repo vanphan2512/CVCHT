@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace WebClientAuthen
+{
+    public class UserFunction
+    {
+        public UserFunction() { }
+
+        private string strFunctionID = string.Empty;
+
+        public string FunctionID
+        {
+            get { return strFunctionID; }
+            set { strFunctionID = value; }
+        }
+        private string strFunctionName = string.Empty;
+
+        public string FunctionName
+        {
+            get { return strFunctionName; }
+            set { strFunctionName = value; }
+        }
+        private string strDescription = string.Empty;
+
+        public string Description
+        {
+            get { return strDescription; }
+            set { strDescription = value; }
+        }
+        private int strSecurityLevelId;
+
+        public int SecurityLevelId
+        {
+            get { return strSecurityLevelId; }
+            set { strSecurityLevelId = value; }
+        }
+
+        #region Column Names
+        public const String colFunctionID = "FunctionID";
+        public const String colFunctionName = "FunctionName";
+        public const String colDescription = "Description";
+        public const String colSecurityLevelId = "SecurityLevelId";
+        #endregion
+    }
+}

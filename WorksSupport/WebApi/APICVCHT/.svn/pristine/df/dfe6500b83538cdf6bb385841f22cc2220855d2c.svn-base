@@ -1,0 +1,39 @@
+﻿using System;
+using System.Web.Http;
+using MyUtils;
+
+namespace Nc.Erp.WorksSupport.Api.Controllers
+{
+    /// <summary>
+    /// Created by      : Truong Hoang Nhi
+    /// Created date    : 25/05/2017
+    /// Definition base controller.
+    /// </summary>
+    public class BaseController : ApiController
+    {
+        /// <summary>
+        /// Validate param
+        /// </summary>
+        /// <param name="param"></param>
+        protected virtual void ValidateParams(object param)
+        {
+            try
+            {
+                AttributeValidateUtil.Validate(param);
+            }
+            catch (Exception e)
+            {
+                var msg  = string.Empty;
+                if(e.InnerException != null)
+                {
+                    msg = e.InnerException.ToString();
+                }
+                else
+                {
+                    msg = e.Message;
+                }
+                throw new Exception(msg);
+            }
+        }
+    }
+}

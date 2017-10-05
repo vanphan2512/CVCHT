@@ -1,0 +1,160 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.WorksSupport
+{
+    /// <summary>
+	/// Created by 		: Luong Trung Nhan
+	/// Created date 	: 17/06/2017 
+	/// Danh sách file đính kèm của công việc cần hỗ trợ
+	/// </summary>	
+    public class WorksSupport_Attachment
+    {
+        #region Member Variables
+        private string strFileID = string.Empty;
+		private string strAttachmentID = string.Empty;
+		private decimal decWorksSupportID;
+		private string strFilePath = string.Empty;
+		private string strFileName = string.Empty;
+		private string strCreatedUser = string.Empty;
+		private DateTime? dtmCreatedDate;
+		private bool bolIsDeleted = false;
+		private string strDeletedUser = string.Empty;
+		private DateTime? dtmDeletedDate;
+        private DataRowState m_State = DataRowState.Unchanged;
+
+		#endregion
+
+
+		#region Properties 
+        public string FileID
+        {
+            get { return strFileID; }
+            set { strFileID = value; }
+        }
+
+        public DataRowState State
+        {
+            get { return m_State; }
+            set { m_State = value; }
+        }
+		/// <summary>
+		/// AttachmentID
+		/// 
+		/// </summary>
+		public string AttachmentID
+		{
+			get { return  strAttachmentID; }
+			set { strAttachmentID = value; }
+		}
+
+		/// <summary>
+		/// WorksSupportID
+		/// Mã công việc cần hỗ trợ
+		/// </summary>
+		public decimal WorksSupportID
+		{
+			get { return  decWorksSupportID; }
+			set { decWorksSupportID = value; }
+		}
+
+		/// <summary>
+		/// FilePath
+		/// Đường dẫn URL file
+		/// </summary>
+		public string FilePath
+		{
+			get { return  strFilePath; }
+			set { strFilePath = value; }
+		}
+
+		/// <summary>
+		/// FileName
+		/// Tên file
+		/// </summary>
+		public string FileName
+		{
+			get { return  strFileName; }
+			set { strFileName = value; }
+		}
+
+		/// <summary>
+		/// CreatedUser
+		/// 
+		/// </summary>
+		public string CreatedUser
+		{
+			get { return  strCreatedUser; }
+			set { strCreatedUser = value; }
+		}
+
+		/// <summary>
+		/// CreatedDate
+		/// 
+		/// </summary>
+		public DateTime? CreatedDate
+		{
+			get { return  dtmCreatedDate; }
+			set { dtmCreatedDate = value; }
+		}
+
+		/// <summary>
+		/// IsDeleted
+		/// 
+		/// </summary>
+		public bool IsDeleted
+		{
+			get { return  bolIsDeleted; }
+			set { bolIsDeleted = value; }
+		}
+
+		/// <summary>
+		/// DeletedUser
+		/// 
+		/// </summary>
+		public string DeletedUser
+		{
+			get { return  strDeletedUser; }
+			set { strDeletedUser = value; }
+		}
+
+		/// <summary>
+		/// DeletedDate
+		/// 
+		/// </summary>
+		public DateTime? DeletedDate
+		{
+			get { return  dtmDeletedDate; }
+			set { dtmDeletedDate = value; }
+		}
+
+
+		#endregion			
+		
+		
+		#region Constructor
+
+		public WorksSupport_Attachment()
+		{
+		}
+		#endregion
+
+
+		#region Column Names
+
+		public const String colAttachmentID = "AttachmentID";
+        public const String colWorksSupportID = "WORKSSUPPORTID";
+        public const String colFilePath = "FILEPATH";
+        public const String colFileName = "FILENAME";
+		public const String colCreatedUser = "CreatedUser";
+		public const String colCreatedDate = "CreatedDate";
+		public const String colIsDeleted = "IsDeleted";
+		public const String colDeletedUser = "DeletedUser";
+		public const String colDeletedDate = "DeletedDate";
+
+		#endregion //Column names
+    }
+}

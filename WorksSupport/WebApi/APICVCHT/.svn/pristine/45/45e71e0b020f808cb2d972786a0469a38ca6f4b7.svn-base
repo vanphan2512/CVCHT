@@ -1,0 +1,396 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Nc.Erp.WorksSupport.Api.Common;
+using Nc.Erp.WorksSupport.Api.Models.WorkSuportStatus;
+using Nc.Erp.WorksSupport.Da.Configuration.Status;
+using Nc.Erp.WorksSupport.Do.Configuration;
+using Nc.Erp.WorksSupport.Do.Configuration.Status;
+
+namespace Nc.Erp.WorksSupport.Api.Features.WorksSupport
+{
+    /// <summary>
+    /// Created by      : Lương Trung Nhân
+    /// Created date    : 30/05/2017
+    /// Api độ trạng thái "ERP.EO.WORKSSUPPORTSTATUS"
+    /// </summary>
+    [RoutePrefix("api/v2/status")]
+    public class StatusController : BaseController
+    {
+        /// <summary>
+        /// Tìm kiếm chất lượng yêu cầu công việc cần hỗ trợ theo keyword
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("Search")]
+        public Response<List<WorksSupportStatus>> Search([FromUri] SearchParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportStatus>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportStatus = new List<WorksSupportStatus>();
+
+                //object param
+                object[] objKeywords = new object[]
+                {
+                    "@KEYWORDS", objparam.Keywords,
+                    "@ISDELETED",objparam.IsDeleted,
+                    "@PAGEINDEX", objparam.PageIndex,
+                    "@PAGESIZE", objparam.PageSize
+                };
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportStatus().SearchData(ref listWorksSupportStatus, objKeywords);
+
+                if (listWorksSupportStatus != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportStatus;
+                    ret.TotalRecord = listWorksSupportStatus.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách trạng thái công việc cần hỗ trợ
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("")]
+        public Response<List<WorksSupportStatus>> GetAll()
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportStatus>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportStatus = new List<WorksSupportStatus>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportStatus().GetAll(ref listWorksSupportStatus);
+
+                if (listWorksSupportStatus != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportStatus;
+                    ret.TotalRecord = listWorksSupportStatus.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("getStatusActived")]
+        public Response<List<WorksSupportStatus>> GetStatusActived()
+        {
+            // Definition object to return.
+            var ret = new Response<List<WorksSupportStatus>>();
+            try
+            {
+                // Definition object return
+                var listWorksSupportStatus = new List<WorksSupportStatus>();
+
+                // Call DaSystemManagement to search data.
+                var objResultMessage = new DaWorksSupportStatus().GetStatusActived(ref listWorksSupportStatus);
+
+                if (listWorksSupportStatus != null)
+                {
+                    ret.Success = true;
+                    ret.Data = listWorksSupportStatus;
+                    ret.TotalRecord = listWorksSupportStatus.Count;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Lấy trạng thái công việc cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("{id}")]
+        public Response<WorksSupportStatus> GetById([FromUri] GetByParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportStatus>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // Definition object return
+                var obj = new WorksSupportStatus();
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportStatus().GetById(ref obj, objparam.Id);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpGet]
+        [Route("checkStatus")]
+        public Response<StatusCheck> CheckAllStatus()
+        {
+            // Definition object to return.
+            var ret = new Response<StatusCheck>();
+            try
+            {
+                // Definition object return
+                var obj = new StatusCheck();
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportStatus().CheckAllStatus(ref obj);
+
+                if (obj != null)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        /// <summary>
+        /// Xóa trạng thái công việc cần hỗ trợ theo ID
+        /// </summary>
+        /// <param name="objparam"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        [Route("Del")]
+
+        public Response<WorksSupportStatus> Delete([FromBody] DeleteParam objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportStatus>();
+            try
+            {
+                //Validate param
+                ValidateParams(objparam);
+                // Call DaWorksSupportStatus to search data.
+                var listError = new List<ValidationError>();
+                bool isUsed = false;
+                var id = objparam.Id != null ? Convert.ToInt32(objparam.Id) : -1;
+                new DaWorksSupportStatus().CheckStatusIsUsed(id, ref isUsed);
+                if (isUsed)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "StatusIsUsed",
+                        Message = "Tên trạng thái đã được sử dụng không thể xóa!"
+                    };
+                    listError.Add(error);
+                }
+                if (listError.Count > 0)
+                {
+                    ret.Success = false;
+                    ret.Errors = listError;
+                    return ret;
+                }
+                var objResultMessage = new DaWorksSupportStatus().Delete(objparam.User, objparam.Id);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("insertBy")]
+        public Response<WorksSupportStatus> SaveDataBy([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var ret = new Response<WorksSupportStatus>();
+            try
+            {
+                //validate param
+                ValidateParams(objparam);
+                // check name is existed in database
+                var listError = new List<ValidationError>();
+                var objCheck = new StatusValidation();
+                bool isUsed = false;
+                if (objparam.Id > 0 && objparam.IsActived == false)
+                {
+                    new DaWorksSupportStatus().CheckStatusIsUsed(objparam.Id, ref isUsed);
+                }
+                new DaWorksSupportStatus().CheckValuesExisted(ref objCheck, objparam.Id, objparam.WorksSupportStatusName, objparam.OrderIndex);
+                if (objCheck.CountName >= 1)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "WorksSupportStatusName",
+                        Message = "Tên trạng thái đã tồn tại!"
+                    };
+                    listError.Add(error);
+                }
+                if (objCheck.CountOrderIndex == 0)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "OrderIndex",
+                        Message = "Thứ tự trạng thái không tồn tại!"
+                    };
+                    listError.Add(error);
+                }
+                // checking priority is used.(only using for update function)
+                if (isUsed)
+                {
+                    var error = new ValidationError
+                    {
+                        Key = "StatusIsUsed",
+                        Message = "Tên trạng thái đã được sử dụng không thể bỏ kích hoạt!"
+                    };
+                    listError.Add(error);
+                }
+                if (listError.Count > 0)
+                {
+                    ret.Success = false;
+                    ret.Errors = listError;
+                    return ret;
+                }
+                // Definition object return
+                var obj = new WorksSupportStatus()
+                {
+                    WorksSupportStatusId = objparam.Id,
+                    WorksSupportStatusName = objparam.WorksSupportStatusName,
+                    IsInitStatus = objparam.IsInitStatus,
+                    IsCompleteStatus = objparam.IsCompleteStatus,
+                    IsCloseStatus = objparam.IsCloseStatus,
+                    Description = objparam.Description,
+                    OrderIndex = objparam.OrderIndex,
+                    IsActived = objparam.IsActived,
+                    IsSystem = objparam.IsSystem,
+                    IconUrl = objparam.IconUrL,
+                    ColorCode = objparam.ColorCode,
+                    UpdatedUser = objparam.User,
+                    CreatedUser = objparam.User
+
+                };
+
+                // Call DaWorksSupportStatus to search data.
+                var objResultMessage = new DaWorksSupportStatus().Insert(obj, ref obj);
+
+                if (!objResultMessage.IsError)
+                {
+                    ret.Success = true;
+                    ret.Data = obj;
+                }
+                else
+                {
+                    ret.Success = false;
+                    ret.Message = objResultMessage.Message;
+                }
+                // Return data.
+                return ret;
+            }
+            catch (Exception e)
+            {
+                var desc = e.InnerException != null ? e.InnerException.ToString() : e.Message;
+                var msg = Request.CreateErrorResponse(HttpStatusCode.BadRequest, desc);
+                throw new HttpResponseException(msg);
+            }
+        }
+
+        [HttpPost]
+        [Route("save")]
+        public ResponseV1<WorksSupportStatus> SaveData([FromBody] SaveParamBy objparam)
+        {
+            // Definition object to return.
+            var result = new ResponseV1<WorksSupportStatus>();
+            var ret = SaveDataBy(objparam);
+            if (ret != null)
+            {
+                result.data = new List<WorksSupportStatus> { ret.Data };
+            }
+            return result;
+        }
+    }
+}

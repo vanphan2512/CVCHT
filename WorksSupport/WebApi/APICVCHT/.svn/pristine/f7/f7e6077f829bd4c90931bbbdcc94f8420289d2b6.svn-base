@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Nc.Erp.WorksSupport.Do.Configuration.WorkSupportType
+{
+    public class WorksSupportTypeValidation
+    {
+        public int CountName { get; set; }
+        public int CountOrderIndex { get; set; }
+    }
+}
