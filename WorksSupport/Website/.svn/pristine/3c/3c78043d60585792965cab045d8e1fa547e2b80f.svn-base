@@ -1,0 +1,54 @@
+System.register(["./baseLayout", "../../event"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __moduleName = context_1 && context_1.id;
+    var baseLayout_1, event_1, BaseApplication;
+    return {
+        setters: [
+            function (baseLayout_1_1) {
+                baseLayout_1 = baseLayout_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+            }
+        ],
+        execute: function () {
+            BaseApplication = (function (_super) {
+                __extends(BaseApplication, _super);
+                function BaseApplication(http) {
+                    return _super.call(this, http) || this;
+                    // let router: Router = injector.get(RootRouter);
+                    // console.log("Router in application:", router);
+                }
+                BaseApplication.prototype.onInit = function () {
+                    _super.prototype.onInit.call(this);
+                    this.eventManager.publish(event_1.ApplicationStateEvent.Init);
+                };
+                BaseApplication.prototype.onBeforeReady = function () {
+                    _super.prototype.onBeforeReady.call(this);
+                    this.eventManager.publish(event_1.ApplicationStateEvent.BeforeReady);
+                };
+                BaseApplication.prototype.onReady = function () {
+                    _super.prototype.onReady.call(this);
+                    this.eventManager.publish(event_1.ApplicationStateEvent.Ready);
+                };
+                BaseApplication.prototype.onUnload = function () {
+                    _super.prototype.onUnload.call(this);
+                    this.eventManager.publish(event_1.ApplicationStateEvent.Unload);
+                };
+                return BaseApplication;
+            }(baseLayout_1.BaseLayout));
+            exports_1("BaseApplication", BaseApplication);
+        }
+    };
+});
+//# sourceMappingURL=baseApplication.js.map

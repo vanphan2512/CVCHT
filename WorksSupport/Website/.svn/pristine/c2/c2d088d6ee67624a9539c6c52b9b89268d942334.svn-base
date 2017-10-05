@@ -1,0 +1,41 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var ConsoleLogger;
+    return {
+        setters:[],
+        execute: function() {
+            ConsoleLogger = (function () {
+                function ConsoleLogger() {
+                }
+                ConsoleLogger.prototype.info = function (pattern) {
+                    var params = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        params[_i - 1] = arguments[_i];
+                    }
+                    var strToWrite = String.format([pattern].concat(params));
+                    console.info(strToWrite);
+                };
+                ConsoleLogger.prototype.warn = function (pattern) {
+                    var params = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        params[_i - 1] = arguments[_i];
+                    }
+                    var strToWrite = String.format([pattern].concat(params));
+                    console.warn(strToWrite);
+                };
+                ConsoleLogger.prototype.error = function (pattern) {
+                    var params = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        params[_i - 1] = arguments[_i];
+                    }
+                    var strToWrite = String.format([pattern].concat(params));
+                    console.error(strToWrite);
+                };
+                return ConsoleLogger;
+            }());
+            exports_1("ConsoleLogger", ConsoleLogger);
+        }
+    }
+});
+//# sourceMappingURL=consoleLogger.js.map

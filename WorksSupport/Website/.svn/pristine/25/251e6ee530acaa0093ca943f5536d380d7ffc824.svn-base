@@ -1,0 +1,391 @@
+import { Component, ViewChild, EventEmitter, Input, Output } from "angular2/core";
+import { Router } from "angular2/router";
+import { Http } from "angular2/http";
+import { BasePage } from "../../../common/models/ui";
+import { PrioritiesModel } from "./prioritiesModel";
+import priorityService from "../_share/services/priorityService";
+import { Grid, PageActions, Page, Form, FormTextInput, FormTextArea, FormNumberInput, SelectStatus } from "../../../common/directive";
+import { FormMode } from "../../../common/enum";
+import { PageAction } from "../../../common/models/ui";
+import { UpdatePriorityModel } from "./updateModel";
+import { DeleteModel } from "./deleteModel";
+import route from "../_share/config/route";
+import sessionStorage from "../../../common/storages/sessionStorage";
+import { CACHE_CONSTANT } from "../../../common/services/cacheService";
+import { ValidationException } from "../../../common/models/exception";
+import { ErrorMessage } from "../../../common/layouts/default/directives/common/errorMessage";
+import { RoleValue } from "../../../common/enum";
+import configHelper from "../../../common/helpers/configHelper";
+
+@Component({
+    templateUrl: "app/modules/configurations/priority/priorities.html",
+    directives: [Grid, PageActions, Page, Form, FormTextInput, FormTextArea, FormNumberInput, ErrorMessage, SelectStatus]
+})
+
+export class Priorities extends BasePage {
+    public modelIconUrl: string = String.empty;
+    public WorksSupportPriorityId: number;
+    public WorksSupportPriorityName: string = String.empty;
+    public Description: string = String.empty;
+    public OrderIndex: number = -1;
+    public IsActived: boolean = false;
+    public IsSystem: boolean = false;
+    public IconUrl: string = String.empty;
+    public ColorCode: string = "#ffffff";
+    public User: string = String.empty;
+
+    public actions: Array<PageAction> = [];
+    private router: Router;
+    public objDelete: DeleteModel;
+    public selectedValue: Array<any> = [];
+    public isCanAdd: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+    public isCanDelete: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+    public userLogin = sessionStorage.get(CACHE_CONSTANT.strUserName);
+    public roleValue: string = RoleValue.Admin;
+    public isAdmin: boolean = sessionStorage.get(CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+    public isAddPopup: boolean = false;
+    private HasNoticefy: boolean = false;
+    constructor(router: Router) {
+        super();
+        let self: Priorities = this;
+        self.router = router;
+        self.model = new PrioritiesModel(self.i18nHelper);
+        self.loadPriorities();
+    }
+    ngOnInit() {
+        this.userLogin = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        this.isAdmin = sessionStorage.get(CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        $(function () {
+            $('[data-toggle="popover"]').popover({ html: true })
+        });
+        $("input.full-popover").ColorPickerSliders({
+            color: self.ColorCode,
+            placement: 'right',
+            hsvpanel: true,
+            previewformat: 'hex',
+            sliders: false,
+            swatches: false,
+            onchange: function (container: any, color: any) {
+                self.ColorCode = color.tiny.toHexString();
+            }
+        });
+        let popOverSettings = {
+            selector: '[rel="popover"]',
+            content: $('#popover-content')
+        };
+        $(document).popover(popOverSettings);
+        $(document).on('click', function (e: any) {
+            $('[data-toggle="popover"],[data-original-title]').each(function () {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false  // fix for BS 3.3.6
+                }
+            });
+        });
+    }
+    public addPageAction(action: any) {
+        this.actions.push(action);
+    }
+
+    @ViewChild(Grid)
+    private gridComponent: Grid;
+
+    @ViewChild(ErrorMessage)
+    private errorMess: ErrorMessage;
+
+    //load priorities
+    private loadPriorities() {
+        let self: Priorities = this;
+        priorityService.getPrioritiesAll().then(function (items: Array<any>) {
+            self.model.importPriority(items);
+            // self.gridComponent.grid.column(0).visible(true);
+        });
+    }
+
+    // show popup add
+    private onShowPopupAdd(event: any) {
+        let $ = window.jQuery;
+        this.model.worksSupportPriorityName = String.empty;
+        this.model.description = String.empty;
+        this.IsActived = true;
+        this.IsSystem = false;
+        this.IconUrl = String.empty;
+        this.modelIconUrl = String.empty;
+        this.errorMess.errors = [];
+        this.isAddPopup = true;
+        this.clearValidate(true);
+    }
+
+    // add new priorities
+    public onAddPriorities(event: any) {
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        if (this.isValid(true)) {
+            this.model.IconUrl = self.IconUrl;
+            this.model.ColorCode = self.ColorCode;
+            this.model.User = sessionStorage.get(CACHE_CONSTANT.strUserName);
+            this.model.IsActived = this.IsActived;
+            this.model.IsSystem = this.IsSystem;
+            this.model.OrderIndex = -1;
+            priorityService.create(this.model).then(function () {
+                $("#modalCreate").modal("hide");
+                $(".modal-backdrop").modal("hide");
+                self.model = new PrioritiesModel(self.i18nHelper);
+                configHelper.showNotify("add", true);
+                self.loadPriorities();
+            }).error(function (error: any) {
+                self.validateOnServer(error);
+            });
+        }
+    }
+
+    // cancel Add 
+    public onCancelAdd() {
+        let $ = window.jQuery;
+        $("#modalCreate").modal("hide");
+        $(".modal-backdrop").modal("hide");
+    }
+
+    // validation at client
+    public isValid(isAdd: boolean): boolean {
+        let validationErrors: ValidationException = new ValidationException();
+        let $ = window.jQuery;
+        this.clearValidate(isAdd);
+        let lenName = (this.model.worksSupportPriorityName === null ? 0 : this.model.worksSupportPriorityName.length);
+        let lenDesc = (this.model.description === null ? 0 : this.model.description.length);
+        let orderIndex: number = this.model.orderIndex;
+        if (!isAdd) {
+            if (orderIndex <= 0 || orderIndex % 1 != 0 || orderIndex > 999) {
+                validationErrors.add("OrderIndex", [], "Thứ tự độ ưu tiên không hợp lệ!");
+                $("#OrderIndex").addClass("has-error");
+            }
+        }
+        if (!this.model.worksSupportPriorityName) {
+            validationErrors.add("WorksSupportPriorityName", {}, "Tên độ ưu tiên là bắt buộc!");
+            $("#WorksSupportPriorityName").addClass("has-error");
+        }
+        if (lenName > 200) {
+            validationErrors.add("WorksSupportPriorityName", {}, "Tên độ ưu tiên không được vượt quá 200 kí tự!");
+            $("#WorksSupportPriorityName").addClass("has-error");
+        }
+        if (lenDesc > 2000) {
+            validationErrors.add("Description", {}, "Mô tả không được vượt quá 2000 kí tự!");
+            $("#Description").addClass("has-error");
+        }
+        validationErrors.throwIfHasError();
+        return !validationErrors.hasError();
+    }
+
+    // clear validation 
+    public clearValidate(isAdd: boolean) {
+        let $ = window.jQuery;
+        if (!isAdd) {
+            $("#OrderIndex").removeClass("has-error");
+        }
+        $("#WorksSupportPriorityName").removeClass("has-error");
+        $("#Description").removeClass("has-error");
+    }
+
+    // clear validation when key down is pressed
+    public clearValidateInput(id: any) {
+        let $ = window.jQuery;
+        $("#" + id).removeClass("has-error");
+        let arrErr = this.errorMess.errors;
+        let index: number;
+        for (let i = 0; i < arrErr.length; i++) {
+            if (arrErr[i].key === id) {
+                arrErr.splice(i, 1);
+            }
+        }
+        this.errorMess.errors = arrErr;
+    }
+
+    // select icon on add model
+    public onIconSelectedAdd() {
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        $("#myIconModal li").on("click", function () {
+            let icon = $(this).find("i").attr("class");
+            self.IconUrl = icon;
+            $("#myIconModal").modal("hide");
+        });
+    }
+
+    // show popup Edit
+    private onShowPopupEdit(event: any) {
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        this.clearValidate(false);
+        this.errorMess.errors = [];
+        $("div").remove(".alert");
+        this.isAddPopup = false;
+        priorityService.get(event.item.WorksSupportPriorityId).then(function (item: any) {
+            self.WorksSupportPriorityId = item.WorksSupportPriorityId;
+            self.model.worksSupportPriorityName = item.WorksSupportPriorityName;
+            self.model.description = item.Description;
+            self.model.orderIndex = item.OrderIndex;
+            self.IsActived = item.IsActived;
+            self.IsSystem = item.IsSystem;
+            self.IconUrl = item.IconUrl;
+            self.ColorCode = item.ColorCode;
+            self.User = item.User;
+        });
+        $("#modalCreate").modal("toggle");
+    }
+    // edit priorities
+    public onEditPriority(event: any) {
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        let updateModel = new UpdatePriorityModel();
+        self.User = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        this.model.Id = self.WorksSupportPriorityId;
+        this.model.IconUrl = self.IconUrl;
+        this.model.ColorCode = self.ColorCode;
+        this.model.User = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        this.model.IsActived = this.IsActived;
+        this.model.IsSystem = this.IsSystem;
+        this.errorMess.errors = [];
+        if (this.isValid(false)) {
+            priorityService.update(this.model).then(function () {
+                $("#modalCreate").modal("hide");
+                $(".modal-backdrop").modal("hide");
+                self.model = new PrioritiesModel(self.i18nHelper);
+                configHelper.showNotify("edit", true);
+                self.loadPriorities();
+            }).error(function (error: Array<any>) {
+                self.validateOnServer(error);
+            });
+        }
+
+    }
+    // cancel edit
+    public onCancelEdit() {
+        let $ = window.jQuery;
+        $("#modalUpdate").modal("hide");
+        $(".modal-backdrop").modal("hide");
+    }
+    // select icon on popup edit
+    public onIconSelectedEdit() {
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        $("#myIconModal li").on("click", function () {
+            let icon = $(this).find("i").attr("class");
+            self.IconUrl = icon;
+            $("#myIconModal").modal("hide");
+        });
+    }
+
+    // show popup delete
+    public onShowPopupDelete(event: any) {
+        let $ = window.jQuery;
+        let self: Priorities = this;
+        this.selectedValue = new Array();
+        let lstId: Array<string> = [];
+        let grid = this.gridComponent.grid.rows(".selected").data();
+        this.User = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        for (let i = 0; i < grid.length; i++) {
+            if (grid[i]["IsSystem"] !== true && this.userLogin !== this.roleValue) {
+                this.selectedValue.push({
+                    id: grid[i]["WorksSupportPriorityId"], name: grid[i]["WorksSupportPriorityName"],
+                    IsSystem: grid[i]["IsSystem"]
+                });
+                lstId.push(grid[i]["WorksSupportPriorityId"]);
+            }
+            if (this.userLogin === RoleValue.Admin) {
+                this.selectedValue.push({
+                    id: grid[i]["WorksSupportPriorityId"], name: grid[i]["WorksSupportPriorityName"],
+                    IsSystem: grid[i]["IsSystem"]
+                });
+                lstId.push(grid[i]["WorksSupportPriorityId"]);
+            }
+            // this.selectedValue.push({ id: grid[i]["WorksSupportPriorityId"], name: grid[i]["WorksSupportPriorityName"],
+            //  IsSystem: grid[i]["IsSystem"] });
+            // lstId.push(grid[i]["WorksSupportPriorityId"]);
+        }
+        this.objDelete = new DeleteModel(lstId.toString(), this.User);
+    }
+    // delte priorities
+    public onDeletePrioritys(event: any) {
+        let self: Priorities = this;
+        let $ = window.jQuery;
+        priorityService.delete(this.objDelete).then(function (event: any) {
+            $("#modalDelete").modal("hide");
+            $(".modal-backdrop").modal("hide");
+            self.model = new PrioritiesModel(self.i18nHelper);
+            configHelper.showNotify("delete", true);
+            self.loadPriorities();
+            self.gridComponent.grid.columns().checkboxes.deselectAll();
+        });
+    }
+    // Search by IsDelete
+    public onStatusChange(event: any) {
+        // Get value of dropdown list
+        let $ = window.jQuery;
+        let currentIsDelete = event.currentTarget.value;
+        let isCanDelete: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+        let isCanEdit: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+        let priorityName = $("#priorityName").val();
+        let self: Priorities = this;
+        priorityService.getPriorities(priorityName, currentIsDelete, 0, 1000).then(function (items: Array<any>) {
+            self.model.importPriority(items);
+        });
+        if (currentIsDelete === "1") {
+            $("#btnDeletePopup").css("display", "none");
+            if (isCanDelete) {
+                self.gridComponent.grid.column(0).visible(false);
+            }
+            if (isCanEdit) {
+                var num = self.gridComponent.grid.column.length - 1;
+                self.gridComponent.grid.column(num).visible(false);
+            }
+        } else {
+            $("#btnDeletePopup").css("display", "inline-block");
+            if (isCanDelete) {
+                self.gridComponent.grid.column(0).visible(true);
+            }
+            if (isCanEdit) {
+                var num = self.gridComponent.grid.column.length - 1;
+                self.gridComponent.grid.column(num).visible(true);
+            }
+            self.gridComponent.grid.columns().checkboxes.deselectAll();
+        }
+    }
+
+    // Search data by name
+    public SearchByKey(event: any) {
+        let $ = window.jQuery;
+        let priorityName = $("#priorityName").val();
+        let currentIsDelete = $(".custom-select .form-control").val();
+        let self: Priorities = this;
+        priorityService.getPriorities(priorityName, currentIsDelete, 0, 1000).then(function (items: Array<any>) {
+            self.model.importPriority(items);
+        });
+    }
+
+    public onToggleSelectChanged(event: any) {
+        let self: Priorities = this;
+        let model: UpdatePriorityModel = new UpdatePriorityModel();
+        model.import(event.item);
+        priorityService.update(model).then(function (event: any) {
+            self.model = new PrioritiesModel(self.i18nHelper);
+            self.loadPriorities();
+        });
+    }
+
+    public validateOnServer(error: Array<any>) {
+        let $ = window.jQuery;
+        for (let i = 0; i < error.length; i++) {
+            let key = error[i].Key;
+            if (key === "WorksSupportPriorityName") {
+                $("#WorksSupportPriorityName").addClass("has-error");
+            }
+            if (key === "OrderIndex") {
+                $("#OrderIndex").addClass("has-error");
+            }
+        }
+    }
+    private showNotify() {
+        let notify = configHelper.showNotify("add", true);
+    }
+}

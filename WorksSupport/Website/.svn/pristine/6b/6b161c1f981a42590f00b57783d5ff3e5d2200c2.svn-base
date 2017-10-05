@@ -1,0 +1,19 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var BaseException;
+    return {
+        setters:[],
+        execute: function() {
+            BaseException = (function () {
+                function BaseException(key, msg) {
+                    this.key = key;
+                    this.msg = msg;
+                }
+                return BaseException;
+            }());
+            exports_1("BaseException", BaseException);
+        }
+    }
+});
+//# sourceMappingURL=baseException.js.map

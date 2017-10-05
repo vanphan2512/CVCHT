@@ -1,0 +1,545 @@
+<div class="main-content">
+                <h2>Báo cáo CVCHT</h2>
+                <div class="main-tab-content">
+                    <div class="row row-reset row-short">
+                        <div class="col-lg-3 col-xs-12">
+                            <select class="form-control">
+                                <option value="">Chọn dự án</option>
+                                <option value="">Dự án 1</option>
+                                <option value="">Dự án 2</option>
+                                <option value="">Dự án 3</option>
+                                <option value="">Dự án 4</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-xs-12 frm-by-name-works">
+                            <select class="form-control">
+                                <option value="">Chọn nhóm công việc</option>
+                                <option value="">nhóm công việc 1</option>
+                                <option value="">nhóm công việc 2</option>
+                                <option value="">nhóm công việc 3</option>
+                                <option value="">nhóm công việc 4</option>
+                            </select>                        
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row row-short">
+                                <div class="col-lg-4 col-xs-12  dtmformdate">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Từ ngày...">
+                                        <span class="input-group-btn">
+                                            <button class="btn dark-bg" type="button "><i class="fa fa-calendar" aria-hidden="true"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-xs-12 dtmtodate">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Đến ngày...">
+                                        <span class="input-group-btn">
+                                            <button class="btn dark-bg" type="button"><i class="fa fa-calendar" aria-hidden="true"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-xs-12 btn-search-works-related">
+                                    <button type="button" class="btn btn btn-primary"> <i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm</button>
+                                </div>
+                                <div class="col-lg-2 col-xs-12 tab-report">
+                                    
+                                    <ul class="nav nav-tabs tabs-page" role="tablist">
+                                        <li role="presentation" ><a href="#tab-report-list" aria-controls="tab-report-list" role="tab" data-toggle="tab"><i class="fa fa-list-ul" aria-hidden="true"></i></a></li>
+                                        <li role="presentation" class="active"><a href="#tab-report-chart" aria-controls="tab-report-chart" role="tab" data-toggle="tab"><i class="fa fa-pie-chart" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content-report">
+                        <div class="tab-content tabs-page">
+                            <div role="tabpanel" class="row row-reset tab-pane " id="tab-report-list">
+                                <div class="col-lg-6 col-xs-12 tab-report-item">
+                                    <h3>Trạng thái</h3>
+                                    <div class="row row-reset">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped" style="width: 20%;background-color: #2B78E4;">
+                                                <span>3</span>
+                                            </div>
+                                            <div class="progress-bar progress-bar-striped" style="width: 15%; background-color: #FF9900;">
+                                                <span>2</span>
+                                            </div>
+                                            <div class="progress-bar progress-bar-striped" style="width: 30%;background-color: #009E0F;">
+                                                <span>3</span>
+                                            </div>
+                                            <div class="progress-bar progress-bar-striped" style="width: 35%;background-color: #9E0EFF;">
+                                                <span>4</span>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                    <div class="row row-reset list-report-status">
+                                        <div class="dptable">
+                                            <div class="dpRow">
+                                                <div class="dpColum title-status"><a href="#">Khởi tạo</a></div>
+                                                <div class="dpColum sum-status"><span style="background: #2b78e4;padding: 7px 10px;border-radius: 50%;">3</span></div>
+                                            </div> 
+                                            <div class="dpRow">
+                                                <div class="dpColum title-status"><a href="#">Đã tiếp nhận</a></div>
+                                                <div class="dpColum sum-status"><span style="background: #FF9900;padding: 7px 10px;border-radius: 50%;">2</span></div>
+                                            </div>
+                                            <div class="dpRow">
+                                                <div class="dpColum title-status"><a href="#">Đang xử lý</a></div>
+                                                <div class="dpColum sum-status"><span style="background: #009E0F;padding: 7px 10px;border-radius: 50%;">3</span></div>
+                                            </div>
+                                            <div class="dpRow">
+                                                <div class="dpColum title-status"><a href="#">Hoàn thành</a></div>
+                                                <div class="dpColum sum-status"><span style="background: #9E0EFF;padding: 7px 10px;border-radius: 50%;">4</span></div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="dptable tbTotal">
+                                            <div class="dpRow total">
+                                                <div class="dpColum title-status"><a href="#">Tổng cộng</a></div>
+                                                <div class="dpColum sum-status"><span style="color: #0288d1;padding: 7px 8px;">12</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-xs-12 tab-report-item">
+                                    <h3>Tình trạng</h3>
+                                    <div class="row row-reset">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped" style="width: 35%;background-color: #d43b3b;">
+                                                <span class="sr-only">3</span>
+                                            </div>
+                                            <div class="progress-bar progress-bar-striped" style="width: 65%;background-color: #232523;">
+                                                <span class="sr-only">4</span>
+                                            </div>
+                                           
+                                        </div>                                        
+                                    </div>
+                                    <div class="row row-reset list-report-status">
+                                        <div class="dptable">
+                                            <div class="dpRow">
+                                                <div class="dpColum title-status"><a href="#">Trể hạng</a></div>
+                                                <div class="dpColum sum-status"><span style="background: #d43b3b;padding: 7px 10px;border-radius: 50%;">3</span></div>
+                                            </div> 
+                                            <div class="dpRow">
+                                                <div class="dpColum title-status"><a href="#">Vi phạm</a></div>
+                                                <div class="dpColum sum-status"><span style="background: #232523;padding: 7px 10px;border-radius: 50%;">2</span></div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class=" row row-reset tab-pane tab-report-chart  active " id="tab-report-chart">
+                                <div class="col-lg-12 col-xs-12 map-column">
+                                    <div class="row row-reset">
+                                        <div class="col-lg-2 col-xs-12"></div>
+                                        <div class="col-lg-8 col-xs-12 map-pie">
+                                            <div id="container" style="min-width: 310px; height: 400px; max-width: 100%; margin: 0 auto">
+                                                
+                                            </div>
+                                                <div id="chartjs-tooltip3" class="chartjs-tooltip3"><span>250</span></div>                             
+                                            </div>
+                                        <div class="col-lg-2 col-xs-12"></div>
+                                    </div>
+                                </div>
+                                
+                              
+                                <div class="col-lg-12 col-xs-12 map-column">
+                                    <div class="row row-reset">
+                                        <div class="col-lg-2 col-xs-12"></div>
+                                        <div class="col-lg-8 col-xs-12" style="position: relative;">
+                                            <div class="sort-by-date">
+                                                <div class="custom-select">Xem theo: 
+                                                    <select class="form-control">
+                                                        <option value="0">Ngày</option>
+                                                        <option value="1">Tuần</option>
+                                                        <option value="2">Tháng</option>
+                                                        <option value="3">Năm</option>
+                                                    </select>
+                                                   
+                                                </div>
+                                            </div>
+                                            <div id="containerColumn" style="min-width: 500px; height: 400px; max-width: 100%; margin: 20px auto"></div>
+                                          
+                                        </div>
+                                        <div class="col-lg-2 col-xs-12"></div>
+                                        
+                                    
+                                </div>
+                             
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-detai-project">
+                        <div class="row row-reset">
+                            <h3 class="col-lg-6 col-xs-12 title-detail">Chi tiết dự án</h3>
+                            <div class="col-lg-6 col-xs-12">
+                                <div class="tab-filters">
+                                    <div>
+                                        <div class="custom-select"><i class="fa fa-filter" aria-hidden="true"></i> Xem theo: 
+                                            <select class="form-control" id="mySelect">
+                                                <option value="0">Tình trạng</option>
+                                                <option value="1">Trạng thái</option>
+                                                <option value="2">Nhóm công việc</option>
+                                            </select>
+                                            <ul class="nav nav-tabs tabs-page" role="tablist" id="myTab" style="visibility: hidden;">
+                                                <li role="presentation" class="active"><a href="#tab-report-condition" aria-controls="tab-report-chart" role="tab" data-toggle="tab"></a></li>
+                                                <li role="presentation" ><a href="#tab-report-status" aria-controls="tab-report-status" role="tab" data-toggle="tab"></a></li>
+                                                <li role="presentation"><a href="#tab-report-worksgroup" aria-controls="tab-report-chart" role="tab" data-toggle="tab"></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-reset">
+                            <div class="tab-content tabs-page">
+                                <div role="tabpanel" class="row row-reset tab-pane active" id="tab-report-condition">
+                                      <table class="table-hover" id="dataTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th valign="middle" width="30%" style="text-align: left;">Công việc</th>
+                                                <th valign="middle" width="15%">Trạng thái</th>
+                                                <th valign="middle" width="15%">Hạn xử lý</th>
+                                                <th valign="middle" width="10%">Ngày Hoàn thành</th>
+                                                <th valign="middle" width="10%">Trể hạn (Ngày)</th>
+                                                <th valign="middle" width="10%">Vi phạm (Giờ)</th>
+                                                <th valign="middle" width="10%">Tiến độ</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td valign="middle" align="left" colspan="7" >
+                                                    <ul class="treeview">
+                                                         <li><a href="#">Hoàn thành (5)</a>
+                                                            <ul>
+                                                            <li><a href="#">Nhóm CV 01 (2) </a>
+                                                               <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                
+                                                            </li>
+                                                            <li><a href="#">Nhóm CV 01 (3) </a>
+
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                            </li>
+                                                            <li><a href="#">Nhóm CV 01 (5) </a>
+                                                               <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                         </li>
+                                                    </ul>
+                                                </td>
+                                               
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="row row-reset tab-pane " id="tab-report-status">
+                                    <table class="table-hover" id="dataTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th valign="middle" width="30%" style="text-align: left;">Công việc</th>
+                                                <th valign="middle" width="20%">Hạn xử lý</th>
+                                                <th valign="middle" width="20%">Ngày Hoàn thành</th>
+                                                <th valign="middle" width="10%">Trể hạn (Ngày)</th>
+                                                <th valign="middle" width="10%">Vi phạm (Giờ)</th>
+                                                <th valign="middle" width="10%">Tiến độ</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td valign="middle" align="left" colspan="6">
+                                                     <ul class="treeview">
+                                                         <li><a href="#">Hoàn thành (5)</a>
+                                                            <ul>
+                                                            <li><a href="#">Nhóm CV 01 (2) </a>
+                                                               <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                
+                                                            </li>
+                                                            <li><a href="#">Nhóm CV 01 (3) </a>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                            </li>
+                                                            <li><a href="#">Nhóm CV 01 (5) </a>
+                                                               <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report-status">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                         </li>
+                                                    </ul>
+                                                </td>
+                                          
+                                            </tr>
+                                           
+                                       
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="row row-reset tab-pane " id="tab-report-worksgroup">
+                                    <table class="table-hover" id="dataTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th valign="middle" width="30%" style="text-align: left;">Công việc</th>
+                                                <th valign="middle" width="15%">Trạng thái</th>
+                                                <th valign="middle" width="15%">Hạn xử lý</th>
+                                                <th valign="middle" width="10%">Ngày Hoàn thành</th>
+                                                <th valign="middle" width="10%">Trể hạn (Ngày)</th>
+                                                <th valign="middle" width="10%">Vi phạm (Giờ)</th>
+                                                <th valign="middle" width="10%">Tiến độ</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <td valign="middle" align="left" colspan="7" >
+                                                    <ul class="treeview">
+                                                         <li><a href="#">Hoàn thành (5)</a>
+                                                            <ul>
+                                                            <li><a href="#">Nhóm CV 01 (2) </a>
+                                                               <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                
+                                                            </li>
+                                                            <li><a href="#">Nhóm CV 01 (3) </a>
+
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                            </li>
+                                                            <li><a href="#">Nhóm CV 01 (5) </a>
+                                                               <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 2</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                                <ul class="list-item-report">
+                                                                    <li><a href="#" target="_blank">Phân tích thiết kế báo cáo 3</a></li>
+                                                                    <li><a href="#" >Hoàn thành</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >22/06/2017</a></li>
+                                                                    <li><a href="#" >3</a></li>
+                                                                    <li><a href="#" >20</a></li>
+                                                                    <li><a href="#" >80%</a></li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                         </li>
+                                                    </ul>
+                                                </td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="footer">© 2017 eOffice</div>
+        </div>

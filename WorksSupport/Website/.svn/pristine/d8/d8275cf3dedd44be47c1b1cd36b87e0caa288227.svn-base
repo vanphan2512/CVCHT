@@ -1,0 +1,64 @@
+System.register(["../../../../common/helpers/configHelper"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var configHelper_1;
+    var qualityService;
+    function getQualilies() {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/Qualities");
+        return connector.get(url);
+    }
+    function get(id) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}/{1}", configHelper_1.default.getAppConfig().api.baseUrl, id);
+        return connector.get(url);
+    }
+    function create(role) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}", configHelper_1.default.getAppConfig().api.baseUrl);
+        return connector.post(url, role);
+    }
+    /*function update(role: any): Promise {
+        let connector = window.ioc.resolve("IConnector");
+        let url = String.format("{0}/{1}", configHelper.getAppConfig().api.baseUrl, role.id);
+        return connector.put(url, role);
+    }*/
+    function update(model) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/Qualities/insertBy");
+        return connector.post(url, model);
+    }
+    function remove(DeleteModel) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/Qualities/Delete");
+        return connector.post(url, DeleteModel);
+    }
+    function getQualityBy(keyWord, isDelete, pageIndex, pageSize) {
+        var connector = window.ioc.resolve("IConnector");
+        // cunstructer param to search.
+        var keySearch = "?Keywords=" + keyWord;
+        var isDel = "&IsDeleted=" + isDelete;
+        var index = "&PageIndex=" + pageIndex;
+        var size = "&PageSize=" + pageSize;
+        var url = String.format("{0}{1}{2}{3}{4}{5}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/Qualities/Search", keySearch, isDel, index, size);
+        return connector.get(url);
+    }
+    return {
+        setters:[
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }],
+        execute: function() {
+            qualityService = {
+                getQualilies: getQualilies,
+                create: create,
+                update: update,
+                delete: remove,
+                get: get,
+                getQualityBy: getQualityBy
+            };
+            exports_1("default",qualityService);
+        }
+    }
+});
+//# sourceMappingURL=qualityService.js.map

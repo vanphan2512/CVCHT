@@ -1,0 +1,16 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var IoCInstanceType;
+    return {
+        setters: [],
+        execute: function () {
+            (function (IoCInstanceType) {
+                IoCInstanceType[IoCInstanceType["Transient"] = 0] = "Transient";
+                IoCInstanceType[IoCInstanceType["Singleton"] = 1] = "Singleton";
+            })(IoCInstanceType || (IoCInstanceType = {}));
+            exports_1("IoCInstanceType", IoCInstanceType);
+        }
+    };
+});
+//# sourceMappingURL=enum.js.map

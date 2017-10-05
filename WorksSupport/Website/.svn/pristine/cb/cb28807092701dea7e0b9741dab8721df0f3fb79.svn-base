@@ -1,0 +1,286 @@
+{
+    "priorities": {
+        "title": "Độ ưu tiên",
+        "addPriorityAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Độ ưu tiên không đúng",
+            "roleNotExist": "Không tìm thấy độ ưu tiên"
+        },
+        "grid": {
+            "index": "Thứ tự",
+            "name": "Tên độ ưu tiên",
+            "description": "Mô tả",
+            "iconUrl": "Biểu tượng",
+            "color": "Màu",
+            "isSystem": "Hệ thống",
+            "isActive": "Kích hoạt"
+        }
+    },
+    "addOrUpdatePriority": {
+        "titleUpdate": "Cập nhật độ ưu tiên",
+        "title": "Thêm mới độ ưu tiên",
+        "name": "Độ ưu tiên",
+        "inputName": "Nhập tên Độ ưu tiên",
+        "inputDesc": "Nhập mô tả",
+        "inputPrioritiesId": "Nhập Id độ ưu tiên",
+        "inputPriorityName": "Nhập tên độ ưu tiên",
+        "inputIconUrl": "Chọn Biểu tượng",
+        "inputDescription": "Nhập mô tả",
+        "inputOrderIndex": "Nhập thứ tự ưu tiên",
+        "inputIsActive": "Nhập trạng thái",
+        "inputIsSystem": "Nhập hệ thống",
+        "prioritiesId": "Id độ ưu tiên",
+        "priorityName": "Tên độ ưu tiên",
+        "iconUrl": "Biểu tượng",
+        "iconList": "Danh sách biểu tượng",
+        "selectIcon": "Chọn biểu tượng",
+        "description": "Mô tả",
+        "orderIndex": "Thứ tự ưu tiên",
+        "isActive": " Kích hoạt",
+        "isSystem": "Hệ thống",
+        "validation": {
+            "nameIsRequireAdd": "Nhập tên độ ưu tiên!",
+            "nameIsRequireEdit": "Nhập tên độ ưu tiên!",
+            "keyIsRequire": "NCS-000000",
+            "nameAlreadyExist": "This name is already existed. Please input another name"
+        }
+    },
+    "status": {
+        "title": "Trạng Thái",
+        "addStatusAction": "Thêm mới",
+        "addStatusAction1": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Trạng thái không đúng",
+            "roleNotExist": "Không tìm thấy Trạng thái"
+        },
+        "grid": {
+            "index": "Thứ tự",
+            "name": " Tên trạng thái",
+            "description": "Mô tả",
+            "isInitStatus": "Trạng thái bắt đầu",
+            "isCompleteStatus": "Trạng thái hoàn thành",
+            "iconUrl": "Biểu tượng",
+            "color": "Màu",
+            "isSystem": "Hệ thống",
+            "isActive": "Kích hoạt",
+            "closeStatus": "Trạng thái kết thúc"
+        }
+    },
+    "addOrUpdateStatus": {
+        "titleUpdate": "Cập nhật trạng thái",
+        "titleAdd": "Thêm mới trạng thái",
+        "inputStatusId": "Nhập Id trạng thái",
+        "inputStatusName": "Nhập tên trạng thái",
+        "inputCompleteStatus": "Nhập trạng thái hoàn thành",
+        "inputCloseStatus": "Nhập trạng thái đóng",
+        "inputInitStatus": "Nhập trạng thái bắt đầu",
+        "inputDescription": "Nhập mô tả",
+        "inputOrderIndex": "Nhập thứ tự ưu tiên",
+        "inputIsActive": "Nhập trạng thái kích hoạt",
+        "inputIsSystem": "Nhập hệ thống",
+        "inputIconUrl": "Chọn biểu tượng",
+        "statusId": "Id trạng thái",
+        "statusName": "Tên trạng thái",
+        "completeStatus": "Hoàn thành",
+        "closeStatus": "Kết thúc",
+        "initStatus": "Bắt đầu",
+        "description": "Mô tả",
+        "orderIndex": "Thứ tự ưu tiên",
+        "isActive": "Kích hoạt",
+        "isSystem": "Hệ thống",
+        "iconUrl": "Biểu tượng",
+        "colorCode": "Màu",
+        "iconList": "Danh sách biểu tượng",
+        "selectIcon": "Chọn biểu tượng",
+        "validation": {
+            "nameIsRequireEdit": "Nhập tên trạng thái!",
+            "nameIsRequireAdd": "Nhập tên trạng thái!",
+            "keyIsRequire": "",
+            "nameAlreadyExist": "This name is already existed. Please input another name"
+        }
+    },
+    "member": {
+        "title": "Vai trò",
+        "addStatusAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Vai trò không đúng",
+            "roleNotExist": "Không tìm thấy Vai trò"
+        },
+        "grid": {
+            "index": "Thứ tự",
+            "name": "Tên vai trò",
+            "description": "Mô tả",
+            "iconUrl": "Biểu tượng",
+            "isSystem": "Hệ thống",
+            "isActive": "Kích hoạt"
+        }
+    },
+    "quality": {
+        "title": "Chất lượng",
+        "addStatusAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Chất lượng không đúng",
+            "roleNotExist": "Không tìm thấy Chất lượng"
+        },
+        "grid": {
+            "index": "Thứ tự",
+            "name": "Tên chất lượng",
+            "description": "Mô tả",
+            "iconUrl": "Biểu tượng",
+            "color": "Màu",
+            "isSystem": "Hệ thống",
+            "isActive": "Kích hoạt"
+        }
+    },
+    "worksType": {
+        "title": "Loại công việc",
+        "addStatusAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Loại công việc không đúng",
+            "roleNotExist": "Không tìm thấy Loại công việc"
+        },
+        "grid": {
+            "index": "Thứ tự",
+            "name": "Tên loại công việc",
+            "description": "Mô tả",
+            "iconUrl": "Biểu tượng",
+            "isSystem": "Hệ thống",
+            "isActive": "Kích hoạt"
+        }
+    },
+    "addWorksType": {
+        "title": "Thêm Loại công việc",
+        "editTitle": "Cập nhật Loại công việc",
+        "name": "Loại công việc",
+        "inputName": "Nhập tên loại công việc",
+        "save": "Thêm mới",
+        "inputDesc": "Nhập mô tả",
+        "desc": "Mô tả",
+        "inputOrderIndex": "Nhập thứ tự ưu tiên",
+        "orderIndex": "Thứ tự ưu tiên",
+        "inputIconurl": "Biểu tượng",
+        "iconurl": "Biểu tượng",
+        "checkIsSystem": "Hệ thống",
+        "IsSystem": "Hệ thống",
+        "checkIsActived": "Kích hoạt",
+        "IsActived": "Kích hoạt",
+        "orderIndexIsRequire": "Thứ tự",
+        "orderIndexAlreadyExisted": "Thứ tự đã tồn tại",
+        "inputWorksSupportTypeId": "Loại công việc",
+        "worksSupportTypeIdIsRequire": "Chọn Loại công việc",
+        "selectIcon": "Chọn biểu tượng",
+        "validation": {
+            "idIsInvalid": "Loại công việc không đúng",
+            "roleNotExist": "Không tìm thấy loại công việc",
+            "nameIsRequire": "Phải nhập tên loại công việc",
+            "keyAlreadyExisted": "Tên loại công việc đã tồn tại"
+        }
+    },
+    "addMember": {
+        "titleStatus": "Trạng thái",
+        "title": "Thêm mới vai trò",
+        "name": "Tên vai trò",
+        "inputName": "Nhập tên vai trò",
+        "inputDesc": "Nhập mô tả",
+        "desc": "Mô tả",
+        "inputIconUrl": "Chọn biểu tượng",
+        "iconUrl": "Biểu tượng",
+        "inputOrderIndex": "Nhập thứ tự ưu tiên",
+        "orderIndex": "Thứ tự ưu tiên",
+        "system": "Hệ thống",
+        "actived": "Kích hoạt",
+        "addStatusAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Vai trò không đúng",
+            "nameIsRequire": "Tên vai trò không hợp lệ",
+            "roleNotExist": "Không tìm thấy Vai trò"
+        }
+    },
+    "updateMember": {
+        "titleStatus": "Trạng thái",
+        "title": "Cập nhật vai trò",
+        "name": "Tên vai trò",
+        "inputName": "Nhập tên vai trò",
+        "inputDesc": "Nhập mô tả",
+        "inputIconUrl": "Chọn biểu tượng",
+        "iconUrl": "Biểu tượng",
+        "desc": "Mô tả",
+        "inputOrderIndex": "Nhập thứ tự ưu tiên",
+        "orderIndex": "Thứ tự ưu tiên",
+        "system": "Hệ thống",
+        "actived": "Kích hoạt",
+        "addStatusAction": "Thêm mới",
+        "selectIcon": "Chọn biểu tượng",
+        "validation": {
+            "idIsInvalid": "Vai trò không đúng",
+            "nameIsRequire": "Tên vai trò không hợp lệ",
+            "roleNotExist": "Không tìm thấy Vai trò"
+        }
+    },
+    "addQuanlity": {
+        "title": "Thêm mới đánh giá chất lượng",
+        "name": "Tên chất lượng",
+        "titleStatus": "Trạng thái",
+        "colorCode": "Màu",
+        "inputName": "Nhập tên chất lượng",
+        "inputDesc": "Nhập mô tả",
+        "desc": "Mô tả",
+        "inputIconurl": "Chọn biểu tượng",
+        "iconurl": "Biểu tượng",
+        "inputOrderIndex": "Nhập thứ tự ưu tiên",
+        "orderIndex": "Thứ tự ưu tiên",
+        "system": "Hệ thống",
+        "actived": "Kích hoạt",
+        "addStatusAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Vai trò không đúng",
+            "nameIsRequire": "Tên đánh giá không hợp lệ",
+            "roleNotExist": "Không tìm thấy Vai trò",
+            "orderIndexIsRequire": "Thứ tự không đúng"
+        }
+    },
+    "updateQuanlity": {
+        "title": "Cập nhật đánh giá chất lượng",
+        "name": "Tên chất lượng",
+        "Inputname": "Nhập tên chất lượng",
+        "desc": "Mô tả",
+        "inputDesc": "Nhập mô tả",
+        "inputIconUrl": "Chọn biểu tượng",
+        "iconUrl": "Biểu tượng",
+        "orderIndex": "Thứ tự ưu tiên",
+        "system": "Hệ thống",
+        "actived": "Kích hoạt",
+        "validation": {
+            "idIsInvalid": "Vai trò không đúng",
+            "nameIsRequire": "Tên vai trò không hợp lệ",
+            "roleNotExist": "Không tìm thấy Vai trò"
+        }
+    },
+    "permissions":{
+        "title": "Phân quyền trên loại yêu cầu công việc cần hỗ trợ",
+        "permissionProject":"Quyền theo dự án",
+        "permissionMemberRole":"Quyền theo vai trò",
+        "permissionWorksGroupProcess":"Quyền xử lý trên nhóm công việc",
+        "permissionWorksProcess":"Quyền xử lý trên công việc",
+        "addProject":"Thêm dự án",
+        "delProject":"Xóa dự án",
+        "editProject":"Chỉnh sửa dự án",
+        "isCanAddWorksSupportGroup":"Thêm nhóm CVCHT",
+        "isCanAddWorksSupport":"Thêm CVCHT",
+        "isCanEditWorksSupportGroup":"Chỉnh sửa nhóm CVCHT",
+        "isCanEditWorksSupport":"Chỉnh sửa CVCHT",
+        "isCanDelWorksSupportGroup":"Xóa nhóm CVCHT",
+        "isCanDelWorksSupport":"Xóa CVCHT",
+        "isCanEditContent":"Chỉnh sửa nội dung",
+        "isCanChangeProgress":"Cập nhật tiến độ",
+        "isCanEditSolutionContent":"Chỉnh sửa nội dung giải pháp",
+        "isCanEditQuality":"Cập nhật chất lượng",
+        "isCanEditCompletedDate":"Chỉnh sửa ngày dự kiến hoàn thành",
+        "isCanAddAttachment":"Thêm tập tin đính kèm",
+        "isCanComment":"Bình luận",
+        "worksTypeTitle":"Vai trò xử lý",
+        "nextStepProgress":"DANH SÁCH BƯỚC XỬ LÝ ĐƯỢC CHUYỂN ĐẾN",
+        "isCanViewProjectReport":"Xem báo cáo",
+        "isCanViewProject":"Xem dự án"
+    }
+}

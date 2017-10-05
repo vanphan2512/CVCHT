@@ -1,0 +1,411 @@
+<error-new-message></error-new-message>
+<div class="margin-top-15">
+    <h2>{{i18n.configurations.permissions.title}}</h2>
+    <div class="main-tab-content label-mar-right">
+        <div class="nav-control">
+            <div class="row">
+                <div class="col-lg-6">
+                </div>
+                <div class="col-lg-6">
+                    <div class="tab-filter">
+                        <div>
+                            <button class="btn btn-eoffice blue-bg" type="button" (click)="popupCopyPermission($event)"><i class="fa fa-plus" aria-hidden="true"></i> Sao chép</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-short">
+            <div class="col-lg-3 col-sm-3">
+                <div class="tab-left">
+                    <ul class="nav nav-pills nav-stacked" id="ulPermission">
+                        <li  id="Permission-{{work.WorksSupportTypeId}}" role="presentation" *ngFor="let work of listWorkType; let i = index" (click)="getConfirm($event)"
+                            [ngClass]="{'active':i===0,'':i!==0}">
+                            <a title="{{work.WorksSupportTypeName}}" id="A-{{work.WorksSupportTypeId}}" aria-controls="tabPermissionDetail" data-toggle="tab">{{work.WorksSupportTypeName}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-9 col-sm-9" id="worksSupportTypeDetail" style="display: none">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="small-tab">
+                            <h3><span>{{i18n.configurations.permissions.permissionProject}}</span></h3>
+                            <input type="hidden" id="WorksTypeId" value="{{WorksTypeId}}" />
+
+                            <div class="dropdown general-search" id="popupSearch">
+                                <div class="input-group" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <div class="bootstrap-tagsinput" (click)="getAllMembersByDepart()">
+                                            <span *ngFor="let item of lstAddMemberOfDepart" class="tag label label-info" id="{{item.userName}}"> {{item.fullName}}<span data-role="remove" (click)="removeMemberOfDepart(item.userName)"></span></span>
+                                        </div>
+                                    <span class="input-group-btn">
+                                      <button class="btn btn-default" type="button" (click)="addMember($event)"><i class="fa fa-plus" aria-hidden="true"></i> Thêm</button>
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu" aria-labelledby="dLabel">
+                                    <!-- start dropdownlist for department -->
+                                    <div class="dp-table filter-header">
+                                        <div class="dp-row">
+                                            <div class="dp-cell dep-fixed-width" (click)="selectPickerOfDepart()">
+                                                <select  id="selDepart" class="form-control selectpicker ss" data-dropup-auto="false" data-size="10" data-live-search="true"
+                                                    multiple title="Tất cả phòng ban">
+                                                	<option *ngFor="let item of lstDepartment" value="{{item.DepartmentId}}">{{item.DepartmentName}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="dp-cell"><input (keyup)="findMembersByDepartments(txtSearchMember.value)" #txtSearchMember
+                                                    type="text" id="txtSearchMember" class="form-control" autocomplete="off"
+                                                    role="textbox" aria-label="Search"></div>
+                                        </div>
+                                    </div>
+                                    <!-- end dropdownlist for department -->
+
+                                    <div class="dropdown-menu inner show" style="max-height: 300px; overflow-y:scroll; ">
+                                        <ul class="dp-table" style="width:100%; " *ngFor="let objDepart of lstMemberOfDepart">
+                                            <li data-original-index="0" class="dp-row" id="li_{{objDepart.UserId}}" [class.selected]="objDepart.IsMember != null" *ngIf="objDepart.IsShowByDepart && objDepart.IsShowByMember">
+                                                <div class="dp-cell dep-fixed-width">{{objDepart.DepartmentName}}</div>
+                                                <div class="dp-cell">
+                                                    <a tabindex="0" [attr.data-tokens]="objDepart.UserId" role="option" aria-disabled="false" aria-selected="true" (click)="addMembersForDepart(objDepart.UserId, objDepart.UserName)">
+                                                        <span class="text">{{objDepart.UserName}}</span>
+                                                        <span class="fa fa-check" ></span>                                                       
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="m-top-15 tbl-permisions">
+                                <tr *ngFor="let user of ListWorksSupportProjectPermis; let i = index">
+                                    <td valign="middle">
+                                        <a class="red" style="cursor: pointer;" id="User-{{user.UserName}}" (click)="RemoveUser($event)"><i class="fa fa-times" aria-hidden="true"></i></a>                                        {{user.FullName}}
+                                    </td>
+
+                                    <td style="width:145px" valign="middle">
+                                        <input class="custom-checkbox" id="isCanAddProject-{{user.UserName}}" style="transform:translateY(3px);" type="checkbox"
+                                            [checked]="user.IsCanAddProject" (change)="user.IsCanAddProject = !user.IsCanAddProject">
+                                        <label attr.for="isCanAddProject-{{user.UserName}}">{{i18n.configurations.permissions.addProject}}</label>
+                                    </td>
+
+                                    <td valign="middle" style="width:145px">
+                                        <input class="custom-checkbox" id="isCanDelProject-{{user.UserName}}" style="transform:translateY(3px);" type="checkbox"
+                                            [checked]="user.IsCanDeleteProject" (change)="user.IsCanDeleteProject = !user.IsCanDeleteProject">
+                                        <label attr.for="isCanDelProject-{{user.UserName}}">{{i18n.configurations.permissions.delProject}}</label>
+                                    </td>
+
+                                    <td valign="middle" style="width:145px">
+                                        <input class="custom-checkbox" id="IsCanEditProject-{{user.UserName}}" style="transform:translateY(3px);" type="checkbox"
+                                            [checked]="user.IsCanEditProject" (change)="user.IsCanEditProject = !user.IsCanEditProject">
+                                        <label attr.for="IsCanEditProject-{{user.UserName}}">{{i18n.configurations.permissions.editProject}}</label>
+                                    </td>
+
+                                    <!-- <td valign="middle" style="width:145px">
+                                        <input class="custom-checkbox" id="IsCanViewProject-{{user.UserName}}" style="transform:translateY(3px);" type="checkbox"
+                                            [checked]="user.IsCanViewProject" (change)="user.IsCanViewProject = !user.IsCanViewProject">
+                                        <label attr.for="IsCanViewProject-{{user.UserName}}">{{i18n.configurations.permissions.isCanViewProject}}</label>
+                                    </td> -->
+
+                                    <td valign="middle" style="width:145px">
+                                        <input class="custom-checkbox" id="IsCanViewProjectReport-{{user.UserName}}" style="transform:translateY(3px);" type="checkbox"
+                                            [checked]="user.IsCanViewProjectReport" (change)="user.IsCanViewProjectReport = !user.IsCanViewProjectReport">
+                                        <label attr.for="IsCanViewProjectReport-{{user.UserName}}">{{i18n.configurations.permissions.isCanViewProjectReport}}</label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 m-top-15">
+                        <div class="small-tab">
+                            <div class="row row-short">
+                                <div class="col-lg-4 col-sm-4">
+                                    <h3><span>{{i18n.configurations.permissions.permissionMemberRole}}</span></h3>
+                                    <div class="input-group m-bottom-5">
+                                        <input type="text" id="textRole" class="form-control" placeholder="Tìm vai trò" (input)="searchMemerRole($event)">
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" (click)="searchMemerRole($event)" ><i class="fa fa-search" aria-hidden="true"></i></button>
+                                      </span>
+                                    </div>
+                                    <ul class="nav nav-tabs nav-stacked second-tab-nav" id="ulListMemberRole" role="tablist">
+                                        <li id="MemberRole-{{role.WorksSupportMemberRoleId}}" role="presentation" *ngFor="let role of listMemberRoleOfPermission; let r = index"
+                                            [ngClass]="{'active':role.WorksSupportMemberRoleId===currentMemberRoleId,'':role.WorksSupportMemberRoleId!==currentMemberRoleId}" (click)="getRoleDetail($event)">
+                                            <a data-target="#tabMemberRole" aria-controls="tabMemberRole" role="tab" data-toggle="tab">
+                                                <input type="checkbox" [checked]="CheckSelected(role.WorksSupportMemberRoleId)" 
+                                                class="custom-checkbox" style="transform:translateY(3px);" 
+                                                id="CB-{{role.WorksSupportMemberRoleId}}" (click)="checkboxRoleID($event)">
+                                                <label attr.for="CB-{{role.WorksSupportMemberRoleId}}">{{role.WorksSupportMemberRoleName}}</label></a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="m-bottom-15"></div>
+                                    <h3><span>Vai trò mặc định</span></h3>
+                                    <select class="form-control" [(ngModel)]="defaultRoleSelected">
+                                    	<option id="{{defaultRole.WorksSupportMemberRoleId}}" *ngFor="let defaultRole of ListWorksSupportTypeMemberRole; let r = index" [value]="defaultRole.WorksSupportMemberRoleId">
+                                            {{defaultRole.WorksSupportMemberRoleName}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-8 col-sm-8">
+                                    <h3><span>{{i18n.configurations.permissions.permissionWorksGroupProcess}}</span></h3>
+                                    <div class="second-tab tab-content">
+                                        <div role="tabpanel" class="tab-pane fade in active" id="tabMemberRole">
+                                            <table class="non-border">
+                                                <tr>
+                                                    <td valign="middle" style="width:50%">
+                                                        <input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);" [checked]="memberRoleModel.IsCanAddWorksSupportGroup"
+                                                            (change)="memberRoleModel.IsCanAddWorksSupportGroup = !memberRoleModel.IsCanAddWorksSupportGroup"
+                                                            id="IsCanAddWorksSupportGroup">
+                                                        <label for="IsCanAddWorksSupportGroup">{{i18n.configurations.permissions.isCanAddWorksSupportGroup}}</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td valign="middle">
+                                                        <input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);" (change)="memberRoleModel.IsCanEditWorksSupportGroup = !memberRoleModel.IsCanEditWorksSupportGroup"
+                                                            [checked]="memberRoleModel.IsCanEditWorksSupportGroup" id="isCanEditWorksSupportGroup">
+                                                        <label for="isCanEditWorksSupportGroup">{{i18n.configurations.permissions.isCanEditWorksSupportGroup}}</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td valign="middle"><input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);"
+                                                            (change)="memberRoleModel.IsCanDeleteWorksSupportGroup = !memberRoleModel.IsCanDeleteWorksSupportGroup"
+                                                            [checked]="memberRoleModel.IsCanDeleteWorksSupportGroup" id="isCanDelWorksSupportGroup">
+                                                        <label for="isCanDelWorksSupportGroup">{{i18n.configurations.permissions.isCanDelWorksSupportGroup}}</label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-8 col-sm-8" style="padding-top: 10px">
+                                    <h3><span>{{i18n.configurations.permissions.permissionWorksProcess}}</span></h3>
+                                    <div class="second-tab tab-content">
+                                        <div role="tabpanel" class="tab-pane fade in active" id="tabMemberRole">
+                                            <table class="non-border">
+                                                <tr>
+                                                    
+                                                    <td valign="middle" style="width:50%">
+                                                        <input id="isCanAddWorksSupport" class="custom-checkbox" type="checkbox" style="transform:translateY(3px);" [checked]="memberRoleModel.IsCanAddWorksSupport"
+                                                            (change)="memberRoleModel.IsCanAddWorksSupport = !memberRoleModel.IsCanAddWorksSupport">
+                                                        <label for="isCanAddWorksSupport">{{i18n.configurations.permissions.isCanAddWorksSupport}}</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                   
+                                                    <td valign="middle"><input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);"
+                                                            (change)="memberRoleModel.IsCanEditWorksSupport = !memberRoleModel.IsCanEditWorksSupport"
+                                                            [checked]="memberRoleModel.IsCanEditWorksSupport" id="isCanEditWorksSupport">
+                                                        <label for="isCanEditWorksSupport">{{i18n.configurations.permissions.isCanEditWorksSupport}}</label>
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td valign="middle"><input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);"
+                                                            (change)="memberRoleModel.IsCanDeleteWorksSupport = !memberRoleModel.IsCanDeleteWorksSupport"
+                                                            [checked]="memberRoleModel.IsCanDeleteWorksSupport" id="isCanDelWorksSupport">
+                                                        <label for="isCanDelWorksSupport">{{i18n.configurations.permissions.isCanDelWorksSupport}}</label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 m-top-15">
+                        <div class="small-tab">
+                            <h3><span>Quyền xử lý bước xử lý</span></h3>
+                            <div class="row row-short">
+                                <div class="col-lg-4 col-sm-4">
+
+                                    <div class="input-group m-bottom-5">
+                                        <input type="text" id="txtWorksFlow" class="form-control" placeholder="Tìm bước xử lý" (input)="searchWorkFlow($event)">
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" (click)="searchWorkFlow($event)" ><i class="fa fa-search" aria-hidden="true"></i></button>
+                                      </span>
+                                    </div>
+
+                                    <ul class="nav nav-tabs nav-stacked second-tab-nav" id="permissionWorksFlow" role="tablist">
+                                        <li role="presentation" id="WorkFlow-{{workFlow.WorksSupportStepId}}" (click)="getNextStep($event)" [ngClass]="{'active':wf===0,'':wf!==0}"
+                                            *ngFor="let workFlow of ListWorksSupportTypeWorkFlow; let wf = index">
+                                            <a data-target="#admin2" aria-controls="admin2" role="tab" data-toggle="tab">{{workFlow.WorksSupportStepName}} - {{workFlow.WorksSupportStepId}}</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-8 col-sm-8">
+                                    <div class="second-tab tab-content">
+                                        <div role="tabpanel" class="tab-pane fade in active" id="btiepnhan">
+                                            <h3><span style="background:#f5f5f5">Vai trò xử lý</span></h3>
+                                            <div class="row row-short">
+                                                <div class="col-lg-4 col-sm-4">
+                                                    <div class="input-group m-bottom-5">
+                                                        <input type="text" id="textRoleOfProccess" class="form-control" placeholder="Tìm vai trò xử lý" (input)="searchMemerRoleProcess($event)">
+                                                        <span class="input-group-btn">
+                                                        <button class="btn btn-default" type="button" (click)="searchMemerRoleProcess($event)" ><i class="fa fa-search" aria-hidden="true"></i></button>
+                                                    </span>
+                                                    </div>
+
+                                                    <ul class="nav nav-tabs nav-stacked second-tab-nav" id="roleOfPermissionProcess" role="tablist">
+                                                        <li role="presentation" id="MemberRoleProcess-{{memberRole.WorksSupportMemberRoleId}}" *ngFor="let memberRole of ListWorksSupportTypeMemberRole; let r = index" [ngClass]="{'active':currentMemberRolePermisId===memberRole.WorksSupportMemberRoleId,'':currentMemberRolePermisId!==memberRole.WorksSupportMemberRoleId}"
+                                                            (click)="getMemeberRoleOfProcess($event)">
+                                                            <a data-target="#workFlowPermission" aria-controls="workFlowPermission" role="tab" data-toggle="tab">
+                                                            <input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);" id="CBRole-{{memberRole.WorksSupportMemberRoleId}}"
+                                                            [checked]="CheckSelectedMemberRole(memberRole.WorksSupportMemberRoleId)">
+                                                            <label attr.for="CBRole-{{memberRole.WorksSupportMemberRoleId}}">{{memberRole.WorksSupportMemberRoleName}} - {{memberRole.WorksSupportMemberRoleId}}</label></a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-lg-8 col-sm-8">
+                                                    <div class="tab-content">
+                                                        <h3><span style="background:#f5f5f5">Quyền theo vai trò xử lý</span></h3>
+                                                        <div role="tabpanel" class="tab-pane fade in active" id="workFlowPermission">
+                                                            <div class="row">
+                                                                <div class="col-lg-6">
+                                                                    <div class="m-bottom-5">
+                                                                        <input type="checkbox" style="transform:translateY(3px);" class="custom-checkbox" id="WfIsCanEditContent" [checked]="wfPermissModel.IsCanEditContent"
+                                                                            (change)="wfPermissModel.IsCanEditContent = !wfPermissModel.IsCanEditContent">
+                                                                        <label for="WfIsCanEditContent">Chỉnh sửa nội dung</label>
+                                                                    </div>
+                                                                    <div class="m-bottom-5">
+                                                                        <input class="custom-checkbox" id="WfIsCanEditSolutionContent" type="checkbox" style="transform:translateY(3px);" [checked]="wfPermissModel.IsCanEditSolutionContent"
+                                                                            (change)="wfPermissModel.IsCanEditSolutionContent = !wfPermissModel.IsCanEditSolutionContent">
+                                                                        <label for="WfIsCanEditSolutionContent">Chỉnh sửa nội dung giải pháp</label>
+
+                                                                    </div>
+
+                                                                    <div class="m-bottom-5">
+
+                                                                        <input class="custom-checkbox" id="WfIsCanEditQuality" type="checkbox" style="transform:translateY(3px);" [checked]="wfPermissModel.IsCanEditQuality"
+                                                                            (change)="wfPermissModel.IsCanEditQuality = !wfPermissModel.IsCanEditQuality">
+                                                                        <label for="WfIsCanEditQuality">Cập nhật chất lượng</label>
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6">
+                                                                    <div class="m-bottom-5">
+
+                                                                        <input class="custom-checkbox" id="WfIsCanAddAttachment" type="checkbox" style="transform:translateY(3px);" [checked]="wfPermissModel.IsCanAddAttachment"
+                                                                            (change)="wfPermissModel.IsCanAddAttachment = !wfPermissModel.IsCanAddAttachment">
+                                                                        <label for="WfIsCanAddAttachment">Thêm tập tin đính kèm</label>
+
+                                                                    </div>
+                                                                    <div class="m-bottom-5">
+                                                                        <input class="custom-checkbox" id="WfIsCanComment" type="checkbox" style="transform:translateY(3px);" [checked]="wfPermissModel.IsCanComment"
+                                                                            (change)="wfPermissModel.IsCanComment = !wfPermissModel.IsCanComment">
+                                                                        <label for="WfIsCanComment">Bình luận</label>
+                                                                    </div>
+                                                                    <div class="m-bottom-5">
+                                                                        <input class="custom-checkbox" id="WfIsCanEditExpectedCompletedDate" type="checkbox" style="transform:translateY(3px);" [checked]="wfPermissModel.IsCanEditExpectedCompletedDate"
+                                                                            (change)="wfPermissModel.IsCanEditExpectedCompletedDate = !wfPermissModel.IsCanEditExpectedCompletedDate">
+                                                                        <label for="WfIsCanEditExpectedCompletedDate">Chỉnh sửa ngày dự kiến hoàn thành</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8 col-sm-8">
+                                                    <div class="tab-content">
+                                                        <h3><span style="background:#f5f5f5">Danh sách bước xử lý được chuyển đến</span></h3>
+                                                        <div role="tabpanel" class="tab-pane fade in active" id="admin2">
+                                                            <table class="non-border">
+                                                                <tr *ngFor="let nextStep of ListWorksSupportTypeWfNx; let i = index">
+                                                                    <td valign="middle"><input type="checkbox" class="custom-checkbox" style="transform:translateY(3px);"
+                                                                            id="NX-{{nextStep.NextWorksSupportStepsId}}" name="{{nextStep.NextWorksSupportStepsName}}"
+                                                                            [checked]="CheckSelectedNextStep(nextStep.NextWorksSupportStepsId)"
+                                                                            (change)="onNextStepPermisChange($event)">
+                                                                        <label attr.for="NX-{{nextStep.NextWorksSupportStepsId}}">{{nextStep.NextWorksSupportStepsName}} - {{nextStep.NextWorksSupportStepsId}}</label></td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top: 15px;">
+            <button type="button" class="btn btn-eoffice green-bg" (click)="onSaveConfirmClick()"><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
+            <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close" (click)="resetData($event)"><i class="fa fa-times" aria-hidden="true"></i> Bỏ qua</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="confirmationModal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <h2 class="modal-title text-center">Thông Báo</h2>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <ul class="list-lg">
+                    <li>Thao tác của bạn vẫn chưa được lưu, bạn có muốn tiếp tục?</li>
+                </ul>
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-eoffice green-bg" (click)="getDetail($evnet)"><i class="fa fa-check-square" aria-hidden="true"></i> Đồng ý</button>
+                <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Bỏ qua</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="confirmationSaveModal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <h2 class="modal-title text-center">Thông Báo</h2>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <ul class="list-lg">
+                    <li>Loại công việc này đang tồn tại dự án, bạn vẫn muốn tiếp tục lưu?</li>
+                </ul>
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-eoffice green-bg" (click)="onSaveClick()"><i class="fa fa-check-square" aria-hidden="true"></i> Đồng ý</button>
+                <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Bỏ qua</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="resetConfirm">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <h2 class="modal-title text-center">Thông Báo</h2>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <ul class="list-lg">
+                    <li>Thao tác của bạn vẫn chưa được lưu, bạn có muốn tiếp tục?</li>
+                </ul>
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-eoffice green-bg" (click)="getDetail($evnet)"><i class="fa fa-check-square" aria-hidden="true"></i> Đồng ý</button>
+                <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="popCopyPermission">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <h2 class="modal-title text-center">Loại Công Việc</h2>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <select class="form-control" [(ngModel)]="fromWorkTypeId">
+                    <option id="{{copy.WorksSupportTypeId}}" *ngFor="let copy of listWorkType; let r = index"
+                        [value]="copy.WorksSupportTypeId" [hidden]="copy.WorksSupportTypeId === WorksTypeId">
+                        {{copy.WorksSupportTypeName}}</option>
+                </select>
+            </div>
+
+            <div style="text-align:center; margin-top: 15px;">
+                <button class="btn btn-eoffice green-bg" type="button" (click)="copyPermission($event)"><i aria-hidden="true" class="fa fa-floppy-o"></i> Chọn</button>
+                <button aria-label="Close" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" type="button"><i aria-hidden="true" class="fa fa-times"></i> Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

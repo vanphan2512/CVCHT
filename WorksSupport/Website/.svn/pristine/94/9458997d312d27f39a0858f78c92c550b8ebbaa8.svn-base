@@ -1,0 +1,40 @@
+System.register(["./validationError", "../../event"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var validationError_1, event_1;
+    var ValidationException;
+    return {
+        setters:[
+            function (validationError_1_1) {
+                validationError_1 = validationError_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+            }],
+        execute: function() {
+            ValidationException = (function () {
+                function ValidationException(key, params) {
+                    if (key === void 0) { key = ""; }
+                    if (params === void 0) { params = {}; }
+                    this.errors = [];
+                    if (key !== "") {
+                        this.add(key, params);
+                    }
+                }
+                ValidationException.prototype.add = function (key, params) {
+                    if (params === void 0) { params = {}; }
+                    this.errors.push(new validationError_1.ValidationError(key, params));
+                };
+                ValidationException.prototype.hasError = function () {
+                    return this.errors.length > 0;
+                };
+                ValidationException.prototype.throwIfHasError = function () {
+                    window.ioc.resolve("IEventManager").publish(event_1.CommonEvent.ValidationFail, this);
+                };
+                return ValidationException;
+            }());
+            exports_1("ValidationException", ValidationException);
+        }
+    }
+});
+//# sourceMappingURL=validationException.js.map

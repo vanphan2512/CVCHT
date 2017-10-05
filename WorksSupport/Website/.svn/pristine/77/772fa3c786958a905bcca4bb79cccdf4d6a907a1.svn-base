@@ -1,0 +1,26 @@
+System.register(["../../enum"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var enum_1;
+    var SelectModel;
+    return {
+        setters:[
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }],
+        execute: function() {
+            SelectModel = (function () {
+                function SelectModel() {
+                    this.mode = enum_1.FormSelectMode.Item;
+                    this.items = [];
+                }
+                SelectModel.prototype.import = function (items) {
+                    this.items = [].concat(items);
+                };
+                return SelectModel;
+            }());
+            exports_1("SelectModel", SelectModel);
+        }
+    }
+});
+//# sourceMappingURL=selectModel.js.map

@@ -1,0 +1,30 @@
+System.register(["./menus/menuItem", "./menus/menuSidebar", "./layout/pageFooter", "./layout/sidebarFooter"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function exportStar_1(m) {
+        var exports = {};
+        for (var n in m) {
+            if (n !== "default") exports[n] = m[n];
+        }
+        exports_1(exports);
+    }
+    return {
+        setters: [
+            function (menuItem_1_1) {
+                exportStar_1(menuItem_1_1);
+            },
+            function (menuSidebar_1_1) {
+                exportStar_1(menuSidebar_1_1);
+            },
+            function (pageFooter_1_1) {
+                exportStar_1(pageFooter_1_1);
+            },
+            function (sidebarFooter_1_1) {
+                exportStar_1(sidebarFooter_1_1);
+            }
+        ],
+        execute: function () {
+        }
+    };
+});
+//# sourceMappingURL=all.js.map

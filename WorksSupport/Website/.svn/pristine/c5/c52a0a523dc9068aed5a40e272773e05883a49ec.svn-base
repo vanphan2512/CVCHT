@@ -1,0 +1,23 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var objectHelper;
+    function getByPath(object, path) {
+        var pathItems = path.split(".");
+        var value = object;
+        pathItems.forEach(function (element) {
+            value = value[element];
+        });
+        return value;
+    }
+    return {
+        setters:[],
+        execute: function() {
+            objectHelper = {
+                getByPath: getByPath
+            };
+            exports_1("default",objectHelper);
+        }
+    }
+});
+//# sourceMappingURL=objectHelper.js.map

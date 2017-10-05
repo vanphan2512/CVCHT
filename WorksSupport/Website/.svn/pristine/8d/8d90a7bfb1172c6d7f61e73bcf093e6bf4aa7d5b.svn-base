@@ -1,0 +1,96 @@
+System.register(["../list/hashtable", "../../event", "../../services/authService", "../../enum", "../../helpers/guidHelper"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var hashtable_1, event_1, event_2, authService_1, enum_1, guidHelper_1;
+    var BaseComponent;
+    return {
+        setters:[
+            function (hashtable_1_1) {
+                hashtable_1 = hashtable_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+                event_2 = event_1_1;
+            },
+            function (authService_1_1) {
+                authService_1 = authService_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (guidHelper_1_1) {
+                guidHelper_1 = guidHelper_1_1;
+            }],
+        execute: function() {
+            BaseComponent = (function () {
+                function BaseComponent(http, componentType) {
+                    if (componentType === void 0) { componentType = event_2.ComponentType.Layout; }
+                    this.id = guidHelper_1.default.create();
+                    this.connector = window.ioc.resolve("IConnector");
+                    this.eventManager = window.ioc.resolve("IEventManager");
+                    var resourceHelper = window.ioc.resolve("IResource");
+                    this.i18nHelper = resourceHelper;
+                    this.i18n = resourceHelper.getResourceData();
+                    this.events = new hashtable_1.Hashtable();
+                    if (componentType === event_2.ComponentType.Layout) {
+                        this.connector.setHttp(http);
+                    }
+                }
+                BaseComponent.prototype.routerOnActivate = function (next) {
+                    var authenticationMode = next.routeData.data["authentication"];
+                    if (!authenticationMode || authenticationMode === enum_1.AuthenticationMode.None) {
+                        return true;
+                    }
+                    var isAuthenticated = authService_1.default.isAuthorized(next);
+                    if (!isAuthenticated) {
+                        this.eventManager.publish(event_1.ApplicationStateEvent.UnAuthorizeRequest, next);
+                    }
+                    return isAuthenticated;
+                };
+                BaseComponent.prototype.ngOnInit = function () {
+                    this.onInit();
+                    var self = this;
+                    this.events.getKeys().forEach(function (key) {
+                        var handler = self.events.get(key);
+                        self.eventManager.subscribe(key, handler);
+                    });
+                };
+                BaseComponent.prototype.ngAfterContentInit = function () {
+                    this.onBeforeReady();
+                };
+                BaseComponent.prototype.ngAfterViewInit = function () {
+                    this.onReady();
+                };
+                BaseComponent.prototype.ngOnDestroy = function () {
+                    var self = this;
+                    this.events.getKeys().forEach(function (key) {
+                        self.eventManager.unsubscribe(key);
+                    });
+                    this.onUnload();
+                };
+                BaseComponent.prototype.ngOnChanges = function () {
+                    this.onChange();
+                };
+                BaseComponent.prototype.onChange = function () { };
+                BaseComponent.prototype.setResources = function (resources) {
+                    var resourceHelper = window.ioc.resolve("IResource");
+                    resourceHelper.load(resources);
+                };
+                BaseComponent.prototype.onInit = function () {
+                };
+                BaseComponent.prototype.onBeforeReady = function () {
+                };
+                BaseComponent.prototype.onReady = function () {
+                };
+                BaseComponent.prototype.onUnload = function () {
+                };
+                BaseComponent.prototype.registerEvent = function (key, handler) {
+                    this.events.set(key, handler);
+                };
+                return BaseComponent;
+            }());
+            exports_1("BaseComponent", BaseComponent);
+        }
+    }
+});
+//# sourceMappingURL=baseComponent.js.map

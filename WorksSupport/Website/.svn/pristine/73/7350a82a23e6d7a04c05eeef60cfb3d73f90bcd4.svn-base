@@ -1,0 +1,15 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var ValidationMode;
+    return {
+        setters: [],
+        execute: function () {
+            exports_1("ValidationMode", ValidationMode = {
+                Invalid: "validation invalid",
+                Valid: "validation valid"
+            });
+        }
+    };
+});
+//# sourceMappingURL=enum.js.map

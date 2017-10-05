@@ -1,0 +1,35 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function exist(key) {
+        return window.sessionStorage.getItem(key) != null;
+    }
+    function remove(key) {
+        window.sessionStorage.removeItem(key);
+        window.sessionStorage.clear();
+    }
+    function set(key, data) {
+        window.sessionStorage.setItem(key, JSON.stringify(data));
+    }
+    function get(key) {
+        if (!exist(key)) {
+            return null;
+        }
+        var data = window.sessionStorage.getItem(key);
+        return JSON.parse(data);
+    }
+    var sessionStorage;
+    return {
+        setters: [],
+        execute: function () {
+            sessionStorage = {
+                exist: exist,
+                get: get,
+                set: set,
+                remove: remove
+            };
+            exports_1("default", sessionStorage);
+        }
+    };
+});
+//# sourceMappingURL=sessionStorage.js.map

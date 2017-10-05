@@ -1,0 +1,259 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./statusModel", "./updateModel", "./deleteModel", "../_share/services/statusService", "../../../common/directive", "../../../common/services/cacheService", "../../../common/models/exception"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, router_1, ui_1, statusModel_1, updateModel_1, deleteModel_1, statusService_1, directive_1, directive_2, cacheService_1, cacheService_2, exception_1;
+    var Status;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (statusModel_1_1) {
+                statusModel_1 = statusModel_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (deleteModel_1_1) {
+                deleteModel_1 = deleteModel_1_1;
+            },
+            function (statusService_1_1) {
+                statusService_1 = statusService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+                directive_2 = directive_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            }],
+        execute: function() {
+            Status = (function (_super) {
+                __extends(Status, _super);
+                function Status(router) {
+                    _super.call(this);
+                    this.modelIconUrl = String.empty;
+                    this.WorksSupportStatusName = String.empty;
+                    this.Description = String.empty;
+                    this.IconUrl = String.empty;
+                    this.User = String.empty;
+                    this.actions = [];
+                    this.selectedValue = [];
+                    this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var self = this;
+                    self.router = router;
+                    self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                    self.loadStatus();
+                }
+                ;
+                // add status 
+                Status.prototype.onAddStatus = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.model.IconUrl = self.modelIconUrl;
+                    statusService_1.default.create(this.model).then(function () {
+                        $('#modalAdd').modal('hide');
+                        $('.modal-backdrop').modal('hide');
+                        self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                        self.loadStatus();
+                    });
+                };
+                // Delete Priority
+                Status.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows(".selected").data();
+                    for (var i = 0; i < grid.length; i++) {
+                        this.selectedValue.push({ id: grid[i]["WorksSupportStatusId"], name: grid[i]["WorksSupportStatusName"] });
+                        lstId.push(grid[i]["WorksSupportStatusId"]);
+                    }
+                    this.objDelete = new deleteModel_1.DeleteModel(lstId.toString(), "administrator");
+                };
+                Status.prototype.onDeleteStatus = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    statusService_1.default.delete(this.objDelete).then(function (event) {
+                        $("#modalDelete").modal("hide");
+                        $(".modal-backdrop").modal("hide");
+                        self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                        self.loadStatus();
+                    });
+                };
+                Status.prototype.onEditStatusClicked = function (event) {
+                };
+                Status.prototype.loadStatus = function () {
+                    var self = this;
+                    statusService_1.default.getStatus().then(function (items) {
+                        self.model.importStatus(items);
+                    });
+                };
+                // Get data by status : 1/0
+                Status.prototype.onStatusChange = function (event) {
+                    debugger;
+                    var self = this;
+                    var $ = window.jQuery;
+                    var currentIsDelete = event.currentTarget.value;
+                    // get data of dropdownlist.
+                    statusService_1.default.getStatusBy("", currentIsDelete, 0, 10).then(function (items) {
+                        self.model.importStatus(items);
+                    });
+                    // check status is delete to show delete button.
+                    if (currentIsDelete === "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                    }
+                };
+                // Search data by name
+                Status.prototype.SearchByKey = function (event) {
+                    debugger;
+                    var $ = window.jQuery;
+                    var statusName = $("#statusName").val();
+                    var self = this;
+                    statusService_1.default.getStatusBy(statusName, 0, 0, 10).then(function (items) {
+                        self.model.importStatus(items);
+                    });
+                };
+                Status.prototype.onToggleSelectChanged = function (event) {
+                    debugger;
+                    var self = this;
+                    var model = new updateModel_1.UpdateStatusModel();
+                    model.import(event.item);
+                    statusService_1.default.update(model).then(function (event) {
+                        self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                        self.loadStatus();
+                    });
+                };
+                // public onIconSelectChanged(event: any) {
+                //     debugger;
+                //     let self: Status = this;
+                //     let model: UpdateStatusModel = new UpdateStatusModel();
+                //     event.item.IconUrl = event.icon;
+                //     model.import(event.item);
+                //     statusService.update(model).then(function (event: any) {
+                //         self.model = new StatusModel(self.i18nHelper);
+                //         self.loadStatus();
+                //     });
+                // }
+                // show popup update
+                Status.prototype.onShowPopupEdit = function (event) {
+                    debugger;
+                    var self = this;
+                    var $ = window.jQuery;
+                    statusService_1.default.get(event.item.WorksSupportStatusId).then(function (item) {
+                        debugger;
+                        self.Id = item.WorksSupportStatusId;
+                        self.WorksSupportStatusName = item.WorksSupportStatusName;
+                        self.IconUrl = item.IconUrl;
+                        self.IsInitStatus = item.IsInitStatus;
+                        self.IsCompleteStatus = item.IsCompleteStatus;
+                        self.IsCloseStatus = item.IsCloseStatus;
+                        self.Description = item.Description;
+                        self.OrderIndex = item.OrderIndex;
+                        self.IsActived = item.IsActived;
+                        self.IsSystem = item.IsSystem;
+                        $('#modalEdit').modal('toggle');
+                    });
+                };
+                Status.prototype.onEditStatus = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    var objUpdate = new updateModel_1.UpdateStatusModel();
+                    self.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    objUpdate.import(self);
+                    if (this.isValidEdit()) {
+                        statusService_1.default.update(objUpdate).then(function () {
+                            $('#modalEdit').modal('hide');
+                            $('.modal-backdrop').modal('hide');
+                            self.model = new statusModel_1.StatusModel(self.i18nHelper);
+                            self.loadStatus();
+                        });
+                    }
+                };
+                Status.prototype.onCancelEdit = function (event) {
+                    var $ = window.jQuery;
+                    $('#modalEdit').modal('hide');
+                    $('.modal-backdrop').modal('hide');
+                };
+                Status.prototype.isValidEdit = function () {
+                    debugger;
+                    var validationErrors = new exception_1.ValidationException();
+                    if (!this.WorksSupportStatusName) {
+                        validationErrors.add("configurations.addOrUpdatePriority.validation.nameIsRequireEdit");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                Status.prototype.isValidAdd = function () {
+                    debugger;
+                    var validationErrors = new exception_1.ValidationException();
+                    if (!this.model.Id) {
+                        validationErrors.add("configurations.addOrUpdatePriority.validation.nameIsRequireAdd");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                Status.prototype.onIconSelectedEdit = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.IconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                Status.prototype.onIconSelectedAdd = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.modelIconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                __decorate([
+                    core_1.ViewChild(directive_1.Grid), 
+                    __metadata('design:type', directive_1.Grid)
+                ], Status.prototype, "gridComponent", void 0);
+                Status = __decorate([
+                    core_1.Component({
+                        templateUrl: "app/modules/configurations/status/status.html",
+                        directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page, directive_2.Form, directive_2.FormTextInput, directive_2.FormFooter, directive_2.FormTextArea, directive_2.FormStatusToggle]
+                    }), 
+                    __metadata('design:paramtypes', [router_1.Router])
+                ], Status);
+                return Status;
+            }(ui_1.BasePage));
+            exports_1("Status", Status);
+        }
+    }
+});
+//# sourceMappingURL=status.js.map

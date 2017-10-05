@@ -1,0 +1,3 @@
+<select id="{{id}}" class="select2_multiple form-control {{model.cssClass}}" multiple="multiple">
+    <option *ngFor="let permission of model.permissions" value="{{permission.id}}">{{permission.name}}</option>
+</select>

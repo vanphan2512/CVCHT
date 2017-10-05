@@ -1,0 +1,21 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var CheckStatusModel;
+    return {
+        setters: [],
+        execute: function () {
+            CheckStatusModel = (function () {
+                function CheckStatusModel() {
+                    this.status = null;
+                }
+                CheckStatusModel.prototype.setStatus = function (inputStatus) {
+                    this.status = inputStatus;
+                };
+                return CheckStatusModel;
+            }());
+            exports_1("CheckStatusModel", CheckStatusModel);
+        }
+    };
+});
+//# sourceMappingURL=checkStatusModel.js.map

@@ -1,0 +1,16 @@
+<div class="tab-login">
+    <h2>{{i18n.registration.signin.title}}</h2>
+    <form>
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1"><i class="fa fa-user-circle-o" aria-hidden="true" style="width:10px"></i></span>
+            <input [validation]="['registration.signin.userNameRequired','registration.signin.invalidUserNameOrPassword']" placeholder="{{i18n.registration.signin.userName}}" type="text" id="username" name="username" [(ngModel)]=model.username class="form-control col-md-7 col-xs-12"
+            />
+        </div>
+        <div class="input-group" style="margin-top:20px">
+            <span class="input-group-addon" id="basic-addon1"><i class="fa fa-lock" aria-hidden="true" style="width:10px"></i></span>
+            <input [validation]="['registration.signin.pwdRequired','registration.signin.invalidUserNameOrPassword']" type="password" id="password" name="password" [(ngModel)]=model.password class="form-control col-md-7 col-xs-12" placeholder="{{i18n.registration.signin.password}}"
+            />
+        </div>
+        <button id="signIn" (click)="onSignInClicked($event)" type="submit" class="btn-eof blue-bg login-btn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+    </form>
+</div>

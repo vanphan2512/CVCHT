@@ -1,0 +1,107 @@
+import { Route, MenuItem, IModule } from "../models/layout";
+import appConfig from "../../config/appConfig";
+let configHelper = {
+    getModuleMenuItems: getModuleMenuItems,
+    getRoutes: getRoutes,
+    getAppConfig: getAppConfig,
+    showNotify: showNotify
+};
+export default configHelper;
+function getAppConfig() {
+    return appConfig;
+}
+function getRoutes() {
+    let items: any = [];
+    appConfig.modules.forEach(function (module: IModule) {
+        items = items.concat(module.routes);
+    });
+    return items;
+}
+function getModuleMenuItems(): Array<MenuItem> {
+    let items: Array<MenuItem> = new Array<MenuItem>();
+    appConfig.modules.forEach(function (module: IModule) {
+        items = appendModuleMenuItems(items, module);
+    });
+    return items;
+}
+function appendModuleMenuItems(items: Array<MenuItem>, module: IModule) {
+    module.menus.forEach(function (menuItem: any) {
+        items.push(menuItem);
+    });
+    return items;
+}
+function showNotify(messageType: string, success: boolean) {
+    let $ = window.jQuery;
+    let icon: string = ""
+    let message: String = "";
+    let type: string = "";
+    if (messageType === "add" && success) {
+        message += "<strong> Thêm dữ liệu thành công!</strong>";
+        icon = "glyphicon glyphicon-warning-sign";
+        type = "success";
+    } else if (messageType === "edit" && success) {
+        message += "<strong> Cập nhật dữ liệu thành công!</strong>";
+        icon = "glyphicon glyphicon-warning-sign";
+        type = "success";
+    } else if (messageType === "delete" && success) {
+        message += "<strong> Xóa dữ liệu thành công!</strong>";
+        icon = "glyphicon glyphicon-warning-sign";
+        type = "success";
+    } else if (messageType === "add" && !success) {
+        message += "<strong> Thêm dữ liệu thất bại!</strong>";
+        icon = "glyphicon glyphicon-warning-sign";
+        type = "danger";
+    } else if (messageType === "edit" && !success) {
+        message += "<strong> Cập nhật dữ liệu thất bại!</strong>";
+        icon = "glyphicon glyphicon-warning-sign";
+        type = "danger";
+    } else {
+        message += "<strong> Xóa dữ liệu thất bại!</strong>";
+        icon = "glyphicon glyphicon-warning-sign";
+        type = "danger";
+    }
+    $.notify({
+        // options
+        icon: icon,
+        title: '<strong> Thông Báo  </strong>',
+        message: message,
+        target: '_self'
+    }, {
+            // settings
+            element: 'body',
+            position: null,
+            type: type,
+            allow_dismiss: true,
+            newest_on_top: false,
+            showProgressbar: false,
+            placement: {
+                from: "bottom",
+                align: "right"
+            },
+            offset: 20,
+            spacing: 10,
+            z_index: 1031,
+            delay: 2000,
+            timer: 1000,
+            mouse_over: null,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            },
+            onShow: null,
+            onShown: null,
+            onClose: null,
+            onClosed: null,
+            icon_type: 'class',
+            template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+            '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+            '<span data-notify="icon"></span> ' +
+            '<span data-notify="title">{1}</span> <br/>' +
+            '<span data-notify="message">{2}</span>' +
+            '<div class="progress" data-notify="progressbar">' +
+            '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+            '</div>' +
+            '</div>'
+        });
+
+}

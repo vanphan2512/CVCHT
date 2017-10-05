@@ -1,0 +1,459 @@
+// Created by:   Nguyen Van Huan
+// Created date: 16/06/2017. 
+import { Component, ViewChild, OnInit, Input } from "angular2/core";
+import { Router } from "angular2/router";
+import { Http } from "angular2/http";
+import { BasePage } from "../../../common/models/ui";
+import { FormDatePicker, FormFilesUpload } from "../../../common/directive";
+import worksGroupService from "../_share/services/WorksGroupService";
+import route from "../_share/config/route";
+import sessionStorage from "../../../common/storages/sessionStorage";
+import { CACHE_CONSTANT } from "../../../common/services/cacheService";
+import { ErrorMessage } from "../../../common/directives/common/errorMessage";
+import { ValidationException } from "../../../common/models/exception";
+import { RoleValue } from "../../../common/enum";
+import projectService from "../_share/services/projectService";
+import WorksSerice from "../_share/services/worksSerice";
+import WorkDetailSerice from "../_share/services/workDetailService";
+import { ProcessUserModel } from "../works/AddProcessUser";
+import { AddQualityModel } from "./AddQualityModel";
+import { AddSolutionModel } from "./AddSolutionModel";
+import { AddCommentModel } from "./AddCommentModel";
+import prioritiesService from "../../configurations/_share/services/priorityService";
+import { EditModel } from "../works/editModel";
+import configHelper from "../../../common/helpers/configHelper";
+@Component({
+    templateUrl: "app/modules/eoffice/workdetail/workdetail.html",
+    directives: [ErrorMessage, FormDatePicker, FormFilesUpload]
+})
+
+export class WorkDetail extends BasePage implements OnInit {
+    private Router: Router;
+    public isCanAdd: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+    public isCanDelete: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+    public IscanViewWork: boolean = sessionStorage.get(CACHE_CONSTANT.EO_WORKSSUPPORT_VIEW) === "true" ? true : false;
+    public userLogin = sessionStorage.get(CACHE_CONSTANT.strUserName);
+    public roleValue: string = RoleValue.Admin;
+    public isAdmin: boolean = sessionStorage.get(CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+    public workID: string = String.empty;
+    public listQuantity: Array<any> = [];
+    public selectedQuantity: string = String.empty;
+    public workDetail: any = null;
+    public listWorksFlow: Array<any> = [];
+    public listUser: Array<any> = [];
+    public selectedUser: string = "";
+    public selectedStepID: string = "";
+    public Note: string = "";
+    public lstProjectInvole: any = [];
+    public selectedProjectInvoleID: string = String.empty;
+    public searchTypeProjectInvole: string = "1";
+    public txtInvoleFromDates: string = String.empty;
+    public txtInvoleToDates: string = String.empty;
+    public listInvole: Array<any> = [];
+    public searchInvoleKeyword: string = String.empty;
+    public selectedListInvole: Array<any> = [];
+    public selectDeleteInvoleID: string = String.empty;
+    public selectDeleteInvoleName: string = String.empty;
+    public QualityNote: string = String.empty;
+    public solutionContent: string = String.empty;
+    public comment: string = String.empty;
+    public listPriority: Array<any> = [];
+    public WorksSupportName: string = String.empty;
+    public Content: string = String.empty;
+    public ExpectedCompletedDate: string = String.empty;
+    public selectedPriority: string = String.empty;
+    public userProfile: any;
+    public workPermisstion: Array<any>;
+    public detailPermisstion: Array<any>;
+    public mustChooseNextStepUser: boolean = true;
+    public fileAttachment: Array<any> = [];
+    public fileUploaded: Array<any> = [];
+    public fileUploadSolution: Array<any> = [];
+    public fileUploadComment: Array<any> = [];
+    public fileUploadEditSolution: Array<any> = [];
+    public solutionEditContent: string = String.empty;
+    constructor(router: Router) {
+        super();
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        self.Router = router;
+        self.workID = localStorage.getItem('workSupportDetailID');
+        self.loadQuantity();
+    }
+    @ViewChild('WorkUpload') formFilesUploadWork: FormFilesUpload;
+    @ViewChild('SolutionUpload') formFilesUploadSolution: FormFilesUpload;
+    @ViewChild('CommentUpload') formFilesUploadComment: FormFilesUpload;
+    @ViewChild('SolutionEditUpload') formFilesUploadEditSolution: FormFilesUpload;
+    
+    @ViewChild(ErrorMessage)
+    private errorMess: ErrorMessage;
+    ngOnInit() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        self.loadDetail();
+        $('.btn-group-menu button').on('click', function (e: any) {
+            var targeted_popup_class = $(this).attr('data-popup-open');
+            $(".btn-group-menu ul").fadeIn(350);
+            $("#modalPopupDetai").addClass('bg-popup');
+            $("#modalPopupDetai").css("display", "block");
+            e.preventDefault();
+        });
+        $('.btn-group-menu .popup-close').on('click', function (e: any) {
+            $(".btn-group-menu ul").fadeOut(350);
+            $("#modalPopupDetai").removeClass('bg-popup');
+            $("#modalPopupDetai").css("display", "none");
+            e.preventDefault();
+        });
+    }
+    public stringToDate(_date: any, _format: any, _delimiter: any): Date {
+        var formatLowerCase = _format.toLowerCase();
+        var formatItems = formatLowerCase.split(_delimiter);
+        var dateItems = _date.split(_delimiter);
+        var monthIndex = formatItems.indexOf("mm");
+        var dayIndex = formatItems.indexOf("dd");
+        var yearIndex = formatItems.indexOf("yyyy");
+        var month = parseInt(dateItems[monthIndex]);
+        month -= 1;
+        var formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+        return formatedDate;
+    }
+    public stringAsDate(inputFormat: string) {
+        function pad(s: any) { return (s < 10) ? '0' + s : s; }
+        var d = new Date(inputFormat);
+        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+    }
+    private loadQuantity() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        WorksSerice.getQuanlitiesByWorkId(self.workID).then(function (items: Array<any>) {
+            self.listQuantity = items;
+        });
+    }
+    private loadDetail() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        WorksSerice.getWorkSupportDetail(self.workID).then(function (items: any) {
+            self.workDetail = items;
+            self.getPermission();
+            self.selectedQuantity = self.workDetail.WorksSupportQualityId === 0 ? "" : self.workDetail.WorksSupportQualityId;
+            self.QualityNote = self.workDetail.WorksSupportQualityNode;
+        });
+        self.userProfile = sessionStorage.get(CACHE_CONSTANT.USER_PROFILE);
+    }
+    private onXuLyClick(event: any) {
+        //console.log(event);
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        WorksSerice.getWorkFlow(event).then(function (items: Array<any>) {
+            self.listWorksFlow = items;
+        });
+        self.listUser = [];
+        self.selectedUser = String.empty;
+    }
+    public onProcessClicked() {
+        let self: WorkDetail = this;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        let model: ProcessUserModel = new ProcessUserModel(parseInt(self.workID), parseInt(self.selectedStepID), user, self.selectedUser, self.Note);
+        WorksSerice.saveWorksProcess(model).then(function (items: Array<any>) {
+            //self.model = new WorksModel(self.i18nHelper);
+            //self.loadWorks();
+        });
+    }
+    public getStepUser(id: any) {
+        let self: WorkDetail = this;
+        self.mustChooseNextStepUser = self.listWorksFlow[self.listWorksFlow.findIndex(_ => _.NextWorksSupportStepId.toString() === self.selectedStepID.toString())].IsMustChooseProcessUser;
+        WorksSerice.getProcessUser(id, self.selectedStepID).then(function (items: Array<any>) {
+            self.loadDetail();
+        });
+    }
+    private onAddWorksInvoleClick() {
+        let $ = window.jQuery;
+        let self: WorkDetail = this;
+        self.lstProjectInvole = [];
+        self.selectedProjectInvoleID = String.empty;
+        self.searchTypeProjectInvole = "1";
+        self.listInvole = [];
+        self.searchInvoleKeyword = "";
+        WorksSerice.getWorksInvole().then(function (items: Array<any>) {
+            self.lstProjectInvole = items;
+        });
+        $('#modal-add-works-related').modal('toggle');
+    }
+    public SearchInvole() {
+        // Get value of dropdown list
+        let $ = window.jQuery;
+        let pageIndex = -1;
+        let pageSize = -1;
+        let self: WorkDetail = this;
+        let ListWorksInvole: Array<any> = self.workDetail.ListWorksInvole === null ? [] : self.workDetail.ListWorksInvole;
+        WorksSerice.getWorksInvoleBy(self.selectedProjectInvoleID.toString(), self.searchInvoleKeyword.toString(), parseInt(self.searchTypeProjectInvole), self.stringToDate(self.txtInvoleFromDates, "dd/MM/yyyy", "/"), self.stringToDate(self.txtInvoleToDates, "dd/MM/yyyy", "/"), pageIndex, pageSize).then(function (items: Array<any>) {
+            self.listInvole = items;
+            self.listInvole.forEach(element => {
+                if (ListWorksInvole.findIndex(_ => _.WorksId === element.WorksId) > -1) element.state = true;
+                else element.state = false;
+            });
+        });
+    }
+    disableCheckBoxInvolve(id: any) {
+        let rs: boolean = false;
+        let self: WorkDetail = this;
+        let ListWorksInvole: Array<any> = self.workDetail.ListWorksInvole === null ? [] : self.workDetail.ListWorksInvole;
+        if (ListWorksInvole.findIndex(_ => _.WorksId.toString() === id.toString()) > -1) rs = true;
+        return rs;
+    }
+    checkAll(ev: any) {
+        let self: WorkDetail = this;
+        self.listInvole.forEach(x => x.state = ev.target.checked)
+    }
+
+    isAllChecked() {
+        let self: WorkDetail = this;
+        if (self.listInvole.length === 0) return false;
+        else return self.listInvole.every(_ => _.state);
+    }
+    private onSaveWorkInvole() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let ListWorksInvole: Array<any> = self.workDetail.ListWorksInvole === null ? [] : self.workDetail.ListWorksInvole;
+        self.selectedListInvole = self.listInvole.filter(x => x.state === true);
+        let difference = self.selectedListInvole
+            .filter(x => ListWorksInvole.findIndex(_ => _.WorksId === x.WorksId) == -1)
+            .concat(ListWorksInvole.filter(x => ListWorksInvole.findIndex(_ => _.WorksId === x.WorksId) == -1));
+        WorkDetailSerice.addWorksInvoleForDetail(self.workID, difference.map(_ => _.WorksId).toString()).then(function () {
+            self.loadDetail();
+            $('#modal-add-works-related').modal('hide');
+        });
+    }
+    private onDeleteWorksInvole() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        WorkDetailSerice.removeInvole(self.selectDeleteInvoleID, self.workID).then(function () {
+            self.loadDetail();
+            $('#modalDelete').modal('hide');
+        });
+    }
+    private confirmDeleteInvole(id: any, name: any) {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        self.selectDeleteInvoleID = id;
+        self.selectDeleteInvoleName = name;
+        $('#modalDelete').modal('toggle');
+    }
+    private onQuality() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        let model: AddQualityModel = new AddQualityModel(self.workID, self.selectedQuantity, self.QualityNote, user);
+        WorkDetailSerice.addQuality(model).then(function () {
+            self.loadDetail();
+        });
+    }
+    private onDeleteSolution() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        WorkDetailSerice.deleteSolution(self.workID, user).then(function () {
+            self.loadDetail();
+            $('#modalDeleteSolution').modal('hide');
+        });
+    }
+    private onAddSolution() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        let model: AddSolutionModel = new AddSolutionModel(self.workID, user, self.solutionContent, JSON.stringify(self.fileUploadSolution));
+        WorkDetailSerice.addSolution(model).then(function () {
+            self.loadDetail();
+            $('#modal-add-solution').modal('hide');
+        });
+    }
+    private onAddSolutionOpenModal() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        self.solutionContent = "";
+        self.fileUploadSolution = [];
+        self.formFilesUploadSolution.reset();
+        $('#modal-add-solution').modal('toggle');
+        self.closeFunctionModal();
+    }
+    public closeFunctionModal() {
+        let $ = window.jQuery;
+        $(".btn-group-menu ul").fadeOut(350);
+        $("#modalPopupDetai").removeClass('bg-popup');
+        $("#modalPopupDetai").css("display", "none");
+    }
+    public onDeleteWorks() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        WorksSerice.delete(self.workID, user).then(function (event: any) {
+            $('#modalDeleteWork').modal('hide');
+            self.Router.navigate([route.work.works.name]);
+        });
+
+    }
+    public onComment() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        let model: AddCommentModel = new AddCommentModel(self.workID, self.comment, user, JSON.stringify(self.fileUploadComment));
+        WorkDetailSerice.addComment(model).then(function () {
+            self.loadDetail();
+            self.comment = "";
+        });
+    }
+    public getPermission() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        WorkDetailSerice.getWorksNextStepPermission(user, self.workID).then(function (items: Array<any>) {
+            self.detailPermisstion = items;
+        });
+        WorksSerice.getWorkPermisstionByGroupId(sessionStorage.get(CACHE_CONSTANT.strUserName), self.workDetail.WorksSupportGroupId).then(function (items: any) {
+            self.workPermisstion = items;
+        });
+    }
+    private onEditWorksClick() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        prioritiesService.getPrioritiesAll().then(function (items: Array<any>) {
+            self.listPriority = items;
+        });
+        WorksSerice.getWorkDetail(self.workID).then(function (items: any) {
+            self.WorksSupportName = items.WorksSupportName;
+            self.Content = items.Content;
+            self.ExpectedCompletedDate = self.stringAsDate(items.ExpectedCompletedDate);
+            self.selectedPriority = items.WorksSupportPriorityId;
+        });
+        self.fileUploaded = [];
+        self.formFilesUploadWork.reset();
+        $("#modalEdit").modal('toggle');
+        self.closeFunctionModal();
+    }
+    public onEditWorks(event: any) {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let Id = parseInt(self.workID);
+        let WorksSupportName = self.WorksSupportName;
+        let Content = self.Content;
+        let ExpectedCompletedDate = self.ExpectedCompletedDate;
+        let WorksSupportPriorityId = self.selectedPriority === "" ? 0 : parseInt(self.selectedPriority);
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        let ListWorksInvole: Array<any> = self.workDetail.ListWorksInvole === null ? [] : self.workDetail.ListWorksInvole;
+        let ListInvole = ListWorksInvole.map(_ => _.WorksId).toString();
+        let EditModels = new EditModel(Id, WorksSupportName, user, Content, self.stringToDate(ExpectedCompletedDate, "dd/MM/yyyy", "/"), WorksSupportPriorityId, parseInt(self.workDetail.WorksSupportGroupId), ListInvole, JSON.stringify(self.fileUploaded));
+        WorksSerice.create(EditModels).then(function () {
+            self.loadDetail();
+            $("#modalEdit").modal("hide");
+            $(".modal-backdrop").modal("hide");
+        })
+    }
+    public onFileUploaded(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        self.fileUploaded.push(obj);
+    }
+    public onDeleteUploadedFile(id: any) {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        WorksSerice.deleteAttachment(user, id).then(function () {
+            self.loadDetail();
+        })
+    }
+    public onFileRemoved(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        let index = self.fileUploaded.findIndex(_ => _.FILEID === obj.FILEID);
+        if (index > -1) {
+            self.fileUploaded.removeItem(self.fileUploaded[index]);
+        }
+    }
+    public onDownload(id: any) {
+        let url = String.format("{0}{1}{2}{3}", configHelper.getAppConfig().api.downloadUrl, "DownloadFile?fileId=", id, "&type=1");
+        window.open(url);
+    }
+    public onDownloadFileComment(id: any) {
+        let url = String.format("{0}{1}{2}{3}", configHelper.getAppConfig().api.downloadUrl, "DownloadFile?fileId=", id, "&type=2");
+        window.open(url);
+    }
+    public onFileUploadedSolution(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        self.fileUploadSolution.push(obj);
+    }
+    public onFileRemovedSolution(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        let index = self.fileUploadSolution.findIndex(_ => _.FILEID === obj.FILEID);
+        if (index > -1) {
+            self.fileUploadSolution.removeItem(self.fileUploadSolution[index]);
+        }
+    }
+    public onFileUploadedComment(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        self.fileUploadComment.push(obj);
+    }
+    public onFileRemovedComment(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        let index = self.fileUploadComment.findIndex(_ => _.FILEID === obj.FILEID);
+        if (index > -1) {
+            self.fileUploadComment.removeItem(self.fileUploadComment[index]);
+        }
+    }
+    public onDownloadSolution(id: any) {
+        let url = String.format("{0}{1}{2}{3}", configHelper.getAppConfig().api.downloadUrl, "DownloadFile?fileId=", id, "&type=3");
+        window.open(url);
+    }
+    private backtoWorkGroup() {
+        this.Router.navigate([route.work.works.name]);
+    }
+    private addAttachFileComment() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        self.formFilesUploadComment.reset();
+        $('#commentAttachment').collapse("toggle");
+    }
+    public onDeleteSolutionAttach(id: any){
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        WorkDetailSerice.deleteSolutionAttachment(id,user).then(function () {
+            self.loadDetail();
+        })
+    }
+    public onFileUploadedEditSolution(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        self.fileUploadEditSolution.push(obj);
+    }
+    public onFileRemovedEditSolution(event: any) {
+        let self: WorkDetail = this;
+        let obj: any = { FILEPATH: event.filePath, FILENAME: event.fileName, FILEID: event.fileId };
+        let index = self.fileUploadSolution.findIndex(_ => _.FILEID === obj.FILEID);
+        if (index > -1) {
+            self.fileUploadEditSolution.removeItem(self.fileUploadEditSolution[index]);
+        }
+    }
+    private onEditSolutionOpen()
+    {
+         let self: WorkDetail = this;
+        let $ = window.jQuery;
+        self.solutionEditContent = self.workDetail.SolutionContent;
+        self.fileUploadEditSolution = [];
+        self.formFilesUploadEditSolution.reset();
+        $('#modal-edit-solution').modal('show');
+    }
+    private onEditSolution() {
+        let self: WorkDetail = this;
+        let $ = window.jQuery;
+        let user = sessionStorage.get(CACHE_CONSTANT.strUserName);
+        let model: AddSolutionModel = new AddSolutionModel(self.workID, user, self.solutionEditContent, JSON.stringify(self.fileUploadEditSolution));
+        WorkDetailSerice.addSolution(model).then(function () {
+            self.loadDetail();
+            $('#modal-edit-solution').modal('hide');
+        });
+    }
+}

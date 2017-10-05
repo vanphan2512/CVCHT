@@ -1,0 +1,43 @@
+System.register(["angular2/core", "./models/list/hashtable"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var core_1, hashtable_1;
+    var EventManager;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (hashtable_1_1) {
+                hashtable_1 = hashtable_1_1;
+            }],
+        execute: function() {
+            EventManager = (function () {
+                function EventManager() {
+                    this.eventEmitterMap = new hashtable_1.Hashtable();
+                }
+                EventManager.prototype.subscribe = function (eventType, eventHandler) {
+                    if (false === this.eventEmitterMap.exist(eventType)) {
+                        this.eventEmitterMap.set(eventType, new core_1.EventEmitter());
+                    }
+                    this.eventEmitterMap.get(eventType).subscribe(eventHandler);
+                };
+                EventManager.prototype.unsubscribe = function (eventType) {
+                    this.eventEmitterMap.remove(eventType);
+                };
+                EventManager.prototype.publish = function (eventType, eventArgs) {
+                    if (eventArgs === void 0) { eventArgs = null; }
+                    if (true === this.eventEmitterMap.exist(eventType)) {
+                        this.eventEmitterMap.get(eventType).emit(eventArgs);
+                    }
+                    else {
+                        console.log("handler for " + eventType + " was not found");
+                    }
+                };
+                return EventManager;
+            }());
+            exports_1("EventManager", EventManager);
+        }
+    }
+});
+//# sourceMappingURL=eventManager.js.map

@@ -1,0 +1,101 @@
+System.register(["../models/promise", "../models/list/hashtable", "./objectHelper", "../helpers/configHelper", "../helpers/userProfileHelper"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var promise_1, hashtable_1, objectHelper_1, configHelper_1, userProfileHelper_1;
+    var ResourceHelper;
+    return {
+        setters:[
+            function (promise_1_1) {
+                promise_1 = promise_1_1;
+            },
+            function (hashtable_1_1) {
+                hashtable_1 = hashtable_1_1;
+            },
+            function (objectHelper_1_1) {
+                objectHelper_1 = objectHelper_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (userProfileHelper_1_1) {
+                userProfileHelper_1 = userProfileHelper_1_1;
+            }],
+        execute: function() {
+            ResourceHelper = (function () {
+                function ResourceHelper() {
+                    this.resources = new hashtable_1.Hashtable();
+                    this.callbacks = new Array();
+                }
+                ResourceHelper.prototype.getResourceData = function () {
+                    return this.resources.data;
+                };
+                ResourceHelper.prototype.load = function (modules) {
+                    var self = this;
+                    modules.forEach(function (module) {
+                        if (self.resources.exist(module)) {
+                            return;
+                        }
+                        self.loadResource(module);
+                    });
+                };
+                ResourceHelper.prototype.resolve = function (key) {
+                    if (!key || key.split(".").length < 2) {
+                        throw "Invalid resource key: " + key;
+                    }
+                    var keyItems = key.split(".");
+                    var moduleName = keyItems.shift();
+                    var resourceObject = this.resources.get(moduleName);
+                    var value = objectHelper_1.default.getByPath(resourceObject, keyItems.join("."));
+                    return value;
+                    // let def = PromiseFactory.create();
+                    /*if (!this.resources.exist(moduleName)) {
+                        let callbacks = this.callbacks[key];
+                        if (!callbacks) {
+                            this.callbacks[moduleName] = new Hashtable<any>();
+                            callbacks = this.callbacks[moduleName];
+                        }
+                        callbacks.set(keyItems.join("."), function (value: string) {
+                            def.resolve(value);
+                        });
+                        let self = this;
+                        this.loadResource(moduleName).then((args: any) => { self.onNewResourceLoaded(args); });
+                    } else {
+                        let resourceObject = this.resources.get(moduleName);
+                        let value = objectHelper.getByPath(resourceObject, keyItems.join("."));
+                        def.resolve(value);
+            
+                    }*/
+                    // return def;
+                };
+                ResourceHelper.prototype.loadResource = function (moduleName) {
+                    var def = promise_1.PromiseFactory.create();
+                    var lang = userProfileHelper_1.default.getLang();
+                    var resourcePath = String.format("{0}{1}.{2}.json", configHelper_1.default.getAppConfig().localeUrl, moduleName, lang);
+                    var connector = window.ioc.resolve("IConnector");
+                    var self = this;
+                    connector.getJSON(resourcePath).then(function (data) {
+                        self.resources.set(moduleName, data);
+                        def.resolve({ module: moduleName, json: data });
+                    });
+                    return def;
+                };
+                ResourceHelper.prototype.onNewResourceLoaded = function (params) {
+                    var moduleJson = params.json;
+                    var callbackes = this.callbacks[params.module];
+                    var items = callbackes.getKeys();
+                    items.forEach(function (key) {
+                        var callback = callbackes.get(key);
+                        var value = objectHelper_1.default.getByPath(moduleJson, key);
+                        if (callback) {
+                            callback(value);
+                            callbackes.remove(key);
+                        }
+                    });
+                };
+                return ResourceHelper;
+            }());
+            exports_1("ResourceHelper", ResourceHelper);
+        }
+    }
+});
+//# sourceMappingURL=resourceHelper.js.map

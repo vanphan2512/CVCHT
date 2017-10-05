@@ -1,0 +1,65 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var PromiseFactory, PromiseStatus, Promise;
+    return {
+        setters:[],
+        execute: function() {
+            PromiseFactory = (function () {
+                function PromiseFactory() {
+                }
+                PromiseFactory.create = function () {
+                    return new Promise();
+                };
+                return PromiseFactory;
+            }());
+            exports_1("PromiseFactory", PromiseFactory);
+            ;
+            (function (PromiseStatus) {
+                PromiseStatus[PromiseStatus["None"] = 0] = "None";
+                PromiseStatus[PromiseStatus["Success"] = 1] = "Success";
+                PromiseStatus[PromiseStatus["Fail"] = 2] = "Fail";
+            })(PromiseStatus || (PromiseStatus = {}));
+            Promise = (function () {
+                function Promise() {
+                    this.self = null;
+                    this.successHandler = null;
+                    this.failHandler = null;
+                    this.status = PromiseStatus.None;
+                    this.self = this;
+                    return this.self;
+                }
+                Promise.prototype.resolve = function (data) {
+                    this.self.data = data;
+                    this.self.status = PromiseStatus.Success;
+                    return this.execute();
+                };
+                Promise.prototype.then = function (successHandler) {
+                    this.self.successHandler = successHandler;
+                    return this.execute();
+                };
+                Promise.prototype.error = function (failHandler) {
+                    this.self.failHandler = failHandler;
+                    return this.execute();
+                };
+                Promise.prototype.reject = function (error) {
+                    this.self.errorData = error;
+                    this.self.status = PromiseStatus.Fail;
+                    return this.self.execute();
+                };
+                Promise.prototype.execute = function () {
+                    if (this.self.status === PromiseStatus.Success && this.self.successHandler != null) {
+                        this.self.successHandler(this.self.data);
+                    }
+                    if (this.self.status === PromiseStatus.Fail && this.self.failHandler != null) {
+                        this.self.failHandler(this.self.errorData);
+                    }
+                    return this.self;
+                };
+                return Promise;
+            }());
+            exports_1("Promise", Promise);
+        }
+    }
+});
+//# sourceMappingURL=promise.js.map

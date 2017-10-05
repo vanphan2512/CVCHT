@@ -1,0 +1,21 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var DeleteModel;
+    return {
+        setters: [],
+        execute: function () {
+            DeleteModel = (function () {
+                function DeleteModel(id, User) {
+                    this.Id = String.empty;
+                    this.User = String.empty;
+                    this.Id = id;
+                    this.User = User;
+                }
+                return DeleteModel;
+            }());
+            exports_1("DeleteModel", DeleteModel);
+        }
+    };
+});
+//# sourceMappingURL=deleteModel.js.map

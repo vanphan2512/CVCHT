@@ -1,0 +1,24 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var PageActionsModel;
+    return {
+        setters: [],
+        execute: function () {
+            PageActionsModel = (function () {
+                function PageActionsModel(actions) {
+                    this.default = {};
+                    this.items = [];
+                    if (actions && actions.length > 0) {
+                        this.default = actions[0];
+                        actions.shift();
+                    }
+                    this.items = actions;
+                }
+                return PageActionsModel;
+            }());
+            exports_1("PageActionsModel", PageActionsModel);
+        }
+    };
+});
+//# sourceMappingURL=pageActionsModel.js.map

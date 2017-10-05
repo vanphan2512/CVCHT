@@ -1,0 +1,732 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./worksTypesModel", "../_share/services/worksTypeService", "../../../common/directive", "./updateModel", "../../../common/services/cacheService", "../../../common/models/exception", "../../../common/layouts/default/directives/common/errorMessage", "../../../common/enum", "../_share/services/priorityService", "../_share/services/qualityService"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, router_1, ui_1, worksTypesModel_1, worksTypesModel_2, worksTypesModel_3, worksTypesModel_4, worksTypeService_1, directive_1, updateModel_1, cacheService_1, cacheService_2, exception_1, errorMessage_1, enum_1, priorityService_1, qualityService_1, WorksTypes;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (worksTypesModel_1_1) {
+                worksTypesModel_1 = worksTypesModel_1_1;
+                worksTypesModel_2 = worksTypesModel_1_1;
+                worksTypesModel_3 = worksTypesModel_1_1;
+                worksTypesModel_4 = worksTypesModel_1_1;
+            },
+            function (worksTypeService_1_1) {
+                worksTypeService_1 = worksTypeService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            },
+            function (errorMessage_1_1) {
+                errorMessage_1 = errorMessage_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (priorityService_1_1) {
+                priorityService_1 = priorityService_1_1;
+            },
+            function (qualityService_1_1) {
+                qualityService_1 = qualityService_1_1;
+            }
+        ],
+        execute: function () {
+            WorksTypes = (function (_super) {
+                __extends(WorksTypes, _super);
+                function WorksTypes(router) {
+                    var _this = _super.call(this) || this;
+                    _this.WorksSupportTypeId = 0;
+                    _this.WorksSupportTypeName = "";
+                    _this.IconUrL = "";
+                    _this.Description = "";
+                    _this.OrderIndex = 1;
+                    _this.User = "";
+                    _this.actions = [];
+                    _this.selectedValue = [];
+                    _this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    _this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    _this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    _this.roleValue = enum_1.RoleValue.Admin;
+                    _this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === _this.roleValue ? true : false;
+                    _this.listPriority = [];
+                    _this.listQualities = [];
+                    _this.listStep = [];
+                    _this.StepNAME = "";
+                    _this.StepDESCRIPTION = "";
+                    _this.StepSTEPCOLORCODE = "#ffffff";
+                    _this.StepMAXPROCESSTIME = "1";
+                    _this.StepISINITSTEP = false;
+                    _this.StepISFINISHSTEP = false;
+                    _this.listNextStep = [];
+                    _this.listSelectedPriority = [];
+                    _this.listSelectedQualities = [];
+                    _this.StepCount = 0;
+                    _this.isEdit = false;
+                    _this.currentStep = String.empty;
+                    _this.StepID = String.empty;
+                    _this.stepName = String.empty;
+                    _this.deletedStepId = [];
+                    var self = _this;
+                    self.router = router;
+                    self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                    self.loadWorkType();
+                    self.loadPriority();
+                    self.loadQualities();
+                    return _this;
+                }
+                WorksTypes.prototype.ngOnInit = function () {
+                    this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+                    var self = this;
+                    var $ = window.jQuery;
+                    $(function () {
+                        $('[data-toggle="popover"]').popover({ html: true });
+                    });
+                    debugger;
+                    $("input.full-popover").ColorPickerSliders({
+                        color: self.StepSTEPCOLORCODE,
+                        placement: 'right',
+                        hsvpanel: true,
+                        previewformat: 'hex',
+                        sliders: false,
+                        swatches: false,
+                        onchange: function (container, color) {
+                            self.StepSTEPCOLORCODE = color.tiny.toHexString();
+                        }
+                    });
+                    var popOverSettings = {
+                        selector: '[rel="popover"]',
+                        content: $('#popover-content')
+                    };
+                    $(document).popover(popOverSettings);
+                    $(document).on('click', function (e) {
+                        $('[data-toggle="popover"],[data-original-title]').each(function () {
+                            //the 'is' for buttons that trigger popups
+                            //the 'has' for icons within a button that triggers a popup
+                            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                                (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false; // fix for BS 3.3.6
+                            }
+                        });
+                    });
+                };
+                WorksTypes.prototype.onAddNewWorkTypeClicked = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.Errors.errors = [];
+                    self.ResetData();
+                    this.clearValidate(true);
+                    $("#modalAdd").modal('toggle');
+                    self.IconUrL;
+                };
+                WorksTypes.prototype.onAddClicked = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    self.listSelectedPriority = [];
+                    self.listSelectedQualities = [];
+                    if (this.isValid(true)) {
+                        var typeModal = $('#modalAdd')[0].className.indexOf("in") > 0 ? "#modalAdd" : "#modalEdit";
+                        $(typeModal + ' input.cbPriority:checked').each(function () {
+                            self.listSelectedPriority.push($(this).attr('data-id'));
+                        });
+                        $(typeModal + ' input.cbQualities:checked').each(function () {
+                            self.listSelectedQualities.push($(this).attr('data-id'));
+                        });
+                        self.SaveCurrentStep();
+                        var user = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                        var editModel = new worksTypesModel_4.AddWorkTypeModel(self.WorksSupportTypeId, self.WorksSupportTypeName, self.Description, self.IconUrL, self.IsActived, self.IsSystem, self.listSelectedPriority.toString(), self.listSelectedQualities.toString(), JSON.stringify(self.listStep), user, 0, self.deletedStepId.toString());
+                        if (this.isValidAdd()) {
+                            worksTypeService_1.default.update(editModel).then(function () {
+                                self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                                self.loadWorkType();
+                                $('#modalAdd').modal('hide');
+                                $('.modal-backdrop').modal('hide');
+                            });
+                        }
+                        setTimeout(function () {
+                            self.validateOnServer();
+                        }, 500);
+                    }
+                };
+                WorksTypes.prototype.validateOnServer = function () {
+                    var $ = window.jQuery;
+                    var arrErr = this.Errors.errors;
+                    for (var i = 0; i < arrErr.length; i++) {
+                        var key = arrErr[i].key;
+                        if (key === "WorksSupportTypeName") {
+                            $("#WorksSupportTypeName").addClass("has-error");
+                        }
+                        if (key === "OrderIndex") {
+                            $("#OrderIndex").addClass("has-error");
+                        }
+                    }
+                };
+                // clear validation 
+                WorksTypes.prototype.clearValidate = function (isAdd) {
+                    var $ = window.jQuery;
+                    $("#WorksSupportTypeName").removeClass("has-error");
+                    $("#Description").removeClass("has-error");
+                    $("#stepName").removeClass("has-error");
+                    $("#stepNameEdit").removeClass("has-error");
+                    $("#ProcessStep").removeClass("has-error");
+                    if (!isAdd) {
+                        $("#OrderIndex").removeClass("has-error");
+                    }
+                };
+                // validation at client
+                WorksTypes.prototype.isValStepName = function (isAdd) {
+                    var validationErrors = new exception_1.ValidationException();
+                    var $ = window.jQuery;
+                    this.clearValidate(isAdd);
+                    var valAdd = $("#stepName").val();
+                    var valEdit = $("#stepNameEdit").val();
+                    if (isAdd) {
+                        if (!valAdd) {
+                            validationErrors.add("StepNAME", {}, "Tên bước xử lí là bắt buộc!");
+                            $("#stepName").addClass("has-error");
+                        }
+                    }
+                    else {
+                        if (!valEdit) {
+                            validationErrors.add("StepNAME", {}, "Tên bước xử lí là bắt buộc!");
+                            $("#stepNameEdit").addClass("has-error");
+                        }
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                WorksTypes.prototype.isValid = function (isAdd) {
+                    var validationErrors = new exception_1.ValidationException();
+                    var $ = window.jQuery;
+                    this.clearValidate(isAdd);
+                    var lenName = (this.WorksSupportTypeName === null ? 0 : this.WorksSupportTypeName.length);
+                    var lenDesc = (this.Description === null ? 0 : this.Description.length);
+                    var orderIndex = this.OrderIndex;
+                    var stepCount = $("#ProcessStep li").length;
+                    var self = this;
+                    var isVal = (isAdd !== true) ? ($("#stepNameEdit").val() === undefined ? false : true) : ($("#stepName").val() === undefined ? false : true);
+                    if (!this.WorksSupportTypeName) {
+                        validationErrors.add("WorksSupportTypeName", {}, "Tên loại công việc là bắt buộc!");
+                        $("#WorksSupportTypeName").addClass("has-error");
+                    }
+                    if (!isAdd) {
+                        if (orderIndex <= 0 || orderIndex % 1 != 0 || orderIndex > 999) {
+                            validationErrors.add("OrderIndex", [], "NCS-000003: Thứ tự loại công việc không hợp lệ!");
+                            $("#OrderIndex").addClass("has-error");
+                        }
+                    }
+                    if (self.listStep.length < 2) {
+                        validationErrors.add("#ProcessStep", {}, "Quy trình xử lý công việc là bắt buộc!");
+                        $("#ProcessStep").addClass("has-error");
+                    }
+                    else {
+                        this.clearValidate(isAdd);
+                        var valAdd = $("#stepName").val();
+                        var valEdit = $("#stepNameEdit").val();
+                        if (isAdd) {
+                            if (isVal && !valAdd) {
+                                validationErrors.add("StepNAME", {}, "Tên bước xử lí là bắt buộc!");
+                                $("#stepName").addClass("has-error");
+                            }
+                        }
+                        else {
+                            if (isVal && !valEdit) {
+                                validationErrors.add("StepNAME", {}, "Tên bước xử lí là bắt buộc!");
+                                $("#stepNameEdit").addClass("has-error");
+                            }
+                        }
+                        if (self.listStep.findIndex(function (obj) { return obj.StepISINITSTEP === true || obj.StepISINITSTEP.toString() === "1"; }) === -1)
+                            validationErrors.add("StepISINITSTEP", {}, "Phải có bước khởi tạo!");
+                        if (self.listStep.findIndex(function (obj) { return obj.StepISFINISHSTEP === true || obj.StepISFINISHSTEP.toString() === "1"; }) === -1)
+                            validationErrors.add("StepISFINISHSTEP", {}, "Phải có bước hoàn thành!");
+                    }
+                    if (lenName > 200) {
+                        validationErrors.add("WorksSupportTypeName", {}, "Tên loại công việc không được vượt quá 200 kí tự!");
+                        $("#WorksSupportTypeName").addClass("has-error");
+                    }
+                    if (lenDesc > 2000) {
+                        validationErrors.add("Description", {}, "Mô tả không được vượt quá 2000 kí tự!");
+                        $("#Description").addClass("has-error");
+                    }
+                    var processTime = Number(this.StepMAXPROCESSTIME);
+                    if (processTime < 0 || processTime % 1 != 0) {
+                        validationErrors.add("StepMAXPROCESSTIME", [], "Thời gian xử lý tối đa không hợp lệ!");
+                        $("#StepMAXPROCESSTIME").addClass("has-error");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                WorksTypes.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows(".selected").data();
+                    for (var i = 0; i < grid.length; i++) {
+                        this.selectedValue.push({ id: grid[i]["WorksSupportTypeId"], name: grid[i]["WorksSupportTypeName"] });
+                        lstId.push(grid[i]["WorksSupportTypeId"]);
+                    }
+                    self.objDelete = new worksTypesModel_2.DeleteModel(lstId.toString(), cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName));
+                };
+                WorksTypes.prototype.onDeleteWorkTypes = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    worksTypeService_1.default.delete(this.objDelete).then(function (event) {
+                        $("#modal").modal("hide");
+                        $(".modal-backdrop").modal("hide");
+                        self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                        self.loadWorkType();
+                    });
+                };
+                WorksTypes.prototype.loadWorkType = function () {
+                    var self = this;
+                    worksTypeService_1.default.getWorksTypes().then(function (items) {
+                        self.model.importWorksTypes(items);
+                    });
+                };
+                WorksTypes.prototype.loadPriority = function () {
+                    var self = this;
+                    priorityService_1.default.getPrioritiesIsActived().then(function (items) {
+                        self.listPriority = items;
+                    });
+                };
+                WorksTypes.prototype.loadQualities = function () {
+                    var self = this;
+                    qualityService_1.default.getQualiliesActived().then(function (items) {
+                        self.listQualities = items;
+                    });
+                };
+                // Get data by status : 1/0
+                WorksTypes.prototype.onWorkTypeChange = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var currentIsDelete = event.currentTarget.value;
+                    var isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var isCanEdit = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                    var worksTypeName = $("#worksTypeName").val();
+                    // get data of dropdownlist.
+                    worksTypeService_1.default.getWorkTypeBy(worksTypeName, currentIsDelete, 0, 1000).then(function (items) {
+                        self.model.importWorksTypes(items);
+                    });
+                    if (currentIsDelete === "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                        if (isCanDelete) {
+                            self.gridComponent.grid.column(0).visible(false);
+                        }
+                        if (isCanEdit) {
+                            var num = self.gridComponent.grid.column.length - 1;
+                            self.gridComponent.grid.column(num).visible(false);
+                        }
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                        if (isCanDelete) {
+                            self.gridComponent.grid.column(0).visible(true);
+                        }
+                        if (isCanEdit) {
+                            var num = self.gridComponent.grid.column.length - 1;
+                            self.gridComponent.grid.column(num).visible(true);
+                        }
+                    }
+                };
+                WorksTypes.prototype.onToggleSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateWorksTypeModel();
+                    model.import(event.item);
+                    worksTypeService_1.default.update(model).then(function (event) {
+                        self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                        self.loadWorkType();
+                    });
+                };
+                // Search data by name
+                WorksTypes.prototype.SearchByKey = function (event) {
+                    var $ = window.jQuery;
+                    var worksTypeName = $("#worksTypeName").val();
+                    var currentIsDelete = $(".custom-select .form-control").val();
+                    var self = this;
+                    worksTypeService_1.default.getWorkTypeBy(worksTypeName, currentIsDelete, 0, 1000).then(function (items) {
+                        self.model.importWorksTypes(items);
+                    });
+                };
+                WorksTypes.prototype.onIconSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateWorksTypeModel();
+                    event.item.IconUrl = event.icon;
+                    model.import(event.item);
+                    worksTypeService_1.default.update(model).then(function (event) {
+                        self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                        self.loadWorkType();
+                    });
+                };
+                WorksTypes.prototype.onSaveClicked = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    if (this.isValidAdd())
+                        worksTypeService_1.default.create(this.model).then(function () {
+                            $("#modalAdd").modal("hide");
+                            $(".modal-backdrop").modal("hide");
+                            self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                            self.loadWorkType();
+                        });
+                };
+                WorksTypes.prototype.onEditWorkTypeClicked = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    self.ResetData();
+                    if ($("#modalEdit").hasClass("has-error") == false) {
+                        $(".alert.alert-danger.error-msg").remove();
+                    }
+                    worksTypeService_1.default.get(event.item.WorksSupportTypeId).then(function (item) {
+                        self.WorksSupportTypeId = item.WorksSupportTypeId;
+                        self.WorksSupportTypeName = item.WorksSupportTypeName;
+                        self.Description = item.Description;
+                        self.IconUrL = item.IconUrl;
+                        self.IsActived = item.IsActived;
+                        self.IsSystem = item.IsSystem;
+                        self.OrderIndex = item.OrderIndex;
+                        self.listStep = [];
+                        self.listSelectedPriority = item.ListWorksSupportTypePriority == null ? [] : item.ListWorksSupportTypePriority.map(function (a) { return a.WorksSupportPriorityId; });
+                        self.listSelectedQualities = item.ListWorksSupportTypeQuality == null ? [] : item.ListWorksSupportTypeQuality.map(function (a) { return a.WorksSupportQualityId; });
+                        for (var index = 0; index < item.ListWorksSupportTypeWorkFlow.length; index++) {
+                            var element = item.ListWorksSupportTypeWorkFlow[index];
+                            var Step = new worksTypesModel_3.StepModel(element.WorksSupportStepId.toString(), element.WorksSupportStepName, element.Description, element.StepColorCode, element.MaxProcessTime, element.IsInitStep, element.IsFinishStep, element.ListWorksSupportTypeWfNx == null ? [] : element.ListWorksSupportTypeWfNx.map(function (a) { return a.NextWorksSupportStepsId.toString(); }), false);
+                            self.listStep.push(Step);
+                        }
+                        if (self.listStep.length > 0) {
+                            var StepModel_1 = self.listStep[0];
+                            self.StepID = StepModel_1.StepID;
+                            self.StepNAME = StepModel_1.StepNAME;
+                            self.StepDESCRIPTION = StepModel_1.StepDESCRIPTION;
+                            self.StepSTEPCOLORCODE = StepModel_1.StepSTEPCOLORCODE;
+                            self.StepMAXPROCESSTIME = StepModel_1.StepMAXPROCESSTIME;
+                            self.StepISINITSTEP = StepModel_1.StepISINITSTEP;
+                            self.StepISFINISHSTEP = StepModel_1.StepISFINISHSTEP;
+                            self.listNextStep = StepModel_1.listNextStep;
+                            self.currentStep = StepModel_1.StepID;
+                        }
+                        self.StepCount = 0;
+                        self.isEdit = false;
+                    });
+                    $("#modalEdit").modal('toggle');
+                };
+                WorksTypes.prototype.onEditClicked = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    self.listSelectedPriority = [];
+                    self.listSelectedQualities = [];
+                    if (this.isValid(false)) {
+                        var typeModal = $('#modalAdd')[0].className.indexOf("in") > 0 ? "#modalAdd" : "#modalEdit";
+                        $(typeModal + ' input.cbPriority:checked').each(function () {
+                            self.listSelectedPriority.push($(this).attr('data-id'));
+                        });
+                        $(typeModal + ' input.cbQualities:checked').each(function () {
+                            self.listSelectedQualities.push($(this).attr('data-id'));
+                        });
+                        self.SaveCurrentStep();
+                        var user = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                        var editModel = new worksTypesModel_4.AddWorkTypeModel(self.WorksSupportTypeId, self.WorksSupportTypeName, self.Description, self.IconUrL, self.IsActived, self.IsSystem, self.listSelectedPriority.toString(), self.listSelectedQualities.toString(), JSON.stringify(self.listStep), user, self.OrderIndex, self.deletedStepId.toString());
+                        worksTypeService_1.default.update(editModel).then(function () {
+                            self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                            self.loadWorkType();
+                            $('#modalEdit').modal('hide');
+                            $('.modal-backdrop').modal('hide');
+                        });
+                    }
+                };
+                // cancel add
+                WorksTypes.prototype.onCancelAdd = function () {
+                    var $ = window.jQuery;
+                    $('#modalAdd').modal('hide');
+                    $('.modal-backdrop').modal('hide');
+                };
+                // cancel edit
+                WorksTypes.prototype.onCancelEdit = function () {
+                    var $ = window.jQuery;
+                    $('#modalEdit').modal('hide');
+                    $('.modal-backdrop').modal('hide');
+                };
+                WorksTypes.prototype.isValidEdit = function () {
+                    var validationErrors = new exception_1.ValidationException();
+                    if (!this.WorksSupportTypeName) {
+                        validationErrors.add("configurations.addWorksType.validation.nameIsRequire");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                WorksTypes.prototype.isValidAdd = function () {
+                    var validationErrors = new exception_1.ValidationException();
+                    var $ = window.jQuery;
+                    if (!this.WorksSupportTypeName) {
+                        validationErrors.add("WorksSupportTypeName", [], "Tên Loại công việc phải bắt buộc!");
+                        $('#WorksSupportTypeNameEdit').addClass("has-error");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                WorksTypes.prototype.resetValidation = function () {
+                    this.Errors.ResetError();
+                    var controls = document.getElementsByClassName("has-error");
+                    for (var i = 0; i < controls.length; i++) {
+                        controls[i].classList.remove('has-error');
+                    }
+                };
+                WorksTypes.prototype.onIconSelected = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.IconUrL = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                WorksTypes.prototype.onErrorEvent = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    event.forEach(function (error) {
+                        var key = error.key;
+                        var controls = document.getElementsByName(key);
+                        for (var i = 0; i < controls.length; i++) {
+                            controls[i].className += " has-error";
+                        }
+                    });
+                };
+                WorksTypes.prototype.ResetData = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    self.WorksSupportTypeId = 0;
+                    self.WorksSupportTypeName = "";
+                    self.Description = "";
+                    self.IconUrL = "";
+                    self.IsActived = true;
+                    self.IsSystem = false;
+                    self.StepID = "";
+                    self.StepNAME = "";
+                    self.StepDESCRIPTION = "";
+                    self.StepSTEPCOLORCODE = "#ffffff";
+                    self.StepMAXPROCESSTIME = "1";
+                    self.StepISINITSTEP = false;
+                    self.StepISFINISHSTEP = false;
+                    self.listStep = [];
+                    self.listNextStep = [];
+                    self.StepCount = 0;
+                    self.isEdit = false;
+                    self.currentStep = "";
+                    self.listSelectedQualities = [];
+                    self.listSelectedPriority = [];
+                    $('input.cbPriority:checked').each(function () {
+                        $(this).removeAttr("checked");
+                    });
+                    var selectedQualities = [];
+                    $('input.cbQualities:checked').each(function () {
+                        $(this).removeAttr("checked");
+                    });
+                    self.deletedStepId = [];
+                };
+                WorksTypes.prototype.SaveCurrentStep = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    var selectedNextStep = [];
+                    var typeModal = $('#modalAdd')[0].className.indexOf("in") > 0 ? "#modalAdd" : "#modalEdit";
+                    if (self.currentStep !== "") {
+                        //if actived step doesn't in edit mode, allow to save data
+                        if (self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === self.currentStep; })].isEdit === false) {
+                            var OldStep_1 = self.currentStep;
+                            var Step = new worksTypesModel_3.StepModel(OldStep_1, self.StepNAME, self.StepDESCRIPTION, self.StepSTEPCOLORCODE, self.StepMAXPROCESSTIME == "" ? "1" : self.StepMAXPROCESSTIME, self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === self.currentStep; })].StepISINITSTEP, self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === self.currentStep; })].StepISFINISHSTEP, self.listNextStep, self.isEdit);
+                            if (self.listStep.findIndex(function (obj) { return obj.StepID === OldStep_1; }) === -1)
+                                self.listStep.push(Step);
+                            else
+                                self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === OldStep_1; })] = Step;
+                        }
+                    }
+                };
+                WorksTypes.prototype.onTabClick = function (event, addOrEdit) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    var typeModal = $('#modalAdd')[0].className.indexOf("in") > 0 ? "#modalAdd" : "#modalEdit";
+                    this.SaveCurrentStep();
+                    var StepId = event.target.id;
+                    if (self.listStep.findIndex(function (obj) { return obj.StepID === StepId; }) === -1) {
+                        self.StepID = "";
+                        self.StepNAME = "";
+                        self.StepDESCRIPTION = "";
+                        self.StepSTEPCOLORCODE = "#ffffff";
+                        self.StepMAXPROCESSTIME = "1";
+                        self.StepISINITSTEP = false;
+                        self.StepISFINISHSTEP = false;
+                        self.listNextStep = [];
+                    }
+                    else {
+                        var Step = self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === StepId; })];
+                        self.StepID = Step.StepID;
+                        self.StepNAME = Step.StepNAME;
+                        self.StepDESCRIPTION = Step.StepDESCRIPTION;
+                        self.StepSTEPCOLORCODE = Step.StepSTEPCOLORCODE;
+                        self.StepMAXPROCESSTIME = Step.StepMAXPROCESSTIME;
+                        self.StepISINITSTEP = Step.StepISINITSTEP;
+                        self.StepISFINISHSTEP = Step.StepISFINISHSTEP;
+                        self.listNextStep = Step.listNextStep;
+                    }
+                };
+                WorksTypes.prototype.renameStep = function (id, addOrEdit) {
+                    var $ = window.jQuery;
+                    this.listStep[this.listStep.findIndex(function (obj) { return obj.StepID === id; })].isEdit = true;
+                    if (addOrEdit === "add") {
+                        $('#Add-Span-' + id).popover('hide');
+                    }
+                    else {
+                        $('#Edit-Span-' + id).popover('hide');
+                    }
+                    this.SaveCurrentStep();
+                };
+                WorksTypes.prototype.addStep = function (add) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    var isVal = (add !== true) ? $("#stepNameEdit").val() === undefined ? false : true : $("#stepName").val() === undefined ? false : true;
+                    if (isVal) {
+                        return false;
+                    }
+                    if (self.listStep.length > 0)
+                        self.SaveCurrentStep();
+                    self.StepCount--;
+                    self.StepNAME = "";
+                    self.StepDESCRIPTION = "";
+                    self.StepSTEPCOLORCODE = "#ffffff";
+                    self.StepMAXPROCESSTIME = "1";
+                    self.StepISINITSTEP = false;
+                    self.StepISFINISHSTEP = false;
+                    self.listNextStep = [];
+                    var Step = new worksTypesModel_3.StepModel(self.StepCount.toString(), "", self.StepDESCRIPTION, self.StepSTEPCOLORCODE, self.StepMAXPROCESSTIME == "" ? "1" : self.StepMAXPROCESSTIME, self.StepISINITSTEP, self.StepISFINISHSTEP, self.listNextStep, true);
+                    self.listStep.unshift(Step);
+                    self.currentStep = self.StepCount.toString();
+                };
+                WorksTypes.prototype.onNextStepSelected = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    var idVal12 = event.target.id;
+                    var idVal = event.target.value;
+                    var index = self.listNextStep.indexOf(idVal);
+                    if (event.target.checked === false) {
+                        if (index > -1)
+                            self.listNextStep.removeItem(self.listNextStep[index]);
+                    }
+                    else {
+                        if (index === -1)
+                            self.listNextStep.push(idVal);
+                    }
+                };
+                WorksTypes.prototype.onDelete = function (event) {
+                    var id = event.target.parentNode.parentElement.parentElement.parentElement.id;
+                    var self = this;
+                    var indexRemove = self.listStep.findIndex(function (obj) { return obj.StepID === id; });
+                    if (indexRemove >= 0) {
+                        self.listStep.splice(indexRemove, 1);
+                        if (id > 0)
+                            self.deletedStepId.push(id);
+                    }
+                    return false;
+                };
+                WorksTypes.prototype.onRename = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var id = event.target.parentNode.parentElement.parentElement.parentElement.id;
+                    self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].isEdit = true;
+                    $('[rel="popover"]').popover('hide');
+                };
+                WorksTypes.prototype.setInit = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var id = event.target.parentNode.parentElement.parentElement.parentElement.id;
+                    self.listStep.forEach(function (element) {
+                        element.StepISINITSTEP = false;
+                    });
+                    if (self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISFINISHSTEP === true || self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISFINISHSTEP.toString() === "1")
+                        self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISFINISHSTEP = false;
+                    self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISINITSTEP = true;
+                    $('[rel="popover"]').popover('hide');
+                };
+                WorksTypes.prototype.setFinish = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var id = event.target.parentNode.parentElement.parentElement.parentElement.id;
+                    self.listStep.forEach(function (element) {
+                        element.StepISFINISHSTEP = false;
+                    });
+                    if (self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISINITSTEP === true || self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISINITSTEP.toString() === "1")
+                        self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISINITSTEP = false;
+                    self.listStep[self.listStep.findIndex(function (obj) { return obj.StepID === id; })].StepISFINISHSTEP = true;
+                    $('[rel="popover"]').popover('hide');
+                };
+                WorksTypes.prototype.onEnter = function (event) {
+                    if (event.target.value.trim() === "") {
+                        event.preventDefault();
+                    }
+                    else {
+                        var $ = window.jQuery;
+                        var self_1 = this;
+                        self_1.StepNAME = event.target.value.trim();
+                        self_1.listStep[self_1.listStep.findIndex(function (obj) { return obj.StepID === event.target.id; })].isEdit = false;
+                    }
+                };
+                WorksTypes.prototype.setCurrentStep = function (event) {
+                    var self = this;
+                    self.currentStep = event.target.id;
+                    return false;
+                };
+                return WorksTypes;
+            }(ui_1.BasePage));
+            __decorate([
+                core_1.ViewChild(errorMessage_1.ErrorMessage),
+                __metadata("design:type", errorMessage_1.ErrorMessage)
+            ], WorksTypes.prototype, "Errors", void 0);
+            __decorate([
+                core_1.ViewChild(directive_1.Grid),
+                __metadata("design:type", directive_1.Grid)
+            ], WorksTypes.prototype, "gridComponent", void 0);
+            WorksTypes = __decorate([
+                core_1.Component({
+                    templateUrl: "app/modules/configurations/worksType/worksTypes.html",
+                    directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page, directive_1.Form, directive_1.FormTextInput, directive_1.FormFooter, directive_1.FormTextArea, directive_1.FormStatusToggle, directive_1.FormNumberInput, errorMessage_1.ErrorMessage]
+                }),
+                __metadata("design:paramtypes", [router_1.Router])
+            ], WorksTypes);
+            exports_1("WorksTypes", WorksTypes);
+        }
+    };
+});
+//# sourceMappingURL=worksTypes.js.map

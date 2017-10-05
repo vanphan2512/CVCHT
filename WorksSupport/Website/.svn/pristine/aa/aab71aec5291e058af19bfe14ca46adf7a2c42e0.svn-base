@@ -1,0 +1,51 @@
+{
+    "project": {
+        "title": "Loại dự án",
+        "addProjectAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Loại dự án không đúng",
+            "roleNotExist": "Không tìm thấy Loại dự án"
+        },
+        "grid": {
+            "index": "Thứ tự hiển thị",
+            "name": "Loại dự án",
+            "description": "Mô tả",
+            "iconUrl": "Icon",
+            "isSystem": "Hệ thống",
+            "isActive": "Kích hoạt"
+        },
+        "addProject": {
+            "title": "Thêm Loại dự án",
+            "save": "Thêm mới",
+            "inputDesc": "Nhập mô tả",
+            "desc": "Mô tả",
+            "inputOrderIndex": "Nhập thứ tự",
+            "orderIndex": "Số thứ tự",
+            "orderIndexIsRequire": "Nhập thứ tự hiển thị",
+            "orderIndexAlreadyExisted": "Thứ tự hiển thị đã tồn tại",
+            "inputWorksSupportTypeId": "Loại công việc",
+            "worksSupportTypeIdIsRequire": "Chọn Loại công việc",
+            "validation": {
+                "idIsInvalid": "Loại dự án không đúng",
+                "roleNotExist": "Không tìm thấy Loại dự án",
+                "nameIsRequire": "Tên dự án không hợp lệ",
+                "keyAlreadyExisted": "Tên dự án đã tồn tại"
+            }
+        }
+    },
+    "worksgroup": {
+        "title": "Nhóm công việc",
+        "addWorksGroupAction": "Thêm mới",
+        "validation": {
+            "idIsInvalid": "Nhóm công việc không đúng",
+            "roleNotExist": "Không tìm thấy nhóm công việc"
+        },
+        "grid": {
+            "orderIndex": "Thứ tự hiển thị",
+            "groupName": "Nhóm công việc",
+            "description": "Mô tả",
+            "isActived": "Kích hoạt"
+            // "isSystem": "Hệ thống",
+        }
+    }
+}

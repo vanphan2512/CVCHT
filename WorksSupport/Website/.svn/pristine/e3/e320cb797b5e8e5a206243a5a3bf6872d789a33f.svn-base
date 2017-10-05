@@ -1,0 +1,44 @@
+System.register(["../../config/appConfig"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function getAppConfig() {
+        return appConfig_1.default;
+    }
+    function getRoutes() {
+        var items = [];
+        appConfig_1.default.modules.forEach(function (module) {
+            items = items.concat(module.routes);
+        });
+        return items;
+    }
+    function getModuleMenuItems() {
+        var items = new Array();
+        appConfig_1.default.modules.forEach(function (module) {
+            items = appendModuleMenuItems(items, module);
+        });
+        return items;
+    }
+    function appendModuleMenuItems(items, module) {
+        module.menus.forEach(function (menuItem) {
+            items.push(menuItem);
+        });
+        return items;
+    }
+    var appConfig_1, configHelper;
+    return {
+        setters: [
+            function (appConfig_1_1) {
+                appConfig_1 = appConfig_1_1;
+            }
+        ],
+        execute: function () {
+            configHelper = {
+                getModuleMenuItems: getModuleMenuItems,
+                getRoutes: getRoutes,
+                getAppConfig: getAppConfig
+            };
+            exports_1("default", configHelper);
+        }
+    };
+});
+//# sourceMappingURL=configHelper.js.map

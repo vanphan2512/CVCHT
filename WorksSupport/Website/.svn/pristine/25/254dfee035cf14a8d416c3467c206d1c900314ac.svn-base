@@ -1,0 +1,295 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./prioritiesModel", "../_share/services/priorityService", "../../../common/directive", "./updateModel", "./deleteModel", "../../../common/services/cacheService", "../../../common/models/exception"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, router_1, ui_1, prioritiesModel_1, priorityService_1, directive_1, directive_2, updateModel_1, deleteModel_1, cacheService_1, cacheService_2, exception_1, Priorities;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (prioritiesModel_1_1) {
+                prioritiesModel_1 = prioritiesModel_1_1;
+            },
+            function (priorityService_1_1) {
+                priorityService_1 = priorityService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+                directive_2 = directive_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (deleteModel_1_1) {
+                deleteModel_1 = deleteModel_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            }
+        ],
+        execute: function () {
+            Priorities = (function (_super) {
+                __extends(Priorities, _super);
+                function Priorities(router) {
+                    var _this = _super.call(this) || this;
+                    _this.modelIconUrl = String.empty;
+                    _this.WorksSupportPriorityName = String.empty;
+                    _this.Description = String.empty;
+                    _this.OrderIndex = 0;
+                    _this.IsActived = false;
+                    _this.IsSystem = false;
+                    _this.IconUrl = String.empty;
+                    _this.User = String.empty;
+                    _this.actions = [];
+                    _this.selectedValue = [];
+                    _this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    _this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var self = _this;
+                    self.router = router;
+                    self.model = new prioritiesModel_1.PrioritiesModel(self.i18nHelper);
+                    self.loadPriorities();
+                    return _this;
+                }
+                Priorities.prototype.addPageAction = function (action) {
+                    this.actions.push(action);
+                };
+                //load priorities
+                Priorities.prototype.loadPriorities = function () {
+                    var self = this;
+                    priorityService_1.default.getPrioritiesAll().then(function (items) {
+                        self.model.importPriority(items);
+                    });
+                };
+                // show popup add
+                Priorities.prototype.onShowPopupAdd = function (event) {
+                    var $ = window.jQuery;
+                    this.model.OrderIndex = 0;
+                    this.model.IsActived = false;
+                    this.model.IsSystem = false;
+                    this.model.Description = String.empty;
+                    this.model.IconUrl = String.empty;
+                    this.model.WorksSupportPriorityName = String.empty;
+                    this.OrderIndex = 0;
+                    this.WorksSupportPriorityName = String.empty;
+                    this.IsActived = false;
+                    this.IsSystem = false;
+                    this.Description = String.empty;
+                    this.IconUrl = String.empty;
+                    this.modelIconUrl = String.empty;
+                    $(".form-control").removeClass("invalid");
+                    $(".form-control").removeClass("validation");
+                };
+                // add new priorities
+                Priorities.prototype.onAddPriorities = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    if (this.isValidAdd()) {
+                        this.model.IconUrl = self.modelIconUrl;
+                        this.model.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                        this.model.IsActived = this.IsActived;
+                        this.model.IsSystem = this.IsSystem;
+                        this.model.OrderIndex = this.OrderIndex;
+                        priorityService_1.default.create(this.model).then(function () {
+                            $('#modalCreate').modal('hide');
+                            $('.modal-backdrop').modal('hide');
+                            self.model = new prioritiesModel_1.PrioritiesModel(self.i18nHelper);
+                            self.loadPriorities();
+                        });
+                    }
+                };
+                // cancel Add 
+                Priorities.prototype.onCancelAdd = function () {
+                    var $ = window.jQuery;
+                    $('#modalCreate').modal('hide');
+                    $('.modal-backdrop').modal('hide');
+                };
+                // validation for add model
+                Priorities.prototype.isValidAdd = function () {
+                    var validationErrors = new exception_1.ValidationException();
+                    if (!this.model.worksSupportPriorityName) {
+                        validationErrors.add("configurations.addOrUpdatePriority.validation.nameIsRequireAdd");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                // select icon on add model
+                Priorities.prototype.onIconSelectedAdd = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.modelIconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                // show popup Edit
+                Priorities.prototype.onShowPopupEdit = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    priorityService_1.default.get(event.item.WorksSupportPriorityId).then(function (item) {
+                        self.WorksSupportPriorityId = item.WorksSupportPriorityId;
+                        self.WorksSupportPriorityName = item.WorksSupportPriorityName;
+                        self.Description = item.Description;
+                        self.OrderIndex = item.OrderIndex;
+                        self.IsActived = item.IsActived;
+                        self.IsSystem = item.IsSystem;
+                        self.IconUrl = item.IconUrl;
+                        self.User = item.User;
+                    });
+                    $(".form-control").removeClass("invalid");
+                    $(".form-control").removeClass("validation");
+                    $('#modalUpdate').modal('toggle');
+                };
+                // edit priorities
+                Priorities.prototype.onEditPriority = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var updateModel = new updateModel_1.UpdatePriorityModel();
+                    self.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    updateModel.import(self);
+                    if (this.isValidEdit()) {
+                        priorityService_1.default.update(updateModel).then(function () {
+                            $('#modalUpdate').modal('hide');
+                            $('.modal-backdrop').modal('hide');
+                            self.model = new prioritiesModel_1.PrioritiesModel(self.i18nHelper);
+                            self.loadPriorities();
+                        });
+                    }
+                };
+                // cancel edit
+                Priorities.prototype.onCancelEdit = function () {
+                    var $ = window.jQuery;
+                    $('#modalUpdate').modal('hide');
+                    $('.modal-backdrop').modal('hide');
+                };
+                // validation for edit model
+                Priorities.prototype.isValidEdit = function () {
+                    var validationErrors = new exception_1.ValidationException();
+                    if (!this.WorksSupportPriorityName) {
+                        validationErrors.add("configurations.addOrUpdatePriority.validation.nameIsRequireEdit");
+                    }
+                    if (this.OrderIndex === 0) {
+                        validationErrors.add("configurations.addOrUpdatePriority.validation.orderIndexInvalid");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                // select icon on popup edit
+                Priorities.prototype.onIconSelectedEdit = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.IconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                // show popup delete
+                Priorities.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows(".selected").data();
+                    this.User = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    for (var i = 0; i < grid.length; i++) {
+                        this.selectedValue.push({ id: grid[i]["WorksSupportPriorityId"], name: grid[i]["WorksSupportPriorityName"] });
+                        lstId.push(grid[i]["WorksSupportPriorityId"]);
+                    }
+                    this.objDelete = new deleteModel_1.DeleteModel(lstId.toString(), this.User);
+                };
+                // delte priorities
+                Priorities.prototype.onDeletePrioritys = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    priorityService_1.default.delete(this.objDelete).then(function (event) {
+                        $("#modalDelete").modal("hide");
+                        $(".modal-backdrop").modal("hide");
+                        self.model = new prioritiesModel_1.PrioritiesModel(self.i18nHelper);
+                        self.loadPriorities();
+                    });
+                };
+                // Search by IsDelete
+                Priorities.prototype.onStatusChange = function (event) {
+                    // Get value of dropdown list
+                    var $ = window.jQuery;
+                    var currentIsDelete = event.currentTarget.value;
+                    var priorityName = $("#priorityName").val();
+                    var self = this;
+                    priorityService_1.default.getPriorities(priorityName, currentIsDelete, 0, 10).then(function (items) {
+                        self.model.importPriority(items);
+                    });
+                    // check status is delete to show delete button.
+                    if (currentIsDelete === "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                    }
+                };
+                // Search data by name
+                Priorities.prototype.SearchByKey = function (event) {
+                    var $ = window.jQuery;
+                    var priorityName = $("#priorityName").val();
+                    var currentIsDelete = $(".custom-select .form-control").val();
+                    var self = this;
+                    priorityService_1.default.getPriorities(priorityName, currentIsDelete, 0, 10).then(function (items) {
+                        self.model.importPriority(items);
+                    });
+                };
+                Priorities.prototype.onToggleSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdatePriorityModel();
+                    model.import(event.item);
+                    priorityService_1.default.update(model).then(function (event) {
+                        self.model = new prioritiesModel_1.PrioritiesModel(self.i18nHelper);
+                        self.loadPriorities();
+                    });
+                };
+                return Priorities;
+            }(ui_1.BasePage));
+            __decorate([
+                core_1.ViewChild(directive_1.Grid),
+                __metadata("design:type", directive_1.Grid)
+            ], Priorities.prototype, "gridComponent", void 0);
+            Priorities = __decorate([
+                core_1.Component({
+                    templateUrl: "app/modules/configurations/priority/priorities.html",
+                    directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page, directive_2.Form, directive_2.FormTextInput, directive_2.FormFooter, directive_2.FormTextArea, directive_2.FormStatusToggle, directive_2.FormNumberInput]
+                }),
+                __metadata("design:paramtypes", [router_1.Router])
+            ], Priorities);
+            exports_1("Priorities", Priorities);
+        }
+    };
+});
+//# sourceMappingURL=priorities.js.map

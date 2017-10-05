@@ -1,0 +1,53 @@
+System.register(["../../../../common/models/layout", "../../project/projects", "../../../../common/enum", "./route"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var layout_1, projects_1, enum_1, route_1;
+    var module;
+    function createModule() {
+        var module = new layout_1.Module("app/modules/configurations", "configurations");
+        module.menus.push(new layout_1.MenuItem("Độ ưu tiên", route_1.default.priority.priorities.name, "fa fa-sort-amount-desc m-right-10"), new layout_1.MenuItem("Trạng Thái", route_1.default.status.status.name, "fa fa-signal m-right-10"), new layout_1.MenuItem("Quyền Member Trên Loại", route_1.default.member.members.name, "fa fa-user-circle-o m-right-10"), new layout_1.MenuItem("Đánh Giá Chất Lượng", route_1.default.quality.qualities.name, "fa fa-check-square-o m-right-10"), new layout_1.MenuItem("Loại Công Việc", route_1.default.worksType.worksTypes.name, "fa fa-th-list m-right-10"));
+        module.addRoutes([
+            // Add Priority route
+            { path: route_1.default.priority.priorities.path, name: route_1.default.priority.priorities.name, component: projects_1.Priorities, data: { authentication: enum_1.AuthenticationMode.Require }, useAsDefault: true },
+            { path: route_1.default.priority.addPriority.path, name: route_1.default.priority.addPriority.name, component: projects_1.Priorities, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.priority.editPriority.path, name: route_1.default.priority.editPriority.name, component: projects_1.Priorities, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // Add Status route
+            { path: route_1.default.status.status.path, name: route_1.default.status.status.name, component: Status, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.status.addStatus.path, name: route_1.default.status.addStatus.name, component: Status, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.status.editStatus.path, name: route_1.default.status.editStatus.name, component: Status, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // Add Member route
+            { path: route_1.default.member.members.path, name: route_1.default.member.members.name, component: Members, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.member.addMember.path, name: route_1.default.member.addMember.name, component: Members, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.member.editMember.path, name: route_1.default.member.editMember.name, component: Members, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // Add Quality route
+            { path: route_1.default.quality.qualities.path, name: route_1.default.quality.qualities.name, component: Qualities, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.quality.addQuality.path, name: route_1.default.quality.addQuality.name, component: Qualities, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.quality.editQuality.path, name: route_1.default.quality.editQuality.name, component: Qualities, data: { authentication: enum_1.AuthenticationMode.Require } },
+            // Add WorksType route
+            { path: route_1.default.worksType.worksTypes.path, name: route_1.default.worksType.worksTypes.name, component: WorksTypes, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.worksType.addWorksType.path, name: route_1.default.worksType.addWorksType.name, component: WorksTypes, data: { authentication: enum_1.AuthenticationMode.Require } },
+            { path: route_1.default.worksType.editWorksType.path, name: route_1.default.worksType.editWorksType.name, component: WorksTypes, data: { authentication: enum_1.AuthenticationMode.Require } },
+        ]);
+        return module;
+    }
+    return {
+        setters:[
+            function (layout_1_1) {
+                layout_1 = layout_1_1;
+            },
+            function (projects_1_1) {
+                projects_1 = projects_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            }],
+        execute: function() {
+            module = createModule();
+            exports_1("default",module);
+        }
+    }
+});
+//# sourceMappingURL=module.js.map

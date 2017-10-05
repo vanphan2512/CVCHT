@@ -1,0 +1,40 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var Hashtable;
+    return {
+        setters:[],
+        execute: function() {
+            Hashtable = (function () {
+                function Hashtable() {
+                    this.data = {};
+                }
+                Hashtable.prototype.getKeys = function () {
+                    var keys = [];
+                    for (var key in this.data) {
+                        keys.push(key);
+                    }
+                    return keys;
+                };
+                Hashtable.prototype.set = function (key, data) {
+                    this.data[key] = data;
+                };
+                Hashtable.prototype.exist = function (key) {
+                    return !!this.data[key];
+                };
+                Hashtable.prototype.get = function (key) {
+                    if (!this.exist(key)) {
+                        throw key + " value was not exist in Hashtable";
+                    }
+                    return this.data[key];
+                };
+                Hashtable.prototype.remove = function (key) {
+                    delete this.data[key];
+                };
+                return Hashtable;
+            }());
+            exports_1("Hashtable", Hashtable);
+        }
+    }
+});
+//# sourceMappingURL=hashtable.js.map

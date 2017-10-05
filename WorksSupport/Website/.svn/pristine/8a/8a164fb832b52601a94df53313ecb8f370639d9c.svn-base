@@ -1,0 +1,73 @@
+System.register(["./common/event", "./common/helpers/configHelper", "angular2/router"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var event_1, configHelper_1, router_1;
+    var ApplicationState, ApplicationStateFactory;
+    return {
+        setters:[
+            function (event_1_1) {
+                event_1 = event_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            }],
+        execute: function() {
+            ApplicationState = (function () {
+                function ApplicationState() {
+                    this.injector = null;
+                }
+                ApplicationState.prototype.registerEvents = function () {
+                    var self = this;
+                    self.eventManager = window.ioc.resolve("IEventManager");
+                    self.eventManager.subscribe(event_1.ApplicationStateEvent.Init, function (args) { return self.onApplicationInit(args); });
+                    self.eventManager.subscribe(event_1.ApplicationStateEvent.BeforeReady, function (args) { return self.onApplicationBeforeReady(args); });
+                    self.eventManager.subscribe(event_1.ApplicationStateEvent.Ready, function (args) { return self.onApplicationReady(args); });
+                    // self.eventManager.subscribe(ApplicationStateEvent.Ready, (args: any) => self.onApplicationReady(args));
+                    self.eventManager.subscribe(event_1.ApplicationStateEvent.UnAuthorizeRequest, function (routeInstruction) { return self.onUnAuthorizeRequest(routeInstruction); });
+                    self.eventManager.subscribe(event_1.ApplicationStateEvent.Unload, function (args) { return self.onApplicationUnload(args); });
+                };
+                ApplicationState.prototype.setInjector = function (injector) {
+                    this.injector = injector;
+                };
+                ApplicationState.prototype.getInjector = function () {
+                    return this.injector;
+                };
+                ApplicationState.prototype.onUnAuthorizeRequest = function (routeInstruction) {
+                    var router = this.injector.get(router_1.Router);
+                    router.navigate([configHelper_1.default.getAppConfig().loginUrl]);
+                };
+                ApplicationState.prototype.onApplicationInit = function (args) {
+                    /* Consider to move to event */
+                    document.title = configHelper_1.default.getAppConfig().app.name;
+                };
+                ApplicationState.prototype.onApplicationBeforeReady = function (args) {
+                };
+                ApplicationState.prototype.onApplicationReady = function (args) {
+                    console.log("onApplicationReady");
+                    this.eventManager.publish(event_1.LoadingIndicatorEvent.Hide);
+                };
+                ApplicationState.prototype.onApplicationUnload = function (args) {
+                };
+                return ApplicationState;
+            }());
+            exports_1("ApplicationState", ApplicationState);
+            ApplicationStateFactory = (function () {
+                function ApplicationStateFactory() {
+                }
+                ApplicationStateFactory.getInstance = function () {
+                    if (!ApplicationStateFactory.appStateInstance) {
+                        ApplicationStateFactory.appStateInstance = new ApplicationState();
+                    }
+                    return ApplicationStateFactory.appStateInstance;
+                };
+                ApplicationStateFactory.appStateInstance = null;
+                return ApplicationStateFactory;
+            }());
+            exports_1("ApplicationStateFactory", ApplicationStateFactory);
+        }
+    }
+});
+//# sourceMappingURL=applicationState.js.map

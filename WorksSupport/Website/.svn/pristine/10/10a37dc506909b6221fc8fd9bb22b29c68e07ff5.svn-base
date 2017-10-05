@@ -1,0 +1,28 @@
+System.register(["../../common/helpers/configHelper", "../services/authService"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var configHelper_1, authService_1;
+    var userService;
+    function signout() {
+        var token = authService_1.default.getAuth().token.value;
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}users/{1}/signout", configHelper_1.default.getAppConfig().api.baseUrl, token);
+        return connector.post(url, null);
+    }
+    return {
+        setters:[
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (authService_1_1) {
+                authService_1 = authService_1_1;
+            }],
+        execute: function() {
+            userService = {
+                signout: signout
+            };
+            exports_1("default",userService);
+        }
+    }
+});
+//# sourceMappingURL=userService.js.map

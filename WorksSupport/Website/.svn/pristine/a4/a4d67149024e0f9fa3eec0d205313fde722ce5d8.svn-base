@@ -1,0 +1,405 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./qualitiesModel", "../_share/services/qualityService", "../../../common/directive", "./updateModel", "./editModel", "../_share/config/route", "../../../common/services/cacheService", "../../../common/models/exception", "../../../common/layouts/default/directives/common/errorMessage", "../../../common/enum"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, router_1, ui_1, qualitiesModel_1, qualitiesModel_2, qualityService_1, directive_1, updateModel_1, editModel_1, route_1, cacheService_1, cacheService_2, exception_1, errorMessage_1, enum_1, Qualities;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (qualitiesModel_1_1) {
+                qualitiesModel_1 = qualitiesModel_1_1;
+                qualitiesModel_2 = qualitiesModel_1_1;
+            },
+            function (qualityService_1_1) {
+                qualityService_1 = qualityService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (editModel_1_1) {
+                editModel_1 = editModel_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            },
+            function (errorMessage_1_1) {
+                errorMessage_1 = errorMessage_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }
+        ],
+        execute: function () {
+            Qualities = (function (_super) {
+                __extends(Qualities, _super);
+                function Qualities(router) {
+                    var _this = _super.call(this) || this;
+                    _this.modelIconUrl = String.empty;
+                    _this.WorksSupportQualityId = 0;
+                    _this.WorksSupportQualityName = String.empty;
+                    _this.Description = String.empty;
+                    _this.IconUrl = String.empty;
+                    _this.OrderIndex = 0;
+                    _this.User = String.empty;
+                    _this.actions = [];
+                    _this.selectedValue = [];
+                    _this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+                    _this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    _this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    _this.roleValue = enum_1.RoleValue.Admin;
+                    _this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === _this.roleValue ? true : false;
+                    _this.isAddPopup = false;
+                    var self = _this;
+                    self.router = router;
+                    self.model = new qualitiesModel_1.QualitiesModel(self.i18nHelper);
+                    self.loadQualities();
+                    return _this;
+                }
+                Qualities.prototype.ngOnInit = function () {
+                    this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    this.isAdmin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+                };
+                Qualities.prototype.onAddNewQualitiesClicked = function () {
+                    var grid = this.gridComponent.grid.row.add({
+                        "WorksSupportQualityId": "0",
+                        "IconUrl": "fa fa-edit"
+                    }).draw();
+                    // this.router.navigate([route.priorities.addRole.name]);
+                };
+                Qualities.prototype.onEditMemberClicked = function (event) {
+                    // this.router.navigate([route.role.editRole.name, { id: event.item.id }]);
+                };
+                Qualities.prototype.onDeleteMembersItemClicked = function (event) {
+                    var self = this;
+                    qualityService_1.default.delete(event.item.id).then(function () {
+                        self.loadQualities();
+                    });
+                };
+                Qualities.prototype.loadQualities = function () {
+                    var self = this;
+                    qualityService_1.default.getQualilies().then(function (items) {
+                        self.model.importQualities(items);
+                    });
+                };
+                // Delete Qualities
+                Qualities.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows(".selected").data();
+                    for (var i = 0; i < grid.length; i++) {
+                        if (grid[i]["IsSystem"] === true && this.userLogin !== this.roleValue) {
+                            this.selectedValue.push({ id: grid[i]["WorksSupportQualityId"], name: grid[i]["WorksSupportQualityName"], isSystem: grid[i]["IsSystem"] });
+                            lstId.push(grid[i]["WorksSupportQualityId"]);
+                        }
+                        if (this.userLogin === enum_1.RoleValue.Admin) {
+                            this.selectedValue.push({ id: grid[i]["WorksSupportQualityId"], name: grid[i]["WorksSupportQualityName"], IsSystem: grid[i]["IsSystem"] });
+                            lstId.push(grid[i]["WorksSupportQualityId"]);
+                        }
+                    }
+                    this.objDelete = new qualitiesModel_2.DeleteModel(lstId.toString(), this.roleValue);
+                };
+                Qualities.prototype.onDeleteQualitys = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    console.log(this.objDelete);
+                    qualityService_1.default.delete(this.objDelete).then(function (event) {
+                        self.router.navigate([route_1.default.quality.qualities.name]);
+                        $("#modal").modal("hide");
+                        $(".modal-backdrop").modal("hide");
+                        self.loadQualities();
+                    });
+                };
+                // Get data by status : 1/0
+                Qualities.prototype.onStatusChange = function (event) {
+                    var self = this;
+                    var currentIsDelete = event.currentTarget.value;
+                    var $ = window.jQuery;
+                    var isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var isCanEdit = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+                    var qualitiName = $("#qualitiName").val();
+                    // get data of dropdownlist.
+                    qualityService_1.default.getQualityBy(qualitiName, currentIsDelete, 0, 1000).then(function (items) {
+                        self.model.importQualities(items);
+                    });
+                    // check status is delete to show delete button.
+                    if (currentIsDelete === "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                        if (isCanDelete) {
+                            self.gridComponent.grid.column(0).visible(false);
+                        }
+                        if (isCanEdit) {
+                            var num = self.gridComponent.grid.column.length - 1;
+                            self.gridComponent.grid.column(num).visible(false);
+                        }
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                        if (isCanDelete) {
+                            self.gridComponent.grid.column(0).visible(true);
+                        }
+                        if (isCanEdit) {
+                            var num = self.gridComponent.grid.column.length - 1;
+                            self.gridComponent.grid.column(num).visible(true);
+                        }
+                    }
+                };
+                // Search data by name
+                Qualities.prototype.SearchByKey = function (event) {
+                    var $ = window.jQuery;
+                    var qualitiName = $("#qualitiName").val();
+                    var currentIsDelete = $(".custom-select .form-control").val();
+                    var self = this;
+                    qualityService_1.default.getQualityBy(qualitiName, currentIsDelete, 0, 1000).then(function (items) {
+                        self.model.importQualities(items);
+                    });
+                };
+                Qualities.prototype.onToggleSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateQualityModel();
+                    model.import(event.item);
+                    qualityService_1.default.update(model).then(function (event) {
+                        self.router.navigate([route_1.default.quality.qualities.name]);
+                    });
+                };
+                Qualities.prototype.onIconSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateQualityModel();
+                    model.import(event.item);
+                    qualityService_1.default.update(model).then(function (event) {
+                        self.router.navigate([route_1.default.quality.qualities.name]);
+                    });
+                };
+                Qualities.prototype.onSaveClicked = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    if (this.isValid(true)) {
+                        qualityService_1.default.createQuanlity(this.model).then(function () {
+                            $("#modalUpdate").modal("hide");
+                            $(".modal-backdrop").modal("hide");
+                            self.model = new qualitiesModel_1.QualitiesModel(self.i18nHelper);
+                            self.loadQualities();
+                        });
+                    }
+                    setTimeout(function () {
+                        self.validateOnServer();
+                    }, 500);
+                };
+                Qualities.prototype.onEditQuanlityClicked = function (event) {
+                    this.clearValidate(false);
+                    var self = this;
+                    var $ = window.jQuery;
+                    this.errorMess.errors = [];
+                    this.isAddPopup = false;
+                    $("div").remove(".alert");
+                    qualityService_1.default.get(event.item.WorksSupportQualityId).then(function (item) {
+                        self.WorksSupportQualityId = item.WorksSupportQualityId;
+                        self.WorksSupportQualityName = item.WorksSupportQualityName;
+                        self.Description = item.Description;
+                        self.IconUrl = item.IconUrl;
+                        self.OrderIndex = item.OrderIndex;
+                        self.IsActived = item.IsActived;
+                        self.IsSystem = item.IsSystem;
+                        self.User = item.User;
+                    });
+                    $('#modalUpdate').modal('toggle');
+                };
+                Qualities.prototype.onEditQuanlity = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var qualityId = this.WorksSupportQualityId;
+                    var qualityName = this.WorksSupportQualityName;
+                    var description = this.Description;
+                    var iconUrl = this.IconUrl;
+                    var orderIndex = this.OrderIndex;
+                    var isActived = this.IsActived;
+                    var isSystem = this.IsSystem;
+                    var user = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    var editModel = new editModel_1.EditModel(qualityId, qualityName, orderIndex, description, iconUrl, isActived, isSystem, user);
+                    if (this.isValid(false)) {
+                        qualityService_1.default.update(editModel).then(function () {
+                            $('#modalUpdate').modal('hide');
+                            $('.modal-backdrop').modal('hide');
+                            self.model = new qualitiesModel_1.QualitiesModel(self.i18nHelper);
+                            self.loadQualities();
+                        });
+                    }
+                    setTimeout(function () {
+                        self.validateOnServer();
+                    }, 500);
+                };
+                Qualities.prototype.onAddNewQuanlitesClick = function () {
+                    this.errorMess.errors = [];
+                    var $ = window.jQuery;
+                    var self = this;
+                    self.WorksSupportQualityId = 0;
+                    self.WorksSupportQualityName = "";
+                    self.Description = "";
+                    self.IconUrl = "";
+                    self.OrderIndex = 0;
+                    self.IsActived = true;
+                    self.IsSystem = false;
+                    self.User = "";
+                    this.isAddPopup = true;
+                };
+                Qualities.prototype.onAddClicked = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var worksSupportQualityId = this.WorksSupportQualityId;
+                    var worksSupportQualityName = this.WorksSupportQualityName;
+                    var description = this.Description;
+                    var IconUrl = self.IconUrl;
+                    var orderIndex = this.OrderIndex;
+                    var isActived = this.IsActived;
+                    var isSystem = this.IsSystem;
+                    var user = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    var editModel = new editModel_1.EditModel(worksSupportQualityId, worksSupportQualityName, orderIndex, description, IconUrl, isActived, isSystem, user);
+                    if (this.isValid(true)) {
+                        qualityService_1.default.createQuanlity(editModel).then(function () {
+                            $('#modalUpdate').modal('hide');
+                            $('.modal-backdrop').modal('hide');
+                            self.model = new qualitiesModel_1.QualitiesModel(self.i18nHelper);
+                            self.loadQualities();
+                        });
+                    }
+                };
+                // select icon on popup edit
+                Qualities.prototype.onIconSelectedEdit = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find("i").attr("class");
+                        self.IconUrl = icon;
+                        $("#myIconModal").modal("hide");
+                    });
+                };
+                // validation at client
+                Qualities.prototype.isValid = function (isAdd) {
+                    debugger;
+                    var validationErrors = new exception_1.ValidationException();
+                    var $ = window.jQuery;
+                    this.clearValidate(isAdd);
+                    var lenName = (this.WorksSupportQualityName === null ? 0 : this.WorksSupportQualityName.length);
+                    var lenDesc = (this.Description === null ? 0 : this.Description.length);
+                    var orderIndex = this.OrderIndex;
+                    if (!isAdd) {
+                        if (orderIndex <= 0 || orderIndex % 1 != 0 || orderIndex > 999) {
+                            validationErrors.add("OrderIndex", [], "NCS-000003: Thứ tự chất lượng không hợp lệ!");
+                            $("#OrderIndex").addClass("has-error");
+                        }
+                    }
+                    if (!this.WorksSupportQualityName) {
+                        validationErrors.add("WorksSupportQualityName", {}, "NCS-000004: Tên chất lượng là bắt buộc!");
+                        $("#WorksSupportQualityName").addClass("has-error");
+                    }
+                    if (lenName > 200) {
+                        validationErrors.add("WorksSupportQualityName", {}, "NCS-000005: Tên chất lượng không được vượt quá 200 kí tự!");
+                        $("#WorksSupportQualityName").addClass("has-error");
+                    }
+                    if (lenDesc > 2000) {
+                        validationErrors.add("Description", {}, "NCS-000006: Mô tả không được vượt quá 2000 kí tự!");
+                        $("#Description").addClass("has-error");
+                    }
+                    validationErrors.throwIfHasError();
+                    return !validationErrors.hasError();
+                };
+                // clear validation 
+                Qualities.prototype.clearValidate = function (isAdd) {
+                    var $ = window.jQuery;
+                    if (!isAdd) {
+                        $("#OrderIndex").removeClass("has-error");
+                    }
+                    $("#WorksSupportQualityName").removeClass("has-error");
+                    $("#Description").removeClass("has-error");
+                };
+                // clear validation when key down is pressed
+                Qualities.prototype.clearValidateInput = function (id) {
+                    var $ = window.jQuery;
+                    $("#" + id).removeClass("has-error");
+                    var arrErr = this.errorMess.errors;
+                    var index;
+                    for (var i = 0; i < arrErr.length; i++) {
+                        if (arrErr[i].key === id) {
+                            arrErr.splice(i, 1);
+                        }
+                    }
+                    this.errorMess.errors = arrErr;
+                };
+                Qualities.prototype.validateOnServer = function () {
+                    var $ = window.jQuery;
+                    var arrErr = this.errorMess.errors;
+                    for (var i = 0; i < arrErr.length; i++) {
+                        var key = arrErr[i].key;
+                        if (key === "WorksSupportQualityName") {
+                            $("#WorksSupportQualityName").addClass("has-error");
+                        }
+                        if (key === "OrderIndex") {
+                            $("#OrderIndex").addClass("has-error");
+                        }
+                    }
+                };
+                // cancel Add 
+                Qualities.prototype.onCancelAdd = function () {
+                    var $ = window.jQuery;
+                    $("#modalUpdate").modal("hide");
+                    $(".modal-backdrop").modal("hide");
+                };
+                return Qualities;
+            }(ui_1.BasePage));
+            __decorate([
+                core_1.ViewChild(directive_1.Grid),
+                __metadata("design:type", directive_1.Grid)
+            ], Qualities.prototype, "gridComponent", void 0);
+            __decorate([
+                core_1.ViewChild(errorMessage_1.ErrorMessage),
+                __metadata("design:type", errorMessage_1.ErrorMessage)
+            ], Qualities.prototype, "errorMess", void 0);
+            Qualities = __decorate([
+                core_1.Component({
+                    templateUrl: "app/modules/configurations/quality/qualities.html",
+                    directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page, directive_1.Form, directive_1.FormTextInput, directive_1.FormFooter, directive_1.FormTextArea, directive_1.FormStatusToggle, directive_1.FormNumberInput, errorMessage_1.ErrorMessage]
+                }),
+                __metadata("design:paramtypes", [router_1.Router])
+            ], Qualities);
+            exports_1("Qualities", Qualities);
+        }
+    };
+});
+//# sourceMappingURL=qualities.js.map

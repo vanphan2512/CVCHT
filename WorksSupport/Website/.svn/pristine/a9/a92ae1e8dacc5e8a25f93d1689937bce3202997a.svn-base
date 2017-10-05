@@ -1,0 +1,31 @@
+System.register(["../../../../common/models/layout", "../../users/userLogin", "../../../../common/enum"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var layout_1, userLogin_1, enum_1;
+    var umModule;
+    function createModule() {
+        var module = new layout_1.Module("app/modules/registration", "registration");
+        module.addRoutes([
+            { path: "/login", name: "Login", component: userLogin_1.UserLogin, data: { authentication: enum_1.AuthenticationMode.None } }
+        ]);
+        return module;
+    }
+    return {
+        setters:[
+            function (layout_1_1) {
+                layout_1 = layout_1_1;
+            },
+            function (userLogin_1_1) {
+                userLogin_1 = userLogin_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }],
+        execute: function() {
+            // console.log("registraiton module");
+            umModule = createModule();
+            exports_1("default",umModule);
+        }
+    }
+});
+//# sourceMappingURL=module.js.map

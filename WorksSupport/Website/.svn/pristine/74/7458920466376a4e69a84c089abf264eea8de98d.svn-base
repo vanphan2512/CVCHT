@@ -1,0 +1,22 @@
+import {Component, Input, Output, EventEmitter} from "angular2/core";
+import {BaseControl} from "../../models/ui";
+import {SelectUser} from "./selectUser";
+@Component({
+    selector: "form-user-select",
+    templateUrl: "app/common/directives/form/formUserSelect.html",
+    directives: [SelectUser]
+})
+export class FormUserSelect extends BaseControl {
+    @Input() labelText: string = String.empty;
+    @Input() placeHolderText: string = String.empty;
+    @Input() model: any;
+    @Output() modelChange = new EventEmitter();
+    public onUserAdded(user: any) {
+        this.model.push(user.id);
+        this.modelChange.emit(this.model);
+    }
+    public onUserRemoved(user: any) {
+        this.model.removeItem(user.id);
+        this.modelChange.emit(this.model);
+    }
+}

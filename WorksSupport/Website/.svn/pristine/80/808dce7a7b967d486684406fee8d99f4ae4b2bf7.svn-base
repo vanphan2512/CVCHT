@@ -1,0 +1,45 @@
+System.register(["../modules/registration/_share/config/module", "../modules/configurations/_share/config/module", "../common/enum"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var module_1, module_2, enum_1;
+    var modules;
+    return {
+        setters:[
+            function (module_1_1) {
+                module_1 = module_1_1;
+            },
+            function (module_2_1) {
+                module_2 = module_2_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }],
+        execute: function() {
+            modules = [
+                module_1.default,
+                module_2.default
+            ];
+            exports_1("default",{
+                app: {
+                    name: "Công Việc Hỗ Trợ"
+                },
+                ioc: "./config/ioc",
+                modules: modules,
+                loginUrl: "/Login",
+                defaultUrl: "/Priorities",
+                localization: {
+                    lang: enum_1.Languages.EN
+                },
+                auth: {
+                    token: "authtoken"
+                },
+                api: {
+                    // Api for deploy
+                    baseUrl: "http://nc.erp.workssupport.com/api/"
+                },
+                localeUrl: "/app/resources/locales/"
+            });
+        }
+    }
+});
+//# sourceMappingURL=appConfig.js.map

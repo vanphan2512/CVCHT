@@ -1,0 +1,91 @@
+System.register(["../../../common/models/ui", "angular2/router", "angular2/core", "./addProjectModel", "../../../common/directive", "../_share/services/projectService", "../../../common/enum", "../_share/config/route"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var ui_1, router_1, core_1, addProjectModel_1, directive_1, projectService_1, enum_1, route_1, AddProject;
+    return {
+        setters: [
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (addProjectModel_1_1) {
+                addProjectModel_1 = addProjectModel_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+            },
+            function (projectService_1_1) {
+                projectService_1 = projectService_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            }
+        ],
+        execute: function () {
+            AddProject = (function (_super) {
+                __extends(AddProject, _super);
+                function AddProject(router, routeParams) {
+                    var _this = _super.call(this) || this;
+                    _this.model = new addProjectModel_1.AddProjectModel();
+                    _this.mode = enum_1.FormMode.AddNew;
+                    var self = _this;
+                    self.router = router;
+                    return _this;
+                }
+                AddProject.prototype.onSaveClicked = function (event) {
+                    var self = this;
+                    if (self.mode === enum_1.FormMode.AddNew) {
+                        projectService_1.default.create(this.model).then(function () {
+                            self.router.navigate([route_1.default.project.projects.name]);
+                        });
+                        return;
+                    }
+                    projectService_1.default.update(this.model).then(function () {
+                        self.router.navigate([route_1.default.project.projects.name]);
+                    });
+                };
+                AddProject.prototype.onCancelClicked = function (event) {
+                    var self = this;
+                    self.router.navigate([route_1.default.project.projects.name]);
+                };
+                return AddProject;
+            }(ui_1.BasePage));
+            AddProject = __decorate([
+                core_1.Component({
+                    templateUrl: "app/modules/eoffice/project/addProject.html",
+                    directives: [directive_1.Page, directive_1.Form, directive_1.FormTextInput, directive_1.FormFooter, directive_1.FormTextArea]
+                }),
+                __metadata("design:paramtypes", [router_1.Router, router_1.RouteParams])
+            ], AddProject);
+            exports_1("AddProject", AddProject);
+        }
+    };
+});
+//# sourceMappingURL=addProject.js.map

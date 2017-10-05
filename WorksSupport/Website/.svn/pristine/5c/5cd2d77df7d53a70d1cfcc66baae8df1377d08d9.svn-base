@@ -1,0 +1,52 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var MembersModel, DeleteModel;
+    return {
+        setters:[],
+        execute: function() {
+            MembersModel = (function () {
+                function MembersModel(resourceHelper) {
+                    this.options = {};
+                    this.eventKey = "member_ondatasource_changed";
+                    this.actions = [];
+                    this.options = {
+                        columns: [
+                            { field: "WorksSupportMemberRoleId", title: resourceHelper.resolve("configurations.member.grid.index"), type: 'id', index: 0 },
+                            { field: "OrderIndex", title: resourceHelper.resolve("configurations.member.grid.index"), type: 'rownumber', index: 1, width: "5%", className: "text-center" },
+                            { field: "WorksSupportMemberRoleName", title: resourceHelper.resolve("configurations.member.grid.name"), type: 'text', index: 2, width: "20%" },
+                            { field: "Description", title: resourceHelper.resolve("configurations.member.grid.description"), type: 'text', index: 3, width: "20%" },
+                            { field: "IconUrl", title: resourceHelper.resolve("configurations.member.grid.iconUrl"), type: 'icon', index: 4, content: "<i class=\"fa-edit\" aria-hidden=\"true\"></i>", className: "text-center" },
+                            { field: "IsSystem", title: resourceHelper.resolve("configurations.member.grid.isSystem"), type: 'checkbox', index: 5, width: "5%", className: "text-center" },
+                            { field: "IsActived", title: resourceHelper.resolve("configurations.member.grid.isActive"), type: 'toggle', index: 6, width: "5%", className: "text-center" },
+                        ],
+                        data: [],
+                        enableEdit: false,
+                        enableDelete: false,
+                        ajaxUrl: "http://nc.erp.workssupport.com/api/v1/member/save"
+                    };
+                }
+                MembersModel.prototype.addPageAction = function (action) {
+                    this.actions.push(action);
+                };
+                MembersModel.prototype.importMembers = function (items) {
+                    var eventManager = window.ioc.resolve("IEventManager");
+                    eventManager.publish(this.eventKey, items);
+                };
+                return MembersModel;
+            }());
+            exports_1("MembersModel", MembersModel);
+            DeleteModel = (function () {
+                function DeleteModel(id, user) {
+                    this.Id = String.empty;
+                    this.User = String.empty;
+                    this.Id = id;
+                    this.User = user;
+                }
+                return DeleteModel;
+            }());
+            exports_1("DeleteModel", DeleteModel);
+        }
+    }
+});
+//# sourceMappingURL=membersModel.js.map

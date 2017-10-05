@@ -1,0 +1,187 @@
+System.register(["angular2/core", "../../models/ui", "./gridModel"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, ui_1, gridModel_1;
+    var Grid;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (gridModel_1_1) {
+                gridModel_1 = gridModel_1_1;
+            }],
+        execute: function() {
+            Grid = (function (_super) {
+                __extends(Grid, _super);
+                function Grid() {
+                    _super.call(this);
+                    this.eventKey = String.empty;
+                    this.options = {};
+                    this.onItemEditClicked = new core_1.EventEmitter();
+                    this.onItemDeleteClicked = new core_1.EventEmitter();
+                    this.onToggleSelectChanged = new core_1.EventEmitter();
+                    this.onIconSelectChanged = new core_1.EventEmitter();
+                }
+                Grid.prototype.onInit = function () {
+                    var self = this;
+                    self.model = new gridModel_1.GridModel(self.options);
+                    if (!String.isNullOrWhiteSpace(self.eventKey)) {
+                        self.registerEvent(self.eventKey, function (data) { self.onDataSourceChanged(data); });
+                    }
+                };
+                Grid.prototype.onDataSourceChanged = function (items) {
+                    var self = this;
+                    self.grid.clear();
+                    self.grid.rows.add(items).draw();
+                };
+                Grid.prototype.onReady = function () {
+                    var $ = window.jQuery;
+                    var self = this;
+                    $(document).ready(function () {
+                        var editor = new $.fn.dataTable.Editor({
+                            ajax: self.model.getAjaxUrl(),
+                            contentType: 'application/json',
+                            table: "#" + self.model.id,
+                            idSrc: self.model.getIDSrc(),
+                            fields: self.model.getFieldEditor()
+                        });
+                        self.grid = $("#" + self.model.id).DataTable({
+                            //dom: "Bfrtip",
+                            data: self.model.data,
+                            responsive: true,
+                            columnDefs: self.model.getColumns(),
+                            select: {
+                                style: 'multi',
+                                selector: 'td:first-child',
+                                info: false
+                            },
+                            searching: false,
+                            language: {
+                                "lengthMenu": "Hiển thị _MENU_ dòng",
+                                "zeroRecords": "Không có kết quả",
+                                "info": "",
+                                select: {
+                                    rows: {
+                                        _: "",
+                                    }
+                                }
+                            },
+                            lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "Tất cả"]],
+                            dom: '<"top"i>rt<"bottom"flp><"clear">',
+                            order: [[1, 'asc']],
+                            buttons: [],
+                            "rowCallback": function (row, data) {
+                                // Set the checked state of the checkbox in the table
+                                eval(self.model.generateRowCallbackCheckBox());
+                            }
+                        });
+                        editor.on('preSubmit', function (event, data, action) {
+                            // Example 1
+                            data.id = Object.keys(data.data)[0];
+                            var html = "";
+                            for (var i = 0; i < Object.keys(data.data[data.id]).length; i++) {
+                                var key = Object.keys(data.data[data.id])[i];
+                                var value = data.data[data.id][key];
+                                html += "data." + key + " = '" + value + "';\n";
+                            }
+                            eval(html);
+                            delete data.data;
+                            delete data.action;
+                        });
+                        editor.on('submitError', function (event, data, action, json) {
+                            alert('Cập nhật lỗi');
+                        });
+                        $("#" + self.model.id).on('click', 'tbody td:not(:first-child)', function () {
+                            editor.inline($(this), {
+                                submit: 'allIfChanged'
+                            });
+                        });
+                        $("#" + self.model.id).on('change', 'input.editor-active', function () {
+                            eval(self.model.generateOnChangeEventCheckBox());
+                        });
+                        self.bindEvents();
+                    });
+                };
+                Grid.prototype.bindEvents = function () {
+                    var self = this;
+                    var $ = window.jQuery;
+                    $("#" + self.model.id + " tbody").on("click", ".grid-edit-item", function () {
+                        var data = self.grid.row($(this).parents("tr")).data();
+                        self.onItemEditClicked.emit({ item: data, gtid: self.grid });
+                    });
+                    $("#" + self.model.id + " tbody").on("click", ".grid-delete-item", function () {
+                        var data = self.grid.row($(this).parents("tr")).data();
+                        self.onItemDeleteClicked.emit({ item: data, gtid: self.grid });
+                    });
+                    $("#" + self.model.id + " tbody").on("click", ".toggle-active", function () {
+                        var data = self.grid.row($(this).parents("tr")).data();
+                        self.onToggleSelectChanged.emit({ item: data, gtid: self.grid });
+                    });
+                    $("#" + self.model.id + " tbody").on("click", ".modalIcon", function () {
+                        this.iconRowSelect = self.grid.row($(this).parents("tr")).data();
+                        localStorage.removeItem('rowSelected');
+                        localStorage.setItem('rowSelected', JSON.stringify(this.iconRowSelect));
+                    });
+                    $("#myIconModal li").on("click", function () {
+                        var icon = $(this).find('i').attr("class");
+                        var data = JSON.parse(localStorage.getItem('rowSelected'));
+                        self.onIconSelectChanged.emit({ item: data, icon: icon, gtid: self.grid });
+                        $('#myIconModal').modal('hide');
+                    });
+                };
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', String)
+                ], Grid.prototype, "eventKey", void 0);
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "options", void 0);
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "onItemEditClicked", void 0);
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "onItemDeleteClicked", void 0);
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "onToggleSelectChanged", void 0);
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "onIconSelectChanged", void 0);
+                Grid = __decorate([
+                    core_1.Component({
+                        selector: "grid",
+                        templateUrl: "app/common/directives/grid/grid.html"
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], Grid);
+                return Grid;
+            }(ui_1.BaseControl));
+            exports_1("Grid", Grid);
+        }
+    }
+});
+//# sourceMappingURL=grid.js.map

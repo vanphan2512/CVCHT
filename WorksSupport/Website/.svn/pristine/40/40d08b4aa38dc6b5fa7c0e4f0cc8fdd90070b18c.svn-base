@@ -1,0 +1,24 @@
+System.register(["../helpers/configHelper"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function getPermissions() {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "permissions");
+        return connector.get(url);
+    }
+    var configHelper_1, permissionService;
+    return {
+        setters: [
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }
+        ],
+        execute: function () {
+            permissionService = {
+                getPermissions: getPermissions
+            };
+            exports_1("default", permissionService);
+        }
+    };
+});
+//# sourceMappingURL=permissionService.js.map

@@ -1,0 +1,72 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var AuthenticationMode, Languages, IoCType, FormSelectMode, FormMode, ItemStatus, InputValueType, HttpStatusCode, Guid, DisplayMode, ParameterValueType, RoleValue;
+    return {
+        setters: [],
+        execute: function () {
+            (function (AuthenticationMode) {
+                AuthenticationMode[AuthenticationMode["None"] = 0] = "None";
+                AuthenticationMode[AuthenticationMode["Require"] = 1] = "Require";
+            })(AuthenticationMode || (AuthenticationMode = {}));
+            exports_1("AuthenticationMode", AuthenticationMode);
+            ;
+            exports_1("Languages", Languages = {
+                EN: "en",
+                VN: "vn"
+            });
+            (function (IoCType) {
+                IoCType[IoCType["IConnector"] = 0] = "IConnector";
+            })(IoCType || (IoCType = {}));
+            exports_1("IoCType", IoCType);
+            ;
+            (function (FormSelectMode) {
+                FormSelectMode[FormSelectMode["Group"] = 0] = "Group";
+                FormSelectMode[FormSelectMode["Item"] = 1] = "Item";
+            })(FormSelectMode || (FormSelectMode = {}));
+            exports_1("FormSelectMode", FormSelectMode);
+            ;
+            (function (FormMode) {
+                FormMode[FormMode["AddNew"] = 0] = "AddNew";
+                FormMode[FormMode["Edit"] = 1] = "Edit";
+            })(FormMode || (FormMode = {}));
+            exports_1("FormMode", FormMode);
+            (function (ItemStatus) {
+                ItemStatus[ItemStatus["None"] = 0] = "None";
+                ItemStatus[ItemStatus["InActive"] = 1] = "InActive";
+                ItemStatus[ItemStatus["Active"] = 2] = "Active";
+                ItemStatus[ItemStatus["Deleted"] = 3] = "Deleted";
+                ItemStatus[ItemStatus["WaitForActivating"] = 4] = "WaitForActivating";
+            })(ItemStatus || (ItemStatus = {}));
+            exports_1("ItemStatus", ItemStatus);
+            (function (InputValueType) {
+                InputValueType[InputValueType["Text"] = 0] = "Text";
+                InputValueType[InputValueType["Currency"] = 1] = "Currency";
+            })(InputValueType || (InputValueType = {}));
+            exports_1("InputValueType", InputValueType);
+            (function (HttpStatusCode) {
+                HttpStatusCode[HttpStatusCode["OK"] = 200] = "OK";
+            })(HttpStatusCode || (HttpStatusCode = {}));
+            exports_1("HttpStatusCode", HttpStatusCode);
+            exports_1("Guid", Guid = {
+                Empty: "00000000-0000-0000-0000-000000000000"
+            });
+            (function (DisplayMode) {
+                DisplayMode[DisplayMode["View"] = 0] = "View";
+                DisplayMode[DisplayMode["Edit"] = 1] = "Edit";
+                DisplayMode[DisplayMode["Add"] = 4] = "Add";
+            })(DisplayMode || (DisplayMode = {}));
+            exports_1("DisplayMode", DisplayMode);
+            (function (ParameterValueType) {
+                ParameterValueType[ParameterValueType["String"] = 0] = "String";
+                ParameterValueType[ParameterValueType["Number"] = 1] = "Number";
+                ParameterValueType[ParameterValueType["Password"] = 2] = "Password";
+            })(ParameterValueType || (ParameterValueType = {}));
+            exports_1("ParameterValueType", ParameterValueType);
+            exports_1("RoleValue", RoleValue = {
+                Admin: "administrator"
+            });
+        }
+    };
+});
+//# sourceMappingURL=enum.js.map

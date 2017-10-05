@@ -1,0 +1,41 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var ComponentType, AuthenticatedEvent, CommonEvent, LoadingIndicatorEvent, HttpCode, ValidationEvent, ApplicationStateEvent;
+    return {
+        setters:[],
+        execute: function() {
+            exports_1("ComponentType", ComponentType = {
+                Layout: "layout",
+                Page: "page",
+                Control: "control"
+            });
+            exports_1("AuthenticatedEvent", AuthenticatedEvent = {
+                AuthenticationChanged: "AuthenticationChanged"
+            });
+            exports_1("CommonEvent", CommonEvent = {
+                ValidationFail: "ValidationFail"
+            });
+            exports_1("LoadingIndicatorEvent", LoadingIndicatorEvent = {
+                Show: "show",
+                Hide: "hide"
+            });
+            exports_1("HttpCode", HttpCode = {
+                NotFound: 404,
+                UnAuthorized: 401,
+                BadRequest: 400
+            });
+            exports_1("ValidationEvent", ValidationEvent = {
+                ValidationFail: "ValidationFail"
+            });
+            exports_1("ApplicationStateEvent", ApplicationStateEvent = {
+                Init: "ApplicationStateEvent.Init",
+                BeforeReady: "ApplicationStateEvent.BeforeReady",
+                Ready: "ApplicationStateEvent.Ready",
+                Unload: "ApplicationStateEvent.Unload",
+                UnAuthorizeRequest: "UnAuthorizeRequest"
+            });
+        }
+    }
+});
+//# sourceMappingURL=event.js.map

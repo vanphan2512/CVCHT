@@ -1,0 +1,3 @@
+<p *ngIf="readOnly===true">{{model}}</p>
+<textarea *ngIf="readOnly===false" rows="5"  (change)="onValueChanged($event)" placeholder="{{placeHolderText}}" type="text"
+    [(ngModel)]=model class="form-control col-md-7 col-xs-12 txtDesc"></textarea>

@@ -1,0 +1,40 @@
+System.register(["angular2/http", "../../helpers/configHelper", "../../services/authService"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var http_1, configHelper_1, authService_1;
+    var JsonHeaders;
+    return {
+        setters:[
+            function (http_1_1) {
+                http_1 = http_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (authService_1_1) {
+                authService_1 = authService_1_1;
+            }],
+        execute: function() {
+            JsonHeaders = (function (_super) {
+                __extends(JsonHeaders, _super);
+                function JsonHeaders() {
+                    _super.call(this);
+                    this.append("Content-Type", "application/json");
+                    this.append("accept", "application/json");
+                    var token = authService_1.default.getAuth().token;
+                    if (!!token && !String.isNullOrWhiteSpace(token.value)) {
+                        this.append(configHelper_1.default.getAppConfig().auth.token, token.value);
+                    }
+                }
+                return JsonHeaders;
+            }(http_1.Headers));
+            exports_1("JsonHeaders", JsonHeaders);
+        }
+    }
+});
+//# sourceMappingURL=jsonHeaders.js.map

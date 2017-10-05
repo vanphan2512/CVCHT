@@ -1,0 +1,38 @@
+System.register(["../common/models/ioc/enum", "../common/connectors/restConnector", "../common/EventManager", "../common/helpers/resourceHelper", "../applicationState", "../common/helpers/logging/consoleLogger"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var enum_1, restConnector_1, EventManager_1, resourceHelper_1, applicationState_1, consoleLogger_1;
+    var iocRegistrations;
+    return {
+        setters:[
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (restConnector_1_1) {
+                restConnector_1 = restConnector_1_1;
+            },
+            function (EventManager_1_1) {
+                EventManager_1 = EventManager_1_1;
+            },
+            function (resourceHelper_1_1) {
+                resourceHelper_1 = resourceHelper_1_1;
+            },
+            function (applicationState_1_1) {
+                applicationState_1 = applicationState_1_1;
+            },
+            function (consoleLogger_1_1) {
+                consoleLogger_1 = consoleLogger_1_1;
+            }],
+        execute: function() {
+            iocRegistrations = [
+                { name: "ILogger", instanceOf: consoleLogger_1.ConsoleLogger, type: enum_1.IoCInstanceType.Transient },
+                { name: "IConnector", instanceOf: restConnector_1.RESTConnector, type: enum_1.IoCInstanceType.Singleton },
+                { name: "IEventManager", instanceOf: EventManager_1.EventManager, type: enum_1.IoCInstanceType.Singleton },
+                { name: "IResource", instanceOf: resourceHelper_1.ResourceHelper, type: enum_1.IoCInstanceType.Singleton },
+                { name: "IApplicationState", instance: applicationState_1.ApplicationStateFactory.getInstance(), type: enum_1.IoCInstanceType.Singleton },
+            ];
+            exports_1("default",iocRegistrations);
+        }
+    }
+});
+//# sourceMappingURL=ioc.js.map

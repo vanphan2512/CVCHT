@@ -1,0 +1,72 @@
+System.register(["../list/hashtable", "./enum", "../exception", "./all", "../../../config/ioc"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var hashtable_1, enum_1, exception_1, all_1, ioc_1;
+    var IoCFactory, IoCContainer;
+    return {
+        setters:[
+            function (hashtable_1_1) {
+                hashtable_1 = hashtable_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            },
+            function (all_1_1) {
+                all_1 = all_1_1;
+            },
+            function (ioc_1_1) {
+                ioc_1 = ioc_1_1;
+            }],
+        execute: function() {
+            IoCFactory = (function () {
+                function IoCFactory() {
+                }
+                IoCFactory.create = function () {
+                    return new IoCContainer();
+                };
+                return IoCFactory;
+            }());
+            exports_1("IoCFactory", IoCFactory);
+            IoCContainer = (function () {
+                function IoCContainer() {
+                    this.registrations = new hashtable_1.Hashtable();
+                }
+                IoCContainer.prototype.import = function (filePath) {
+                    var iocItems = ioc_1.default; //  require(filePath);
+                    var self = this;
+                    iocItems.forEach(function (iocConfig) {
+                        var key = iocConfig.name;
+                        self.registrations.set(key, iocConfig);
+                    });
+                };
+                IoCContainer.prototype.resolve = function (name) {
+                    if (!this.registrations.exist(name)) {
+                        throw new exception_1.InvalidOperation("Can not resolve {0} from ioc container", name);
+                    }
+                    var registration = this.registrations.get(name);
+                    var instance = this.getInstance(registration);
+                    return instance;
+                };
+                IoCContainer.prototype.getInstance = function (registration) {
+                    var instance = null;
+                    switch (registration.type) {
+                        case enum_1.IoCInstanceType.Transient:
+                            instance = all_1.IoCBuilder.createTrainsent(registration);
+                            break;
+                        case enum_1.IoCInstanceType.Singleton:
+                            instance = all_1.IoCBuilder.createSingleton(registration);
+                        default:
+                            break;
+                    }
+                    return instance;
+                };
+                return IoCContainer;
+            }());
+            exports_1("IoCContainer", IoCContainer);
+        }
+    }
+});
+//# sourceMappingURL=iocFactory.js.map

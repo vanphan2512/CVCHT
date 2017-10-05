@@ -1,0 +1,27 @@
+System.register(["./enum"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var enum_1;
+    var IoCRegistrationItem;
+    return {
+        setters:[
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }],
+        execute: function() {
+            IoCRegistrationItem = (function () {
+                function IoCRegistrationItem(name, instanceOf, type) {
+                    if (type === void 0) { type = enum_1.IoCInstanceType.Singleton; }
+                    this.instance = null;
+                    this.instanceFn = null;
+                    this.name = name;
+                    this.type = type;
+                    this.instanceOf = instanceOf;
+                }
+                return IoCRegistrationItem;
+            }());
+            exports_1("IoCRegistrationItem", IoCRegistrationItem);
+        }
+    }
+});
+//# sourceMappingURL=iocRegistrationItem.js.map

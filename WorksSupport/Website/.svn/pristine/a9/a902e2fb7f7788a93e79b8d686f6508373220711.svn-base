@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" style="min-height: 100%;">
+
+<head>
+    <base href="/">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Loading ...</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/bootstrap-tagsinput.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/bootstrap-select.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/style-global.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="app/resources/themes/nc/vendors/datatables/datatables.min.css" />
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.7/css/dataTables.checkboxes.css" rel="stylesheet" />
+    <link href="app/resources/themes/nc/css/datables/dataTables.checkboxes.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/css/datables/select.dataTables.min.css" rel="stylesheet">
+    <link href="app/resources/themes/nc/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">  
+    <link href="app/resources/themes/nc/css/style-global-dev.css" rel="stylesheet">
+</head>
+
+<body id="login">
+
+    <default-layout></default-layout>
+    <!-- build:js jsBundle.js -->
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.js"></script>
+    <script src="app/resources/themes/nc/vendors/jquery/dist/jquery.min.js"></script> 
+    <script src="app/resources/themes/nc/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+     <script src="app/resources/themes/nc/js/moment/moment.min.js"></script> 
+    <script src="app/resources/themes/nc/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+    <script src="app/resources/themes/nc/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+    <script src="app/resources/themes/nc/js/workssupport.js"></script>
+    <script src="app/resources/jsextension.js"></script>
+    <script src="systemjs.conf.js"></script>
+    <script src="app/resources/themes/nc/vendors/datatables/dataTables.select.js"></script>
+    <script src="app/resources/themes/nc/vendors/datatables/dataTables.checkboxes.js"></script>
+    <!--Add toastr -->
+    <script src="app/resources/themes/nc/vendors/dev/tinycolor.min.js"></script>
+    <link href="app/resources/themes/nc/vendors/color-picker-slider/bootstrap.colorpickersliders.min.css" rel="stylesheet" />
+    <script src="app/resources/themes/nc/vendors/color-picker-slider/bootstrap.colorpickersliders.min.js"></script>
+    <script src="app/resources/themes/nc/vendors/bootstrap/dist/js/bootstrap-select.js"></script>
+    <!--Add bootstrap-notify -->
+    <script src="app/resources/themes/nc/vendors/notify/bootstrap-notify.min.js"></script>
+    <script>
+        angular = {};
+        System.config({
+            packages: {
+                app: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            }
+        });
+        System.import("app/main").catch(function (error) { console.log(error); });
+    </script>
+</body>
+
+</html>

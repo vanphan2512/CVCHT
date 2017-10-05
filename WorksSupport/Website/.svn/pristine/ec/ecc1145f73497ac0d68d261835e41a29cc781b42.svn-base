@@ -1,0 +1,102 @@
+System.register(["angular2/core", "../../../common/models/ui", "./selectUserModel", "../../../common/enum", "../../../common/services/userService"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, ui_1, selectUserModel_1, enum_1, userService_1, SelectUser;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (selectUserModel_1_1) {
+                selectUserModel_1 = selectUserModel_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            },
+            function (userService_1_1) {
+                userService_1 = userService_1_1;
+            }
+        ],
+        execute: function () {
+            SelectUser = (function (_super) {
+                __extends(SelectUser, _super);
+                function SelectUser() {
+                    var _this = _super.call(this) || this;
+                    _this.model = new selectUserModel_1.SelectUserModel();
+                    _this.SelectMode = enum_1.FormSelectMode;
+                    _this.cssClass = String.empty;
+                    _this.mode = enum_1.FormSelectMode.Item;
+                    _this.onItemSelected = new core_1.EventEmitter();
+                    _this.onItemUnSelected = new core_1.EventEmitter();
+                    var self = _this;
+                    _this.mode = enum_1.FormSelectMode.Item;
+                    return _this;
+                }
+                SelectUser.prototype.onReady = function () {
+                    var self = this;
+                    userService_1.default.getUsers().then(function (pers) {
+                        self.model.setUsers(pers);
+                        window.setTimeout(function () {
+                            self.dom.val(self.values).trigger("change");
+                        }, 0);
+                    });
+                    this.dom = window.jQuery(String.format("#{0}", self.id)).select2({
+                        maximumSelectionLength: 1,
+                        placeholder: self.placeHolder,
+                        allowClear: true
+                    });
+                    this.dom.on("select2:select", function (item) { self.onItemSelected.emit({ id: item.params.data.id, name: item.params.data.text }); });
+                    this.dom.on("select2:unselect", function (item) { self.onItemUnSelected.emit({ id: item.params.data.id, name: item.params.data.text }); });
+                };
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", String)
+                ], SelectUser.prototype, "placeHolder", void 0);
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", Array)
+                ], SelectUser.prototype, "values", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", Object)
+                ], SelectUser.prototype, "onItemSelected", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", Object)
+                ], SelectUser.prototype, "onItemUnSelected", void 0);
+                SelectUser = __decorate([
+                    core_1.Component({
+                        selector: "select-users",
+                        templateUrl: "app/common/directives/form/selectUser.html"
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], SelectUser);
+                return SelectUser;
+            }(ui_1.BaseControl));
+            exports_1("SelectUser", SelectUser);
+        }
+    };
+});
+//# sourceMappingURL=selectUser.js.map

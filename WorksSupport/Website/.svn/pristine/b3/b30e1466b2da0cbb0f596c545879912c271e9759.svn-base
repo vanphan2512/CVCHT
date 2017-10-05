@@ -1,0 +1,40 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var UpdatePriorityModel;
+    return {
+        setters: [],
+        execute: function () {
+            UpdatePriorityModel = (function () {
+                function UpdatePriorityModel() {
+                    this.Id = 0;
+                    this.WorksSupportPriorityName = "";
+                    this.Description = 0;
+                    this.OrderIndex = 0;
+                    this.IsActived = false;
+                    this.IsSystem = false;
+                    this.IconUrl = "";
+                    this.User = "";
+                }
+                UpdatePriorityModel.prototype.import = function (item) {
+                    if (!item) {
+                        return;
+                    }
+                    this.Id = item.WorksSupportPriorityId;
+                    this.WorksSupportPriorityName = item.WorksSupportPriorityName;
+                    this.Description = item.Description;
+                    this.OrderIndex = item.OrderIndex;
+                    this.IsActived = item.IsActived;
+                    this.IsSystem = item.IsSystem;
+                    if (item.IconUrl !== null && item.IconUrl !== "") {
+                        this.IconUrl = item.IconUrl;
+                    }
+                    this.User = item.User;
+                };
+                return UpdatePriorityModel;
+            }());
+            exports_1("UpdatePriorityModel", UpdatePriorityModel);
+        }
+    };
+});
+//# sourceMappingURL=updateModel.js.map

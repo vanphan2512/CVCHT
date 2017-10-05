@@ -1,0 +1,26 @@
+System.register(["../../enum"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var enum_1, SelectUserModel;
+    return {
+        setters: [
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }
+        ],
+        execute: function () {
+            SelectUserModel = (function () {
+                function SelectUserModel() {
+                    this.mode = enum_1.FormSelectMode.Item;
+                    this.users = [];
+                }
+                SelectUserModel.prototype.setUsers = function (users) {
+                    this.users = [].concat(users);
+                };
+                return SelectUserModel;
+            }());
+            exports_1("SelectUserModel", SelectUserModel);
+        }
+    };
+});
+//# sourceMappingURL=selectUserModel.js.map

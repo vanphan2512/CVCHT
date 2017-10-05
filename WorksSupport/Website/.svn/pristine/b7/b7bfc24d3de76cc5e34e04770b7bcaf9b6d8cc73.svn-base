@@ -1,0 +1,28 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var Model;
+    return {
+        setters: [],
+        execute: function () {
+            Model = (function () {
+                function Model() {
+                    this.items = [];
+                }
+                Model.prototype.import = function (steps) {
+                    if (!steps) {
+                        return;
+                    }
+                    var currIndex = 0;
+                    var self = this;
+                    steps.forEach(function (step) {
+                        self.items.push({ id: step.id, title: step.title, description: step.description, index: ++currIndex });
+                    });
+                };
+                return Model;
+            }());
+            exports_1("Model", Model);
+        }
+    };
+});
+//# sourceMappingURL=wizardModel.js.map

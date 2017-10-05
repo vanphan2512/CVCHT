@@ -1,0 +1,55 @@
+System.register(["./cacheService"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var cacheService_1, cacheService_2;
+    var authService;
+    function isAuthorized(routeInstruction) {
+        var profile = getUserProfile();
+        return isAuthenticated(profile);
+    }
+    function removeAuth() {
+        cacheService_2.default.remove(cacheService_1.CACHE_CONSTANT.USER_PROFILE);
+        cacheService_2.default.remove(cacheService_1.CACHE_CONSTANT.TOKEN);
+    }
+    function isAuthenticated(profile) {
+        return !!profile;
+    }
+    function setAuth(auth) {
+        cacheService_2.default.set(cacheService_1.CACHE_CONSTANT.USER_PROFILE, auth.Profile);
+        cacheService_2.default.set(cacheService_1.CACHE_CONSTANT.TOKEN, auth.Token);
+        console.log("Token", cacheService_2.default.get(cacheService_1.CACHE_CONSTANT.TOKEN));
+    }
+    function getAuth() {
+        var auth = {
+            profile: cacheService_2.default.get(cacheService_1.CACHE_CONSTANT.USER_PROFILE),
+            token: cacheService_2.default.get(cacheService_1.CACHE_CONSTANT.TOKEN)
+        };
+        return auth;
+    }
+    function getUserProfile() {
+        if (!cacheService_2.default.exist(cacheService_1.CACHE_CONSTANT.USER_PROFILE)) {
+            return null;
+        }
+        var userProfile = cacheService_2.default.get(cacheService_1.CACHE_CONSTANT.USER_PROFILE);
+        return userProfile;
+    }
+    return {
+        setters:[
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            }],
+        execute: function() {
+            authService = {
+                getUserProfile: getUserProfile,
+                setAuth: setAuth,
+                getAuth: getAuth,
+                removeAuth: removeAuth,
+                isAuthenticated: isAuthenticated,
+                isAuthorized: isAuthorized
+            };
+            exports_1("default",authService);
+        }
+    }
+});
+//# sourceMappingURL=authService.js.map

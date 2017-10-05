@@ -1,0 +1,160 @@
+System.register(["angular2/core", "../../../common/models/ui", "./checkStatusModel", "../../../common/services/statusService", "../../../modules/configurations/_share/config/route", "../../../common/helpers/configHelper", "../../../common/services/cacheService"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, ui_1, checkStatusModel_1, statusService_1, route_1, configHelper_1, cacheService_1, cacheService_2, SelectStatus;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (checkStatusModel_1_1) {
+                checkStatusModel_1 = checkStatusModel_1_1;
+            },
+            function (statusService_1_1) {
+                statusService_1 = statusService_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            }
+        ],
+        execute: function () {
+            SelectStatus = (function (_super) {
+                __extends(SelectStatus, _super);
+                function SelectStatus() {
+                    var _this = _super.call(this) || this;
+                    _this.model = new checkStatusModel_1.CheckStatusModel();
+                    _this.userLogin = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.strUserName);
+                    var self = _this;
+                    return _this;
+                }
+                SelectStatus.prototype.onReady = function () {
+                    var self = this;
+                    self.urlStatus = route_1.default.status.status.path;
+                    var notify = localStorage.getItem(configHelper_1.default.getAppConfig().defaultUrl + "_notify");
+                    localStorage.setItem(configHelper_1.default.getAppConfig().defaultUrl + "_notify", "true");
+                    if (self.userLogin != null && notify === "false") {
+                        statusService_1.default.getStatus().then(function (status) {
+                            self.showNotify(status);
+                        });
+                    }
+                };
+                SelectStatus.prototype.showNotify = function (model) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    var message = "Vui lòng khai báo trạng thái";
+                    var count = 0;
+                    if (model.IsInitStatus === false) {
+                        message += "<strong> Bắt đầu</strong>";
+                        count++;
+                    }
+                    if (model.IsCloseStatus === false) {
+                        count *= 2;
+                    }
+                    if (model.IsCompleteStatus === false) {
+                        if (count === 0) {
+                            message += "<strong> Hoàn thành</strong>";
+                        }
+                        else if (count === 2) {
+                            message += "<strong>, Hoàn thành</strong>";
+                        }
+                        else {
+                            message += "<strong> và Hoàn thành</strong>";
+                        }
+                        count++;
+                    }
+                    if (model.IsCloseStatus === false) {
+                        message += count === 0 ? "<strong> Kết thúc</strong>" : "<strong> và Kết thúc</strong>";
+                    }
+                    message += "!";
+                    if (model.IsInitStatus === true && model.IsCompleteStatus === true && model.IsCloseStatus) {
+                        return;
+                    }
+                    $.notify({
+                        // options
+                        icon: 'glyphicon glyphicon-warning-sign',
+                        title: '<strong> Thông Báo  </strong>',
+                        message: message,
+                        url: self.urlStatus,
+                        target: '_self'
+                    }, {
+                        // settings
+                        element: 'body',
+                        position: 'absolute',
+                        type: "info",
+                        allow_dismiss: true,
+                        newest_on_top: false,
+                        showProgressbar: false,
+                        placement: {
+                            from: "bottom",
+                            align: "right"
+                        },
+                        offset: 20,
+                        spacing: 10,
+                        z_index: 1031,
+                        delay: 5000,
+                        timer: 1000,
+                        mouse_over: null,
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        },
+                        onShow: null,
+                        onShown: null,
+                        onClose: null,
+                        onClosed: null,
+                        icon_type: 'class',
+                        template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+                            '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+                            '<span data-notify="icon"></span> ' +
+                            '<span data-notify="title">{1}</span> <br/>' +
+                            '<span data-notify="message">{2}</span>' +
+                            '<div class="progress" data-notify="progressbar">' +
+                            '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                            '</div>' +
+                            '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                            '</div>'
+                    });
+                };
+                SelectStatus = __decorate([
+                    core_1.Component({
+                        selector: "check-status",
+                        templateUrl: "app/common/directives/form/checkStatus.html"
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], SelectStatus);
+                return SelectStatus;
+            }(ui_1.BaseControl));
+            exports_1("SelectStatus", SelectStatus);
+        }
+    };
+});
+//# sourceMappingURL=checkStatus.js.map

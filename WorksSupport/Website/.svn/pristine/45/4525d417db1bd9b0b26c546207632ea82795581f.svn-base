@@ -1,0 +1,166 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var GridModel;
+    return {
+        setters:[],
+        execute: function() {
+            GridModel = (function () {
+                function GridModel(options) {
+                    this.id = String.format("_grid{0}", GridModel.NumberOfInstance);
+                    this.data = [];
+                    this.options = null;
+                    GridModel.NumberOfInstance++;
+                    this.data = options.data;
+                    this.options = options;
+                }
+                GridModel.prototype.getAjaxUrl = function () {
+                    var ajaxUrl = String.empty;
+                    if (String.isNullOrWhiteSpace(this.options.ajaxUrl)) {
+                        return ajaxUrl;
+                    }
+                    else {
+                        ajaxUrl = this.options.ajaxUrl;
+                        return ajaxUrl;
+                    }
+                };
+                GridModel.prototype.getIDSrc = function () {
+                    var idSrc = String.empty;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return idSrc;
+                    }
+                    else {
+                        this.options.columns.forEach(function (column, index) {
+                            if (column.type == "id") {
+                                idSrc = column.field;
+                            }
+                        });
+                        return idSrc;
+                    }
+                };
+                GridModel.prototype.getFieldEditor = function () {
+                    var fields = [];
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return fields;
+                    }
+                    else {
+                        this.options.columns.forEach(function (column, index) {
+                            switch (column.type) {
+                                case "text": {
+                                    fields.push({ "name": column.field });
+                                    break;
+                                }
+                                case "checkbox": {
+                                    fields.push({ "name": column.field, "type": "checkbox", "separator": "|", "options": [{ label: '', value: 1 }] });
+                                }
+                                default:
+                                    {
+                                        break;
+                                    }
+                            }
+                        });
+                        return fields;
+                    }
+                };
+                GridModel.prototype.generateRowCallbackCheckBox = function () {
+                    var str = String.empty;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return str;
+                    }
+                    else {
+                        this.options.columns.forEach(function (column, index) {
+                            switch (column.type) {
+                                case "checkbox": {
+                                    str += "$('input.editor-active', row).prop( 'checked', data." + column.field + " == 1 ); ";
+                                }
+                                default:
+                                    {
+                                        break;
+                                    }
+                            }
+                        });
+                        return str;
+                    }
+                };
+                GridModel.prototype.generateOnChangeEventCheckBox = function () {
+                    var str = String.empty;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return str;
+                    }
+                    else {
+                        str = "editor.edit( $(this).closest('tr'), false )";
+                        this.options.columns.forEach(function (column, index) {
+                            switch (column.type) {
+                                case "checkbox": {
+                                    str += ".set( '" + column.field + "', $(this).prop( 'checked' ) ? 1 : 0 )";
+                                }
+                                default:
+                                    {
+                                        break;
+                                    }
+                            }
+                        });
+                        str += ".submit();";
+                        return str;
+                    }
+                };
+                GridModel.prototype.getColumns = function () {
+                    var columns = [];
+                    var data;
+                    var type;
+                    var row;
+                    var meta;
+                    if (!this.options || String.isNullOrWhiteSpace(this.options.columns)) {
+                        return columns;
+                    }
+                    else {
+                        columns.push({ "targets": 0, "checkboxes": { 'selectRow': true }, "orderable": false });
+                        this.options.columns.forEach(function (column, index) {
+                            switch (column.type) {
+                                case "checkbox": {
+                                    columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": function (data, type, row) { if (type === 'display') {
+                                            return '<input type="checkbox" class="editor-active">';
+                                        } return data; }, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible == "false" ? false : true });
+                                    break;
+                                }
+                                case "icon": {
+                                    columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": function (data, type, full, meta) { return '<a class="modalIcon" href="#" data-toggle="modal" data-target="#myIconModal"><i class=\"' + (data == null ? "fa fa-edit" : data) + '\" aria-hidden=\"true\"></i></a>'; }, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible == "false" ? false : true });
+                                    break;
+                                }
+                                case "toggle": {
+                                    columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": function (data, type, full, meta) { return '<span class=\"ios-tog\"><input class="toggle-active" id=\"' + column.field + '-' + (meta.row + meta.settings._iDisplayStart + 1) + '\" ' + (data ? ' checked' : '') + ' type=\"checkbox\"><label for=\"' + column.field + '-' + (meta.row + meta.settings._iDisplayStart + 1) + '\"><i></i></label></span>'; }, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible == "false" ? false : true });
+                                    break;
+                                }
+                                default:
+                                    {
+                                        columns.push({ "data": column.field, title: column.title, "targets": index, "defaultContent": !!column.content ? column.content : String.empty, "render": !!column.render ? column.render : null, "className": !!column.className ? column.className : null, "width": !!column.width ? column.width : null, "visible": column.visible == "false" ? false : true });
+                                        break;
+                                    }
+                            }
+                        });
+                        var actionContent = this.getActions();
+                        if (!String.isNullOrWhiteSpace(actionContent)) {
+                            columns.push({ width: "20%", orderable: false, data: null, title: "", targets: columns.length, defaultContent: actionContent });
+                        }
+                        return columns;
+                    }
+                };
+                /* Resolve static text to i18n later */
+                GridModel.prototype.getActions = function () {
+                    var html = String.empty;
+                    if (this.options.enableAdit === true) {
+                        html += "<input type=button class=\"btn btn-default grid-edit-item\" id=\"editGridItem\" value=\"Edit\"/>";
+                    }
+                    if (this.options.enableDelete === true) {
+                        html += "<input type=button class=\"btn btn-danger grid-delete-item\" id=\"deleteGridItem\" value=\"Delete\"/>";
+                    }
+                    return html;
+                };
+                GridModel.NumberOfInstance = 0;
+                return GridModel;
+            }());
+            exports_1("GridModel", GridModel);
+        }
+    }
+});
+//# sourceMappingURL=gridModel.js.map

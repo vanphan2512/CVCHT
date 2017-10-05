@@ -1,0 +1,119 @@
+import { Component, Input, Output, EventEmitter } from "angular2/core";
+import { BaseControl } from "../../../models/ui";
+import guidHelper from "../../../helpers/guidHelper";
+import httpHelper from "../../../helpers/httpHelper";
+import jsonHelper from "../../../helpers/jsonHelper";
+import configHelper from "../../../helpers/configHelper";
+@Component({
+    selector: "form-filesUpload",
+    templateUrl: "app/common/directives/form/upload/filesUpload.html"
+})
+export class FormFilesUpload extends BaseControl {
+    public id: string = guidHelper.create();
+    @Input() files: Array<any> = [];
+    //@Input() maxFileSize: any = 10;
+    //@Input() acceptedFilesType: any = ".pdf,.ppt,.pptx,.rar,.zip,.xls,.xlsx,.doc,.docx,.png,.jpg";
+    @Output() filesChanged: EventEmitter<any> = new EventEmitter();
+    @Input() description: string;
+    @Output() onFileUploaded: EventEmitter<any> = new EventEmitter();
+    @Output() onFileRemoved: EventEmitter<any> = new EventEmitter();
+    private dropzone: any = {};
+    constructor() {
+        super();
+    }
+    protected onReady() {
+        let self: FormFilesUpload = this;
+        let $ = window.jQuery;
+        $(String.format("#{0}_form", this.id)).dropzone({
+            init: function () {
+                self.dropzone = this;
+                this.on("removedfile", function (file: any) {
+                    let jsonResponse = jsonHelper.parse(file.xhr.responseText);
+                    let ev: any = {
+                        fileName: jsonResponse.Data.FileName,
+                        fileSize: jsonResponse.Data.Size,
+                        filePath: jsonResponse.Data.FilePath,
+                        fileId: jsonResponse.Data.FileId
+                    };
+                    self.onFileRemoved.emit(ev);
+                });
+            },
+            autoProcessQueue: true,
+            uploadMultiple: true,
+            url: String.format("{0}v2/files", configHelper.getAppConfig().api.baseUrl),
+            //removedfile: (response: any) => this.removeUploadedFile(response),
+            success: (response: any) => this.fileUploadResponse(response),
+            maxFilesize: 10,
+            addRemoveLinks: true,
+            acceptedFiles: ".pdf,.ppt,.pptx,.rar,.zip,.xls,.xlsx,.doc,.docx,.png,.jpg",
+            dictDefaultMessage: "Kéo thả file vào đây để tải lên",
+            dictFileTooBig: "Chỉ chấp nhận file tối đa 10 MB",
+            dictInvalidFileType: "Chỉ chấp nhận file đính kèm(*.pdf .ppt .pptx .rar .zip .xls .xlsx .doc .docx .png .jpg)",
+            dictRemoveFile: "Xóa file",
+            dictCancelUpload: "Hủy",
+            dictRemoveFileConfirmation: "Bạn có chắc chắn muốn xóa?"
+        });
+    }
+    /* protected onChange() {
+        let self: FormFilesUpload = this;
+        self.files.forEach(function (file: any) {
+            let tempFile = { name: file.fileName, zise: file.size };
+            self.dropzone.emit("addedfile", tempFile);
+            let photoUrl: string = String.format("{0}/v2/files/{1}/thumbnail", configHelper.getAppConfig().api.baseUrl, file.id);
+            self.dropzone.emit("thumbnail", tempFile, photoUrl);
+        });
+    } */
+
+    private isErrorResponse(response: any) {
+
+        let jsonResponse = jsonHelper.parse(response.xhr.responseText);
+        return httpHelper.isSuccessStatusCode(response.xhr.status) && httpHelper.isSuccessStatusCode(jsonResponse.status);
+    }
+    private handleErrorUpload(response: any) {
+        let ev: any = {
+            type: response.type,
+            fileName: response.name,
+            fileSize: response.size
+        };
+        if (httpHelper.isSuccessStatusCode(response.xhr.status)) {
+            ev.uploadStatus = {
+                status: response.xhr.status,
+                file: String.empty,
+                errors: [httpHelper.resolve(response.xhr.status)]
+            };
+            this.onFileUploaded.emit(ev);
+            return;
+        }
+        let jsonResponse = jsonHelper.parse(response.xhr.responseText);
+        ev.uploadStatus = {
+            status: jsonResponse.status,
+            file: String.empty,
+            errors: jsonResponse.errors
+        };
+        this.onFileUploaded.emit(ev);
+    }
+    private handleSuccessUpload(response: any) {
+        let self: FormFilesUpload = this;
+        let jsonResponse = jsonHelper.parse(response.xhr.responseText);
+        let ev: any = {
+            fileName: jsonResponse.Data.FileName,
+            fileSize: jsonResponse.Data.Size,
+            filePath: jsonResponse.Data.FilePath,
+            fileId: jsonResponse.Data.FileId
+        };
+        this.filesChanged.emit(this.files);
+        this.onFileUploaded.emit(ev);
+        self.dropzone.emit("uploadprogress", response);
+    }
+    public fileUploadResponse(response: any) {
+        if (this.isErrorResponse(response)) {
+            this.handleErrorUpload(response);
+            return;
+        }
+        this.handleSuccessUpload(response);
+    }
+    public reset() {
+        let self: FormFilesUpload = this;
+        self.dropzone.removeAllFiles();
+    }
+}

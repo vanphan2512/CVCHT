@@ -1,0 +1,61 @@
+System.register(["./cacheService"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function isAuthorized(routeInstruction) {
+        var profile = getUserProfile();
+        return isAuthenticated(profile);
+    }
+    function removeAuth() {
+        cacheService_1.default.remove(cacheService_2.CACHE_CONSTANT.USER_PROFILE);
+        cacheService_1.default.remove(cacheService_2.CACHE_CONSTANT.TOKEN);
+    }
+    function isAuthenticated(profile) {
+        return !!profile;
+    }
+    function setAuth(auth) {
+        cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.USER_PROFILE, auth.profile);
+        cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.TOKEN, auth.profile.strTokenString);
+        cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.strUserName, auth.profile.strUserName);
+        auth.lsUserFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_VIEW"; }) === -1 ? cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_VIEW, "false") : cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_VIEW, "true");
+        auth.lsUserFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_ADD"; }) === -1 ? cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD, "false") : cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD, "true");
+        auth.lsUserFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_EDIT"; }) === -1 ? cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT, "false") : cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT, "true");
+        auth.lsUserFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPORTGROUP_DELETE"; }) === -1 ? cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE, "false") : cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE, "true");
+        auth.lsUserFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_AUTHORIZE_VIEW"; }) === -1 ? cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_VIEW, "false") : cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_VIEW, "true");
+        auth.lsUserFunction.findIndex(function (obj) { return obj.FunctionID === "EO_WORKSSUPPORT_AUTHORIZE_EDIT"; }) === -1 ? cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_EDIT, "false") : cacheService_1.default.set(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPPORT_AUTHORIZE_EDIT, "true");
+    }
+    function getAuth() {
+        var auth = {
+            profile: cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.USER_PROFILE),
+            token: cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.TOKEN)
+        };
+        return auth;
+    }
+    function getUserProfile() {
+        if (!cacheService_1.default.exist(cacheService_2.CACHE_CONSTANT.USER_PROFILE)) {
+            return null;
+        }
+        var userProfile = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.USER_PROFILE);
+        return userProfile;
+    }
+    var cacheService_2, cacheService_1, authService;
+    return {
+        setters: [
+            function (cacheService_2_1) {
+                cacheService_2 = cacheService_2_1;
+                cacheService_1 = cacheService_2_1;
+            }
+        ],
+        execute: function () {
+            authService = {
+                getUserProfile: getUserProfile,
+                setAuth: setAuth,
+                getAuth: getAuth,
+                removeAuth: removeAuth,
+                isAuthenticated: isAuthenticated,
+                isAuthorized: isAuthorized
+            };
+            exports_1("default", authService);
+        }
+    };
+});
+//# sourceMappingURL=authService.js.map

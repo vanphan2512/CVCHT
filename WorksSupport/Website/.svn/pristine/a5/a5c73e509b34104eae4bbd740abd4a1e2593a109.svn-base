@@ -1,0 +1,711 @@
+
+#top-bar{
+    margin-bottom: 0;
+}
+#sidebar-menu{
+    padding-top: 10px;
+}
+#sidebar-menu{
+    background: #dcdcdd;
+}
+.main-search.active .input-group{
+    width: 100%;
+}
+textarea.txtDesc {
+    resize: none;
+}
+#searchAddon{
+    padding: 0;
+    width: 35px;
+}
+.form-control, .btn-default, .btn-default:hover{
+    font-size:13px;
+    height:28px;
+}
+input[type=checkbox] + label{
+    margin-left: 0;
+}
+.btn{
+    padding: 5px 12px;
+}
+
+input[type=checkbox]:disabled {
+    opacity: 0;
+    pointer-events: none;
+
+}
+table.dataTable tbody td {
+  vertical-align: middle !important;
+}
+
+#modalAdd .popupTab .modal-content {
+    /*padding: 0 0 20px 0;
+    border-radius: 0;
+    position: relative;*/
+    
+}
+#modalAdd .popupTab .titleProject {
+    /*background-color: rgba(185, 185, 185, 0.29);*/
+}
+#modalAdd .popupTab .titleProject h2 {
+    /*text-align: left;
+    font-size: 15px;
+    padding-bottom: 0;
+    line-height: 30px;
+    padding-left: 10px;
+    font-weight: 500;*/
+}
+#modalAdd .popupTab .modal-content button.close.close-modal {
+    /*position: absolute;
+    z-index: 999;
+    top: 3px;
+    right: 10px;*/
+}
+#modalAdd .popupTab .modal-content .contentPopup {
+    padding: 20px 20px 0px 20px;
+}
+#modalAdd .popupTab .modal-content .contentPopup .form-horizontal .form-group {
+    margin-right: 0;
+    margin-left: 0;
+}
+#modalAdd .popupTab .modal-content .contentPopup .btnActioninfo{
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+#modalAdd .popupTab .modal-content .contentPopup .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+#modalAdd .popupTab .modal-content .contentPopup .form-horizontal .control-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
+#modalAdd .popupTab .modal-content .contentPopup .tab-content .frmAddInfo{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 20px;
+    border: 1px solid #c5c3c6;
+    margin-top: -1px;
+}
+
+#modalAdd .popupTab .modal-content .contentPopup .col-sm-6, #modalAdd .popupTab .modal-content .contentPopup .col-md-6, #modalAdd .popupTab .modal-content .contentPopup .col-md-3, #modalAdd .popupTab .modal-content .contentPopup .col-sm-3, #modalAdd .popupTab .modal-content .contentPopup .col-xs-12, #modalAdd .popupTab .modal-content .contentPopup .col-md-9, #modalAdd .popupTab .modal-content .contentPopup .col-sm-9 {
+    padding-left: 0;
+    padding-right: 0;
+}
+#modalAdd .popupTab .modal-content .contentPopup .form-control, #modalAdd .popupTab .modal-content .contentPopup .form-horizontal .infoDesc .form-control  {
+    /*height: 25px;
+    border-radius: 0;*/
+    padding-left: 12px;
+}
+#modalAdd .popupTab .modal-content .contentPopup .form-horizontal .infoDesc label {
+    width: 12.5%;
+    float: left;
+}
+#modalAdd .popupTab .modal-content .contentPopup .form-horizontal .infoDesc textarea {
+    width: 87.5%;
+    border-radius: 0;
+    padding-left: 5px;
+}
+
+#modalAdd .popupTab .modal-content .contentPopup .form-horizontal .form-group label {
+    line-height: 25px;
+}
+
+
+
+
+#modalUpdate .popupTab .modal-content .contentPopup {
+    padding: 20px 20px 0px 20px;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .form-group {
+    margin-right: 0;
+    margin-left: 0;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .btnActioninfo{
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .control-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .tab-content .frmAddInfo{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 20px;
+    border: 1px solid #c5c3c6;
+    border-top-color: #fff;
+}
+
+#modalUpdate .popupTab .modal-content .contentPopup .col-sm-6, #modalUpdate .popupTab .modal-content .contentPopup .col-md-6, #modalUpdate .popupTab .modal-content .contentPopup .col-md-3, #modalUpdate .popupTab .modal-content .contentPopup .col-sm-3, #modalUpdate .popupTab .modal-content .contentPopup .col-xs-12, #modalUpdate .popupTab .modal-content .contentPopup .col-md-9, #modalUpdate .popupTab .modal-content .contentPopup .col-sm-9 {
+    padding-left: 0;
+    padding-right: 0;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-control, #modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .infoDesc .form-control  {
+    /*height: 25px;
+    border-radius: 0;*/
+    padding-left: 12px;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .infoDesc label {
+    width: 12.5%;
+    float: left;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .infoDesc textarea {
+    width: 87.5%;
+    padding-left: 5px;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .infoOrderInex label {
+    width: 12.5%;
+    float: left;
+}
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .infoOrderInex input#OrderIndex {
+    width: 87.5%;
+    padding-left: 5px;
+}
+
+#modalUpdate .popupTab .modal-content .contentPopup .form-horizontal .form-group label {
+    line-height: 25px;
+}
+#myTabs {
+    margin-left: 30px;
+}
+#myTabs li {
+    background-color: #ccc;
+    border: 1px solid #c5c3c6;
+
+}
+#myTabs>li>a{
+    border: none;
+    color: #4c5c68;
+}
+#myTabs li.active {
+    background-color: #fff;
+    border-bottom-color: #fff;
+}
+#myTabs>li.active>a, #myTabs>li.active>a:focus, #myTabs>li.active>a:hover{
+    border: none; 
+    border-bottom-color: transparent; 
+}
+#myTabs>li>a:hover{
+    background: #fff;
+}
+#modalAdd .popupTab .modal-content .contentPopup #member {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 20px;
+    border: 1px solid #c5c3c6;
+    margin-top: -1px;
+}
+.cusName{
+    float: left;
+    margin-right: 25px;
+}
+#cusNameWorks{
+    margin-left: -15px;
+}
+
+.listMemberProject{
+    margin-top: 30px;
+}
+.textboxAddStep {
+    display:inline; 
+    width: 78%;
+    height: 25px !important;
+    font-size: 12px;
+}
+.chkIsActive {
+    background-color: gray;
+    opacity: 0.2;
+}
+input[type=checkbox]:focus{
+    outline: none;
+}
+.main-search .input-group-addon button{
+    width: 100%;
+    height: 100%;
+}
+.the-icons .fa-hover:hover {
+    font-size: 13.5px;
+}
+
+table{
+    white-space: normal;
+    
+
+}
+table td{
+    word-break: break-word;
+}
+
+.dropdown-menu {
+    /*min-width: 190px;*/
+}
+table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
+    top:50%;
+    margin-top:-9px;
+
+}
+.table>thead>tr>th {
+    vertical-align: middle;
+    border-bottom: 2px solid #ddd;
+    text-align: center;
+}
+.cusworks{
+    margin-top: 50px;
+}
+.dropdownWorkInvole {
+    display: block;
+    width: 100%;
+    padding: 3px 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #292b2c;
+    text-align: inherit;
+    white-space: nowrap;
+    background: 0 0;
+    border: 0;
+}
+.dt-checkboxes-select-all {position: relative;}
+
+.dt-checkboxes-select-all .custom-checkbox{
+    z-index: -999;
+}
+#cbAll{
+    z-index: 999;
+    top: 5px;
+}
+.lblIsActive {
+    vertical-align: bottom;
+}
+.btnEditTd {
+    cursor: pointer;
+}
+.modal-body {
+    padding: 20px 0 5px 0;
+}
+
+@-moz-document url-prefix() { 
+    #cbAll {
+        top: 13px;
+        z-index: 999;
+    }
+}
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+    margin: 20px 0;
+}
+.navbar-nav>li>.dropdown-menu{
+    width: 100%;
+}
+.textboxAddStepAdd {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    width: 83%;
+}
+.label-mar-right .custom-checkbox{
+    z-index: -999;
+}
+.ios-tog{
+}
+.lblIsActive {
+    padding-left: 5px;
+}
+#modalCreate .ios-tog label, #modalUpdate .ios-tog label {
+    margin-top: -3px;
+}
+
+
+.content-region{
+    padding-top: 42px!important;
+}
+/*Unauthorized*/
+.unauthorized{}
+.unauthorized .content-region,
+.unauthorized footer
+{
+  margin-left: 0px!important;
+}
+.unauthorized .top_nav{display: none!important;}
+.unauthorized .content-region{
+  display: table;
+  width: 100%;
+}
+/*End of Unauthorized*/
+/*Page*/
+.page .page-title {
+  height: 45px;
+}
+
+.page-singin{
+  margin-top: 50px!important;
+}
+/*End of Page*/
+
+.loading {
+    opacity: 0;
+    transition: opacity .8s ease-in-out;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: -1;
+    
+}
+.loading.show{
+    display: block;
+    opacity: 0.5;
+    z-index: 1000;
+    background-image: url("../images/loading.gif");
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 64px;
+    position: fixed;
+}
+
+.loading {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #7B7B7B url("../images/loading.gif") no-repeat center center;
+  opacity: .75;
+  filter: alpha(opacity=75);
+  z-index: 20140628;
+}
+
+.error-msg{
+    margin-top: 5px;
+}
+.error-msg .alert-link{
+    font-weight: normal!important;
+    color:white!important;
+}
+
+
+.user-quick-profile{
+    margin-top:5px!important;
+}
+.validation.invalid
+{
+    background-image: url("../images/error.png")!important;
+    background-repeat: no-repeat;
+    background-position: 100% 50%;
+    background-size: 24px 24px;
+    padding-right: 24px;
+    border:solid 1px red!important;
+}
+.validation.invalid::-webkit-input-placeholder,
+.validation.invalid:-moz-placeholder,
+.validation.invalid::-moz-placeholder,
+.validation.invalid:-ms-input-placeholder {
+   color:red!important;
+}
+.small-tab-scroll
+{
+    height: 113px;
+    overflow-y: scroll;
+    padding-top: 5px;
+}
+#txtstartDate .datetimepicker .form-control{
+        width: 153px;
+    float: left;
+}
+#txtendDate .datetimepicker .form-control{
+        width: 153px;
+    float: left;
+}
+#txtExpecDates .datetimepicker .form-control{
+    /* width: 250px; */
+    float: left;
+}
+
+.main-content{
+    padding-bottom: 0px;margin-bottom: 50px;
+}
+
+.non-border, .non-border td, .non-border tr {
+    border: 0;
+    padding:2px 4px;
+}
+.favProjectIsSelected {
+    color:coral;padding-left: 5px;padding-top: 3px;
+}
+
+.favProjectIsDefault {
+    color:#fff ;padding-left: 5px;padding-top: 3px;
+}
+.hide-member{
+    pointer-events: none;
+    background-color: rgba(128, 128, 128, 0.12);
+    opacity: 0.5;
+}
+.cus{
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.min-height-200{
+    margin-bottom: 50px;
+}
+.dpColum{
+    vertical-align: top;
+}
+#iconStart{
+    margin-left: -15px;
+    /*pointer-events: none;*/
+}
+.tab-scroll{
+    overflow-x: hidden;
+}
+.nav-stacked>li {
+    position: relative; 
+    display: flex !important;
+}
+
+.nav-stacked>li:hover {
+        background: #0288d1;
+    }
+    .second-tab-nav > li > a:hover, .second-tab-nav > li > a:focus {
+        background: #0288d1;
+    }
+    .second-tab-nav > li > a:hover:after{
+            border-color: transparent transparent transparent #0288d1;
+    }
+    .second-tab-nav > li:hover:after {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 22px 0 22px 15px;
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    margin-top: -22px;
+    border-color: transparent transparent transparent #0288d1;
+}
+.nav-stacked>li>a .popover-content {
+    width: 200px;
+}
+.nav-stacked>li:hover a {
+    color: #fff;
+}
+
+.nav-stacked>li:hover a .popover-content a {
+    color: #000;
+}  
+
+.second-tab-nav > li> a input {
+    height: 25px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.height-25 {
+    line-height: 25px;
+}
+.nav-stacked>li .menu-popover {
+    width: 15%
+}
+.nav-stacked>li .menu-popover > span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.ProcessStepA {
+    padding: 0px !important;
+}
+.ProcessStepA > div,
+.ProcessStepA > span {
+    padding: 10px 15px;
+}
+.ProcessStepA > span > input
+ {
+    width: 95%;
+}
+a.txt-role{
+    padding: 0 !important;
+}
+a.txt-role label {
+    line-height: 36px;
+    width: 100%;
+}
+a.txt-role-member label.title-member-role {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    margin-bottom: auto;
+    margin-top: auto;
+    line-height: 36px;
+}
+#ulPermission > li > a {
+    padding: 0 10px;
+    line-height: 36px;
+    width: 100%;
+}
+#ulPermission .active{
+    background: #0288d1;
+}
+#ulPermission .active::after {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 18.5px 0 18.5px 25px;
+    border-color: transparent transparent transparent #0288d1;
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+#ulPermission  > li > a:hover {
+    background: transparent;
+}
+#ulPermission  > li > a:hover:after{
+    z-index: -9999;
+    background-color: #0288d1;
+}
+#ulPermission  > li:hover::after{
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 18.5px 0 18.5px 25px;
+    border-color: transparent transparent transparent #0288d1;
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+#ProcessStep > li > a:hover,
+#ProcessStep > li > a:focus{
+    background: #4c5c68;
+}
+.second-tab-nav > li:hover:after{
+    border-color: transparent transparent transparent #4c5c68;    
+}
+#ProcessStep >li:hover {
+    background: #4c5c68;
+}
+.favProjectIsDefault{
+    color: white;
+}
+.favProjectIsSelected{
+    color: red;
+}
+.cusValidation {
+    /* background-image: url(../images/error.png)!important; */
+    background-repeat: no-repeat;
+    background-position: 100% 50%;
+    background-size: 24px 24px;
+    padding-right: 24px;
+    border: solid 1px red!important;
+}
+
+#memberlistpopup {
+    position: relative;
+}
+.note-member{
+    position: fixed;
+    bottom: 30px;
+    left: 20px;
+}
+.disactive{
+    filter: grayscale(1);
+    opacity: 0.8;    
+    cursor: default;
+}
+.list-all-project {
+    margin-bottom: 50px;
+}
+.project-list .item .tit a:hover {
+    color: #0288d1;
+    text-decoration: none;
+}
+
+.project-list .item .tit a {
+    color: #4c5c68;
+
+}
+.member-item select.form-control {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    width: 80%;
+    margin: 0 auto;
+}
+.btn-link{cursor: pointer;}
+.model-erorr .modal-header {padding: 0;border-bottom: 0;}
+.disactive .thumbnail {
+    cursor: default;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+.itemWorksGroup {
+    margin-bottom: 50px;
+}
+.min-width-70{
+    min-width: 70%;
+}
+.navTop ul li:hover {
+    color: #0288d1;
+}
+.navTop ul li>a:hover {
+    color: #0288d1;
+}
+
+.title-works-logo {
+    cursor: pointer;
+    color: #90a4ae;
+    font-size: 14px;
+}
+.title-works-logo:hover {
+    color: #0288d1;
+    text-decoration: none;
+}
+.lstDetailGroup .progress .progress-bar {
+    line-height: 16px;
+}
+button {
+    padding: 0;
+}
+.treeview .tree-collapse,
+.treeview .tree-collapsed{
+    cursor: pointer;
+}
+.treeview .tree-collapse:before {
+    /* symbol for "opening" panels */
+    font-family: 'FontAwesome';  /* essential for enabling glyphicon */
+    content: "\f077";    /* adjust as needed, taken from bootstrap.css */
+    color: grey;         /* adjust as needed */
+    padding-right: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+.treeview .tree-collapsed:before {
+    font-family: 'FontAwesome';
+    content: "\f078"; 
+    color: grey;
+    padding-right: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+.dropzone .dz-preview .dz-error-message::after{
+    left: 45px !important;
+}

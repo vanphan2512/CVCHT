@@ -1,0 +1,1 @@
+<select-users (onItemUnSelected)="onUserRemoved($event)" (onItemSelected)="onUserAdded($event)" [values]=model [placeHolder]=placeHolderText></select-users>

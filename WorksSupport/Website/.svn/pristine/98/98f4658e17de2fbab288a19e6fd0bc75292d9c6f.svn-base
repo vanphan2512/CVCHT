@@ -1,0 +1,70 @@
+System.register(["angular2/core", "../../models/ui", "./toggle", "../../enum"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, ui_1, toggle_1, enum_1;
+    var FormStatusToggle;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (toggle_1_1) {
+                toggle_1 = toggle_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }],
+        execute: function() {
+            FormStatusToggle = (function (_super) {
+                __extends(FormStatusToggle, _super);
+                function FormStatusToggle() {
+                    _super.apply(this, arguments);
+                    this.modelChange = new core_1.EventEmitter();
+                    this.options = [
+                        { value: enum_1.ItemStatus.Active, text: this.i18nHelper.resolve("common.form.status.active"), active: true },
+                        { value: enum_1.ItemStatus.InActive, text: this.i18nHelper.resolve("common.form.status.inactive"), active: false }
+                    ];
+                }
+                FormStatusToggle.prototype.onChanged = function (item) {
+                    this.modelChange.next(item.value);
+                };
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', Object)
+                ], FormStatusToggle.prototype, "model", void 0);
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', core_1.EventEmitter)
+                ], FormStatusToggle.prototype, "modelChange", void 0);
+                FormStatusToggle = __decorate([
+                    core_1.Component({
+                        selector: "form-status-toggle",
+                        template: "<form-toggle [model]=model (modelChange)=onChanged($event) [options]=options></form-toggle>",
+                        directives: [toggle_1.FormToggle]
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], FormStatusToggle);
+                return FormStatusToggle;
+            }(ui_1.BaseControl));
+            exports_1("FormStatusToggle", FormStatusToggle);
+        }
+    }
+});
+//# sourceMappingURL=statusToggle.js.map

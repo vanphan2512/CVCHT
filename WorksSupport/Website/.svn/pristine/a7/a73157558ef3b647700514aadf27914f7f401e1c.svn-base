@@ -1,0 +1,19 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function isMatch(pattern, value) {
+        var regex = new RegExp(pattern);
+        return regex.test(value);
+    }
+    var regexHelper;
+    return {
+        setters: [],
+        execute: function () {
+            regexHelper = {
+                isMatch: isMatch
+            };
+            exports_1("default", regexHelper);
+        }
+    };
+});
+//# sourceMappingURL=regexHelper.js.map

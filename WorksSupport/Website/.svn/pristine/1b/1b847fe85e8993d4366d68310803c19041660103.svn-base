@@ -1,0 +1,19 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var InvalidOperation;
+    return {
+        setters: [],
+        execute: function () {
+            InvalidOperation = (function () {
+                function InvalidOperation(key, msg) {
+                    if (msg === void 0) { msg = ""; }
+                    // super(key, msg);
+                }
+                return InvalidOperation;
+            }());
+            exports_1("InvalidOperation", InvalidOperation);
+        }
+    };
+});
+//# sourceMappingURL=invalidOperation.js.map

@@ -1,0 +1,151 @@
+System.register(["rxjs/Rx", "angular2/http", "angular2/core", "../models/promise", "../models/http", "../models/exception", "../event"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var http_1, core_1, promise_1, http_2, exception_1, event_1, event_2;
+    var RESTConnector;
+    return {
+        setters:[
+            function (_1) {},
+            function (http_1_1) {
+                http_1 = http_1_1;
+            },
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (promise_1_1) {
+                promise_1 = promise_1_1;
+            },
+            function (http_2_1) {
+                http_2 = http_2_1;
+            },
+            function (exception_1_1) {
+                exception_1 = exception_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+                event_2 = event_1_1;
+            }],
+        execute: function() {
+            RESTConnector = (function () {
+                function RESTConnector() {
+                    var http = window.appState.getInjector().get(http_1.Http);
+                    this.setHttp(http);
+                }
+                RESTConnector.prototype.setHttp = function (http) {
+                    RESTConnector.http = http;
+                    RESTConnector.eventManager = window.ioc.resolve("IEventManager");
+                };
+                RESTConnector.prototype.getJSON = function (jsonPath) {
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Show);
+                    var def = promise_1.PromiseFactory.create();
+                    var headers = new http_2.JsonHeaders();
+                    RESTConnector.http.get(jsonPath, { headers: headers })
+                        .map(function (response) { return response.json(); })
+                        .subscribe(function (data) { def.resolve(data); });
+                    return def;
+                };
+                RESTConnector.prototype.post = function (url, data) {
+                    var _this = this;
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Show);
+                    var def = promise_1.PromiseFactory.create();
+                    var headers = new http_2.JsonHeaders();
+                    var dataToSend = JSON.stringify(data);
+                    RESTConnector.http.post(url, dataToSend, { headers: headers })
+                        .map(function (response) { return response.json(); })
+                        .subscribe(function (data) { return _this.handleResponse(def, data); }, function (exception) { return _this.handleException(def, exception); });
+                    return def;
+                };
+                RESTConnector.prototype.put = function (url, data) {
+                    var _this = this;
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Show);
+                    var def = promise_1.PromiseFactory.create();
+                    var headers = new http_2.JsonHeaders();
+                    var dataToSend = JSON.stringify(data);
+                    RESTConnector.http.put(url, dataToSend, { headers: headers })
+                        .map(function (response) { return response.json(); })
+                        .subscribe(function (data) { return _this.handleResponse(def, data); }, function (exception) { return _this.handleException(def, exception); });
+                    return def;
+                };
+                RESTConnector.prototype.get = function (url) {
+                    var _this = this;
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Show);
+                    var def = promise_1.PromiseFactory.create();
+                    var headers = new http_2.JsonHeaders();
+                    RESTConnector.http.get(url, { headers: headers })
+                        .map(function (response) { return response.json(); })
+                        .subscribe(function (data) { return _this.handleResponse(def, data); }, function (exception) { return _this.handleException(def, exception); });
+                    return def;
+                };
+                RESTConnector.prototype.delete = function (url) {
+                    var _this = this;
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Show);
+                    var def = promise_1.PromiseFactory.create();
+                    var headers = new http_2.JsonHeaders();
+                    RESTConnector.http.delete(url, { headers: headers })
+                        .map(function (response) { return response.json(); })
+                        .subscribe(function (data) { return _this.handleResponse(def, data); }, function (exception) { return _this.handleException(def, exception); });
+                    return def;
+                };
+                RESTConnector.prototype.handleResponse = function (def, response) {
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Hide);
+                    if (response.Success === true) {
+                        def.resolve(response.Data);
+                        return;
+                    }
+                    else {
+                        //let validationEror: ValidationException = this.getValidationExceptionFromResponse(response.Error);
+                        RESTConnector.eventManager.publish(event_1.CommonEvent.ValidationFail, response.Error);
+                        def.reject(response.Error);
+                    }
+                };
+                RESTConnector.prototype.handleException = function (def, exception) {
+                    RESTConnector.eventManager.publish(event_1.LoadingIndicatorEvent.Hide);
+                    var error = this.getError(exception);
+                    def.reject(error);
+                    RESTConnector.eventManager.publish(event_1.CommonEvent.ValidationFail, error);
+                };
+                RESTConnector.prototype.getValidationExceptionFromResponse = function (responseErrors) {
+                    var validationEror = new exception_1.ValidationException();
+                    responseErrors.forEach(function (errorItem) {
+                        validationEror.add(errorItem.key, errorItem.params);
+                    });
+                    return validationEror;
+                };
+                RESTConnector.prototype.getError = function (exception) {
+                    var validationEror;
+                    switch (exception.status) {
+                        case event_2.HttpCode.BadRequest:
+                            validationEror = new exception_1.ValidationException("common.httpError.badRequest");
+                            break;
+                        case event_2.HttpCode.NotFound:
+                            validationEror = new exception_1.ValidationException("common.httpError.notFound");
+                            break;
+                        case event_2.HttpCode.UnAuthorized:
+                            validationEror = new exception_1.ValidationException("common.httpError.unAuthorized");
+                            break;
+                        default:
+                            validationEror = new exception_1.ValidationException("common.httpError.genericError");
+                            break;
+                    }
+                    return validationEror;
+                };
+                RESTConnector = __decorate([
+                    core_1.Injectable(), 
+                    __metadata('design:paramtypes', [])
+                ], RESTConnector);
+                return RESTConnector;
+            }());
+            exports_1("RESTConnector", RESTConnector);
+        }
+    }
+});
+//# sourceMappingURL=restConnector.js.map

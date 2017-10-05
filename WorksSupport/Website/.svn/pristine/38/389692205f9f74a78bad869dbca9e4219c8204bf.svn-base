@@ -1,0 +1,13 @@
+import {KeyNamePair} from "../../models/keyNamePair";
+import {FormSelectMode} from "../../enum";
+
+export class SelectUserModel {
+    public mode: FormSelectMode = FormSelectMode.Item;
+    public users: Array<any>;
+    constructor() {
+        this.users = [];
+    }
+    public setUsers(users: any) {
+        this.users = [].concat(users);
+    }
+}

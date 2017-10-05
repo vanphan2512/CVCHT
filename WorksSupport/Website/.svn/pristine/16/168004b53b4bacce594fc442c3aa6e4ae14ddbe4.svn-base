@@ -1,0 +1,365 @@
+import { Component, ViewChild } from "angular2/core";
+import { Router } from "angular2/router";
+import { BasePage } from "../../../common/models/ui";
+import { MembersModel } from "./membersModel";
+import { DeleteModel } from "./membersModel";
+import memberService from "../_share/services/memberService";
+import { Grid, PageActions, Page, Form, FormTextInput, FormTextArea, FormNumberInput, SelectStatus } from "../../../common/directive";
+import { PageAction } from "../../../common/models/ui";
+import { UpdateMemberModel } from "./updateModel";
+import route from "../_share/config/route";
+import { EditModel } from "./editModel";
+import cacheService from "../../../common/services/cacheService";
+import { CACHE_CONSTANT } from "../../../common/services/cacheService";
+import { ValidationException } from "../../../common/models/exception";
+import { ErrorMessage } from "../../../common/layouts/default/directives/common/errorMessage";
+import { RoleValue } from "../../../common/enum";
+import configHelper from "../../../common/helpers/configHelper";
+@Component({
+    templateUrl: "app/modules/configurations/member/members.html",
+    directives: [Grid, PageActions, Page, Form, FormTextInput, FormTextArea, FormNumberInput, ErrorMessage, SelectStatus]
+})
+export class Members extends BasePage {
+    public modelIconUrl: string = String.empty;
+    public WorksSupportMemberRoleId: number = 0;
+    public WorksSupportMemberRoleName: string = String.empty;
+    public Description: string = String.empty;
+    public OrderIndex: number = 0;
+    public IconUrl: string = String.empty;
+    public IsActived: boolean;
+    public IsSystem: boolean;
+    public User: string = String.empty;
+    public actions: Array<PageAction> = [];
+    private router: Router;
+    public selectedValue: Array<any> = [];
+    public objDelete: DeleteModel;
+    public isCanAdd: boolean = cacheService.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_ADD) === "true" ? true : false;
+    public isCanDelete: boolean = cacheService.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+    public userLogin = cacheService.get(CACHE_CONSTANT.strUserName);
+    public roleValue: string = RoleValue.Admin;
+    public isAdmin: boolean = cacheService.get(CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+    public isDeleteMode: number = 0;
+    public isAddPopup: boolean = false;
+    constructor(router: Router) {
+        super();
+        let self: Members = this;
+        self.router = router;
+        self.model = new MembersModel(self.i18nHelper);
+        self.loadMembers();
+    }
+    ngOnInit() {
+        this.userLogin = cacheService.get(CACHE_CONSTANT.strUserName);
+        this.isAdmin = cacheService.get(CACHE_CONSTANT.strUserName) === this.roleValue ? true : false;
+    }
+    private onAddNewMemberClicked() {
+        let grid = this.gridComponent.grid.row.add({
+            "WorksSupportMemberRoleId": "0",
+            "IconUrl": "fa fa-edit"
+        }).draw();
+    }
+    @ViewChild(Grid)
+    private gridComponent: Grid;
+
+    @ViewChild(ErrorMessage)
+    private errorMess: ErrorMessage;
+
+    // Delete Member
+    public onShowPopupDelete(event: any) {
+        debugger;
+        let $ = window.jQuery;
+        let self: Members = this;
+        this.selectedValue = new Array();
+        let lstId: Array<string> = [];
+        let grid = this.gridComponent.grid.rows(".selected").data();
+
+        for (let i = 0; i < grid.length; i++) {
+            if (grid[i]["IsSystem"] !== true && this.userLogin !== RoleValue.Admin) {
+                this.selectedValue.push({ id: grid[i]["WorksSupportMemberRoleId"], name: grid[i]["WorksSupportMemberRoleName"], isSystem: grid[i]["IsSystem"] });
+                lstId.push(grid[i]["WorksSupportMemberRoleId"]);
+
+            }
+            if (this.userLogin === RoleValue.Admin) {
+                this.selectedValue.push({ id: grid[i]["WorksSupportMemberRoleId"], name: grid[i]["WorksSupportMemberRoleName"], isSystem: grid[i]["IsSystem"] });
+                lstId.push(grid[i]["WorksSupportMemberRoleId"]);
+            }
+
+            // this.selectedValue.push({ id: grid[i]["WorksSupportMemberRoleId"], name: grid[i]["WorksSupportMemberRoleName"], isSystem: grid[i]["IsSystem"] });
+            // lstId.push(grid[i]["WorksSupportMemberRoleId"]);
+
+        }
+        this.objDelete = new DeleteModel(lstId.toString(), this.User);
+    }
+
+    public onDeleteMembers(event: any) {
+        let $ = window.jQuery;
+        let self: Members = this;
+        memberService.delete(this.objDelete).then(function (event: any) {
+            $("#modal").modal("hide");
+            $(".modal-backdrop").modal("hide");
+            self.model = new MembersModel(self.i18nHelper);
+            configHelper.showNotify("delete", true);
+            self.loadMembers();
+        });
+    }
+
+    private loadMembers() {
+        let self: Members = this;
+        memberService.getMembers().then(function (items: Array<any>) {
+            self.model.importMembers(items);
+        });
+    }
+
+    // Get data by status : 1/0
+    public onStatusChange(event: any) {
+        let self: Members = this;
+        let $ = window.jQuery;
+        let currentIsDelete = event.currentTarget.value;
+        this.isDeleteMode = currentIsDelete;
+        let isCanDelete: boolean = cacheService.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+        let isCanEdit: boolean = cacheService.get(CACHE_CONSTANT.EO_WORKSSUPORTGROUP_EDIT) === "true" ? true : false;
+        let memberName = $("#memberName").val();
+        // get data of dropdownlist.
+        memberService.getMemberBy(memberName, currentIsDelete, 0, 1000).then(function (items: Array<any>) {
+            self.model.importMembers(items);
+        });
+        // check status is delete to show delete button.
+        if (currentIsDelete === "1") {
+            $("#btnDeletePopup").css("display", "none");
+            if (isCanDelete) {
+                self.gridComponent.grid.column(0).visible(false);
+            }
+            if (isCanEdit) {
+                var num = self.gridComponent.grid.column.length - 1;
+                self.gridComponent.grid.column(num).visible(false);
+            }
+        } else {
+            $("#btnDeletePopup").css("display", "inline-block");
+            if (isCanDelete) {
+                self.gridComponent.grid.column(0).visible(true);
+            }
+            if (isCanEdit) {
+                var num = self.gridComponent.grid.column.length - 1;
+                self.gridComponent.grid.column(num).visible(true);
+            }
+            self.gridComponent.grid.columns().checkboxes.deselectAll();
+        }
+    }
+    // Search data by name 
+    public SearchByKey(event: any) {
+        let $ = window.jQuery;
+        let memberName = $("#memberName").val();
+        $("#searchButton").addClass("active");
+        let currentIsDelete = $(".custom-select .form-control").val();
+        let self: Members = this;
+        memberService.getMemberBy(memberName, currentIsDelete, 0, -1).then(function (items: Array<any>) {
+            self.model.importMembers(items);
+        });
+    }
+
+    public onIconSelectChanged(event: any) {
+        let self: Members = this;
+        let model: UpdateMemberModel = new UpdateMemberModel();
+        model.import(event.item);
+        memberService.update(model).then(function (event: any) {
+            self.model = new MembersModel(self.i18nHelper);
+            self.loadMembers();
+        });
+    }
+
+    public onToggleSelectChanged(event: any) {
+        let self: Members = this;
+        let model: UpdateMemberModel = new UpdateMemberModel();
+        model.import(event.item);
+        memberService.update(model).then(function (event: any) {
+            self.model = new MembersModel(self.i18nHelper);
+            self.loadMembers();
+        });
+    }
+
+    public onSaveClicked(event: any): void {
+        let $ = window.jQuery;
+        let self: Members = this;
+        this.errorMess.errors = [];
+        if (this.isValid(true)) {
+            memberService.createMenber(this.model).then(function () {
+                $("#modalUpdate").modal("hide");
+                $(".modal-backdrop").modal("hide");
+                self.model = new MembersModel(self.i18nHelper);
+                self.loadMembers();
+            });
+        }
+    }
+
+    public isValid(isAdd: boolean): boolean {
+        let $ = window.jQuery;
+        this.clearValidate(isAdd);
+        let validationErrors: ValidationException = new ValidationException();
+        let lenName = (this.WorksSupportMemberRoleName === null ? 0 : this.WorksSupportMemberRoleName.length);
+        let lenDesc = (this.Description === null ? 0 : this.Description.length);
+        let orderIndex: number = this.OrderIndex;
+        if (!isAdd) {
+            if (orderIndex < 1 || orderIndex % 1 != 0 || orderIndex > 999) {
+                validationErrors.add("OrderIndex", [], "NCS-000003: Thứ tự vai trò không hợp lệ!");
+                $("#OrderIndex").addClass("has-error");
+            }
+        }
+        if (!this.WorksSupportMemberRoleName) {
+            validationErrors.add("WorksSupportMemberRoleName", [], "NCS-000004: Tên vai trò là bắt buộc!");
+            $("#WorksSupportMemberRoleName").addClass("has-error");
+        }
+        if (lenName > 200) {
+            validationErrors.add("WorksSupportMemberRoleName", [], "NCS-000005: Tên vai trò không được vượt quá 200 kí tự!");
+            $("#WorksSupportMemberRoleName").addClass("has-error");
+        }
+        if (lenDesc > 2000) {
+            validationErrors.add("Description", [], "NCS-000006: Mô tả không được vượt quá 2000 kí tự!");
+            $("#Description").addClass("has-error");
+        }
+        validationErrors.throwIfHasError();
+        return !validationErrors.hasError();
+    }
+    // clear validation 
+    public clearValidate(isAdd: boolean) {
+        let $ = window.jQuery;
+        if (!isAdd) {
+            $("#OrderIndex").removeClass("has-error");
+        }
+        $("#WorksSupportMemberRoleName").removeClass("has-error");
+        $("#Description").removeClass("has-error");
+    }
+
+    // clear validation when key down is pressed
+    public clearValidateInput(id: any) {
+        let $ = window.jQuery;
+        $("#" + id).removeClass("has-error");
+        let arrErr = this.errorMess.errors;
+        let index: number;
+        for (let i = 0; i < arrErr.length; i++) {
+            if (arrErr[i].key === id) {
+                arrErr.splice(i, 1);
+            }
+        }
+        this.errorMess.errors = arrErr;
+    }
+    public onEditMemberClicked(event: any) {
+        let self: Members = this;
+        let $ = window.jQuery;
+        this.errorMess.errors = [];
+        $("div").remove(".alert");
+        this.isAddPopup = false;
+        this.clearValidate(false);
+        memberService.get(event.item.WorksSupportMemberRoleId).then(function (item: any) {
+            self.WorksSupportMemberRoleId = item.WorksSupportMemberRoleId;
+            self.WorksSupportMemberRoleName = item.WorksSupportMemberRoleName;
+            self.Description = item.Description;
+            self.IconUrl = item.IconUrl;
+            self.OrderIndex = item.OrderIndex;
+            self.IsActived = item.IsActived;
+            self.IsSystem = item.IsSystem;
+            self.User = item.User;
+        })
+        $('#modalUpdate').modal('toggle');
+    }
+    public onEditMember(event: any) {
+        this.errorMess.errors = [];
+        let self: Members = this;
+        let $ = window.jQuery;
+        let memberId = this.WorksSupportMemberRoleId;
+        let memberName = this.WorksSupportMemberRoleName;
+        let description = this.Description;
+        let iconUrl = this.IconUrl;
+        let orderIndex = this.OrderIndex;
+        let isActived = this.IsActived;
+        let isSystem = this.IsSystem;
+        let user = cacheService.get(CACHE_CONSTANT.strUserName);
+        let editModel = new EditModel(memberId, memberName, description, iconUrl, orderIndex, isActived, isSystem, user);
+        if (this.isValid(false)) {
+            memberService.update(editModel).then(function () {
+                $('#modalUpdate').modal('hide');
+                $('.modal-backdrop').modal('hide');
+                self.model = new MembersModel(self.i18nHelper);
+                configHelper.showNotify("edit", true);
+                self.loadMembers();
+            }).error(function (error: any) {
+                self.validateOnServer(error);
+            });
+        }
+    }
+
+    private onAddNewMemberClick() {
+        let $ = window.jQuery;
+        let self: Members = this;
+        self.WorksSupportMemberRoleId = 0;
+        self.WorksSupportMemberRoleName = "";
+        self.Description = "";
+        self.IconUrl = "";
+        self.OrderIndex = 0;
+        self.IsActived = true;
+        self.IsSystem = false;
+        self.User = "";
+        this.errorMess.errors = [];
+        this.isAddPopup = true;
+        this.clearValidate(true);
+    }
+
+    public onAddClicked(event: any) {
+        let self: Members = this;
+        let $ = window.jQuery;
+        let worksSupportMemberRoleId = this.WorksSupportMemberRoleId;
+        let worksSupportMemberRoleName = this.WorksSupportMemberRoleName;
+        let description = this.Description;
+        let IconUrl = self.IconUrl;
+        let orderIndex = this.OrderIndex;
+        let isActived = this.IsActived;
+        let isSystem = this.IsSystem;
+        let user = cacheService.get(CACHE_CONSTANT.strUserName);
+        let editModel = new EditModel(worksSupportMemberRoleId, worksSupportMemberRoleName, description, IconUrl, orderIndex, isActived, isSystem, user);
+        if (this.isValid(true)) {
+            memberService.createMenber(editModel).then(function () {
+                $('#modalUpdate').modal('hide');
+                $('.modal-backdrop').modal('hide');
+                self.model = new MembersModel(self.i18nHelper);
+                configHelper.showNotify("add", true);
+                self.loadMembers();
+            }).error(function (error: any) {
+                self.validateOnServer(error);
+            });
+        }
+
+    }
+
+    // select icon on popup edit
+    public onIconSelectedEdit() {
+        let self: Members = this;
+        let $ = window.jQuery;
+        $("#myIconModal li").on("click", function () {
+            let icon = $(this).find("i").attr("class");
+            self.IconUrl = icon;
+            $("#myIconModal").modal("hide");
+        });
+    }
+
+    private hidePagging() {
+        let $ = window.jQuery;
+        $(".pagination").css({ 'display': "none" });
+    }
+    public validateOnServer(error: any) {
+        let $ = window.jQuery;
+        for (let i = 0; i < error.length; i++) {
+            let key = error[i].Key;
+            if (key === "WorksSupportMemberRoleName") {
+                $("#WorksSupportMemberRoleName").addClass("has-error");
+            }
+            if (key === "OrderIndex") {
+                $("#OrderIndex").addClass("has-error");
+            }
+        }
+    }
+    // cancel Add 
+    public onCancelAdd() {
+
+        let $ = window.jQuery;
+        $("#modalUpdate").modal("hide");
+        $(".modal-backdrop").modal("hide");
+    }
+}

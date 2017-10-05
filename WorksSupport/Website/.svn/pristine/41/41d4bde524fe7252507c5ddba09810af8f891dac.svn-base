@@ -1,0 +1,31 @@
+System.register(["../services/cacheService", "./configHelper"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function getLang() {
+        var defaultLang = configHelper_1.default.getAppConfig().localization.lang;
+        if (!cacheService_1.default.exist(cacheService_2.CACHE_CONSTANT.USER_PROFILE)) {
+            return defaultLang;
+        }
+        var userProfile = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.USER_PROFILE);
+        return !!userProfile.lang && !String.isNullOrWhiteSpace(userProfile.lang) ? userProfile.languageCode : defaultLang;
+    }
+    var cacheService_2, cacheService_1, configHelper_1, userProfileHelper;
+    return {
+        setters: [
+            function (cacheService_2_1) {
+                cacheService_2 = cacheService_2_1;
+                cacheService_1 = cacheService_2_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }
+        ],
+        execute: function () {
+            userProfileHelper = {
+                getLang: getLang
+            };
+            exports_1("default", userProfileHelper);
+        }
+    };
+});
+//# sourceMappingURL=userProfileHelper.js.map

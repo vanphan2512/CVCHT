@@ -1,0 +1,65 @@
+System.register(["../../../../common/helpers/configHelper"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var configHelper_1;
+    var worksTypeService;
+    function getWorksTypes() {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/workssupporttypes");
+        return connector.get(url);
+    }
+    // Get data by Id
+    function get(id) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}/{1}", configHelper_1.default.getAppConfig().api.baseUrl, id);
+        return connector.get(url);
+    }
+    // Create new
+    function create(role) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}", configHelper_1.default.getAppConfig().api.baseUrl);
+        return connector.post(url, role);
+    }
+    // Update data
+    function update(model) {
+        debugger;
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/workssupporttypes/insertBy");
+        return connector.post(url, model);
+    }
+    // Remove data
+    function remove(deleteModel) {
+        var connector = window.ioc.resolve("IConnector");
+        var url = String.format("{0}/{1}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/workssupporttypes/Del");
+        return connector.post(url, deleteModel);
+    }
+    // Get data by keyWords, isDeleted, pageIndex, PageSize
+    function getWorkTypeBy(keyWord, isDelete, pageIndex, pageSize) {
+        var connector = window.ioc.resolve("IConnector");
+        // cunstructer param to search.
+        var keySearch = "?Keywords=" + keyWord;
+        var isDel = "&IsDeleted=" + isDelete;
+        var index = "&PageIndex=" + pageIndex;
+        var size = "&PageSize=" + pageSize;
+        var url = String.format("{0}{1}{2}{3}{4}{5}", configHelper_1.default.getAppConfig().api.baseUrl, "v1/workssupporttypes/Search", keySearch, isDel, index, size);
+        return connector.get(url);
+    }
+    return {
+        setters:[
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            }],
+        execute: function() {
+            worksTypeService = {
+                getWorksTypes: getWorksTypes,
+                create: create,
+                update: update,
+                delete: remove,
+                get: get,
+                getWorkTypeBy: getWorkTypeBy
+            };
+            exports_1("default",worksTypeService);
+        }
+    }
+});
+//# sourceMappingURL=worksTypeService.js.map

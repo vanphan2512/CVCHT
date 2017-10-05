@@ -1,0 +1,99 @@
+import { Component, Input, Output, EventEmitter } from "angular2/core";
+import { BaseControl } from "../../../common/models/ui";
+import { CheckStatusModel } from "./checkStatusModel";
+import statusService from "../../../common/services/statusService";
+import { Router } from "angular2/router";
+import route from "../../../modules/configurations/_share/config/route";
+import configHelper from "../../../common/helpers/configHelper";
+import cacheService from "../../../common/services/cacheService";
+import { CACHE_CONSTANT } from "../../../common/services/cacheService";
+
+@Component({
+    selector: "check-status",
+    templateUrl: "app/common/directives/form/checkStatus.html"
+})
+export class SelectStatus extends BaseControl {
+    public model: CheckStatusModel = new CheckStatusModel();
+    private dom: any;
+    private router: Router;
+    public urlStatus: string;
+    public userLogin = cacheService.get(CACHE_CONSTANT.strUserName);
+    constructor() {
+        super();
+        let self: SelectStatus = this;
+    }
+
+    protected onReady() {
+        let self: SelectStatus = this;
+        self.urlStatus = route.status.status.path;
+        let notify: any  = localStorage.getItem(configHelper.getAppConfig().defaultUrl + "_notify");
+        localStorage.setItem(configHelper.getAppConfig().defaultUrl +"_notify", "true");
+        if (self.userLogin != null && notify === "false") {
+            statusService.getStatus().then(function (status: any) {
+                self.showNotify(status);
+            });
+        }
+    }
+    private showNotify(model: any) {
+        let $ = window.jQuery;
+        let self: SelectStatus = this;
+        let message: String = "Bạn chưa khai báo các trạng thái";
+        if (model.IsInitStatus === false) {
+            message += "<strong> Khởi tạo </strong>";
+        }
+        if (model.IsCompleteStatus === false) {
+            message += "<strong> Hoàn thành </strong>";
+        }
+        if (model.IsCloseStatus === false) {
+            message += "<strong> Kết thúc </strong>";
+        }
+        if (model.IsCloseStatus === true && model.IsCompleteStatus === true && model.IsCloseStatus) {
+            return;
+        }
+        $.notify({
+            // options
+            icon: 'glyphicon glyphicon-warning-sign',
+            title: '<strong> Thông Báo  </strong>',
+            message: message,
+            url: self.urlStatus,
+            target: '_self'
+        }, {
+                // settings
+                element: 'body',
+                position: 'absolute',
+                type: "info",
+                allow_dismiss: true,
+                newest_on_top: false,
+                showProgressbar: false,
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                },
+                offset: 20,
+                spacing: 10,
+                z_index: 1031,
+                delay: 5000,
+                timer: 1000,
+                mouse_over: null,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                onShow: null,
+                onShown: null,
+                onClose: null,
+                onClosed: null,
+                icon_type: 'class',
+                template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+                '<span data-notify="icon"></span> ' +
+                '<span data-notify="title">{1}</span> <br/>' +
+                '<span data-notify="message">{2}</span>' +
+                '<div class="progress" data-notify="progressbar">' +
+                '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                '</div>' +
+                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                '</div>'
+            });
+    }
+}

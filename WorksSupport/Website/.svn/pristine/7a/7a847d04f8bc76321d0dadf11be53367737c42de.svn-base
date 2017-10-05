@@ -1,0 +1,161 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./worksTypesModel", "../_share/services/worksTypeService", "../../../common/directive", "./updateModel", "../_share/config/route", "../../../common/services/cacheService"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, router_1, ui_1, worksTypesModel_1, worksTypesModel_2, worksTypeService_1, directive_1, updateModel_1, route_1, cacheService_1, cacheService_2;
+    var WorksTypes;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (worksTypesModel_1_1) {
+                worksTypesModel_1 = worksTypesModel_1_1;
+                worksTypesModel_2 = worksTypesModel_1_1;
+            },
+            function (worksTypeService_1_1) {
+                worksTypeService_1 = worksTypeService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            },
+            function (cacheService_1_1) {
+                cacheService_1 = cacheService_1_1;
+                cacheService_2 = cacheService_1_1;
+            }],
+        execute: function() {
+            WorksTypes = (function (_super) {
+                __extends(WorksTypes, _super);
+                function WorksTypes(router) {
+                    _super.call(this);
+                    this.actions = [];
+                    this.selectedValue = [];
+                    this.isCanAdd = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    this.isCanDelete = cacheService_1.default.get(cacheService_2.CACHE_CONSTANT.EO_WORKSSUPORTGROUP_DELETE) === "true" ? true : false;
+                    var self = this;
+                    self.router = router;
+                    self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                    self.loadWorkType();
+                }
+                WorksTypes.prototype.onAddNewWorkTypeClicked = function () {
+                    var grid = this.gridComponent.grid.row.add({
+                        "WorksSupportTypeId": "0",
+                        "IconUrl": "fa fa-edit"
+                    }).draw();
+                };
+                WorksTypes.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows(".selected").data();
+                    for (var i = 0; i < grid.length; i++) {
+                        this.selectedValue.push({ id: grid[i]["WorksSupportTypeId"], name: grid[i]["WorksSupportTypeName"] });
+                        lstId.push(grid[i]["WorksSupportTypeId"]);
+                    }
+                    this.objDelete = new worksTypesModel_2.DeleteModel(lstId.toString(), "administrator");
+                };
+                WorksTypes.prototype.onDeleteWorkTypes = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    worksTypeService_1.default.delete(this.objDelete).then(function (event) {
+                        $("#modal").modal("hide");
+                        $(".modal-backdrop").modal("hide");
+                        self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                        self.loadWorkType();
+                    });
+                };
+                WorksTypes.prototype.loadWorkType = function () {
+                    var self = this;
+                    worksTypeService_1.default.getWorksTypes().then(function (items) {
+                        self.model.importWorksTypes(items);
+                    });
+                };
+                // Get data by status : 1/0
+                WorksTypes.prototype.onWorkTypeChange = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var currentIsDelete = event.currentTarget.value;
+                    // get data of dropdownlist.
+                    worksTypeService_1.default.getWorkTypeBy("", currentIsDelete, 0, 10).then(function (items) {
+                        self.model.importWorksTypes(items);
+                    });
+                    // check status is delete to show delete button.
+                    if (currentIsDelete === "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                    }
+                };
+                WorksTypes.prototype.onToggleSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateWorksTypeModel();
+                    model.import(event.item);
+                    worksTypeService_1.default.update(model).then(function (event) {
+                        self.model = new worksTypesModel_1.WorksTypesModel(self.i18nHelper);
+                        self.loadWorkType();
+                    });
+                };
+                // Search data by name
+                WorksTypes.prototype.SearchByKey = function (event) {
+                    var $ = window.jQuery;
+                    var worksTypeName = $("#worksTypeName").val();
+                    var self = this;
+                    worksTypeService_1.default.getWorkTypeBy(worksTypeName, 0, 0, 10).then(function (items) {
+                        self.model.importWorksTypes(items);
+                    });
+                };
+                WorksTypes.prototype.onIconSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateWorksTypeModel();
+                    event.item.IconUrl = event.icon;
+                    model.import(event.item);
+                    worksTypeService_1.default.update(model).then(function (event) {
+                        self.router.navigate([route_1.default.worksType.worksTypes.name]);
+                        self.loadWorkType();
+                    });
+                };
+                __decorate([
+                    core_1.ViewChild(directive_1.Grid), 
+                    __metadata('design:type', directive_1.Grid)
+                ], WorksTypes.prototype, "gridComponent", void 0);
+                WorksTypes = __decorate([
+                    core_1.Component({
+                        templateUrl: "app/modules/configurations/worksType/worksTypes.html",
+                        directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page]
+                    }), 
+                    __metadata('design:paramtypes', [router_1.Router])
+                ], WorksTypes);
+                return WorksTypes;
+            }(ui_1.BasePage));
+            exports_1("WorksTypes", WorksTypes);
+        }
+    }
+});
+//# sourceMappingURL=worksTypes.js.map

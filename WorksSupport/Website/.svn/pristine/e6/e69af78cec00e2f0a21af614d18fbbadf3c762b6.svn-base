@@ -1,0 +1,2328 @@
+<div class="main-content">
+    <h2>{{wGName}}</h2>
+    <div class="main-tab-content label-mar-right" style="margin-top:0; padding:15px 30px;margin-left: 0;margin-right: 0;">
+        <button type="button" *ngIf="isAdmin || isCanAdd" class="btn-eof blue-bg  btn-add-detai-worksgroup" (click)="onAddNewWorksClick()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        <div class="nav-control">
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <div class="main-buttons">
+                        <div class="main-search  m-right-10" id="searchButton">
+                            <div class="input-group">
+                                <input type="text" id="worksName" name="worksName" class="form-control" placeholder="Nhập từ khóa tìm kiếm" aria-describedby="basic-addon2"
+                                    (keyup)="onSearch()">
+                                <span class="input-group-addon" id="searchAddon"><button type="button" (click)="onSearch()"><i class="fa fa-search" aria-hidden="true"></i></button></span>
+                            </div>
+                        </div>
+                        <button type="button" data-toggle="modal" (click)="onShowPopupEdit()" data-target="#modalUpdateWorkGroup" class="btn-eof blue-bg m-right-10 btn-user"><i class="fa fa-user" aria-hidden="true"></i></button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row row-short itemWorksGroupDetail">
+            <div class="col-lg-2 col-md-3 group-sidebar-left">
+                <!-- <ul class="iconProjectLeft">
+                    <li *ngFor="let project of listProject" [ngClass]="{'active': selectedProjectID.toString() === project.WorksSupportProjectId.toString(), '' : selectedProjectID !== project.WorksSupportProjectId.toString()}"
+                        data-toggle="tooltip" (click)="onProjectChange(project.WorksSupportProjectId)">
+                        <i class="fa {{project.IconUrl}}" aria-hidden="true"></i> <span class="group-sidebar-left-title">{{project.WorksSupportProjectName}}</span>
+                    </li>
+                </ul> -->
+
+                <ul class="works-groups-list-left">
+                    <li class="list-group marquee" title="" *ngFor="let worksGroup of listWorksGroup" [ngClass]="{'active': selectedWorksGroupID.toString() === worksGroup.WorksSupportGroupId.toString(), '' : selectedWorksGroupID !== worksGroup.WorksSupportGroupId.toString()}"
+                        (click)="onWorksGroupChange(worksGroup.WorksSupportGroupId)">
+                        <a>
+                            <p>
+                                <i class="fa {{worksGroup.IconUrl}}" aria-hidden="true"></i> {{worksGroup.WorksSupportGroupName}}
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-10 col-md-9">
+                <div class="navTop">
+                    <ul>
+                        <li style="cursor:pointer" (click)="onProjectChange(selectedProjectID)"><i class="fa {{projectIcon}}" aria-hidden="true"></i> {{projectName}}</li>
+                        <span class="btn-angle-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                        <li><i class="fa {{wGIcon}}" aria-hidden="true"></i> {{wGName}}</li>
+                    </ul>
+                </div>
+                <div class="lstWorksGroup">
+                    <ul class="nav nav-tabs tabs-page" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Danh sách công việc</a></li>
+                    </ul>
+                    <div class="row lstDetailGroup">
+                        <table class="table-hover" id="dataTable" style="width:100%">
+                            <thead>
+                                <th colspan="2" valign="middle" style="text-align:left;width: 42%">Tên công việc</th>
+                                <th valign="middle" style="width: 10%">Ngày tạo</th>
+                                <th valign="middle" style="width:21%">Tiến độ</th>
+                                <th valign="middle" style="width:12%">Trạng thái</th>
+                                <th valign="middle" style="width:10%">Xử lý</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="listWorks===null || listWorks.length===0">
+                                    <td colspan="6" class="text-center">
+                                        Không có công việc
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let works of listWorks">
+                                    <td width="5%" valign="middle" align="center">
+                                        <div class="dropdown dropdown-left">
+                                            <a class="dropdown-toggle btn" href="#" data-toggle="dropdown" id="menu1" *ngIf="isAdmin || isCanEdit || isCanDel" aria-expanded="true"><i class="fa fa-ellipsis-h"></i></a>
+                                            <ul class="dropdown-menu " role="menu" aria-labelledby="menu1">
+                                                <form>
+                                                    <li>
+                                                        <button type="button " class="btn dark-bg-drop" *ngIf="isAdmin || isCanEdit" (click)="onEditWorksClick(works.WorksSupportId)"><i class="fa fa-pencil" aria-hidden="true"></i> Chỉnh sửa</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="btn dark-bg-drop" *ngIf="isAdmin || isCanDel" (click)="confirmDelete(works.WorksSupportId,works.WorksSupportName)"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                                                    </li>
+                                                </form>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td valign="middle" align="left"><span (click)="redirecttoDetail(works.WorksSupportId)"><a class="title-works-support-name">{{works.WorksSupportName}}</a></span></td>
+                                    <td valign="middle" align="center" style="text-align:center;"><span style="color: #90a4ae;">{{stringAsDate(works.CreatedDate)}}</span></td>
+                                    <td valign="middle" align="center" style="text-align:left;">
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="works.Currentprogress" aria-valuemin="0" aria-valuemax="100"
+                                                [ngStyle]="{'width': works.Currentprogress + '%'}">
+                                                <span class="sr-only">{{works.Currentprogress}}% hoàn thành</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td valign="middle" align="center"><span class="btn btn-eoffice-status max-text-status">{{works.WorksSupportStatusName}}</span></td>
+                                    <td valign="middle" align="center">
+                                        <div class="dropdown">
+                                            <a class="dropdown-toggle btn btn-eoffice-handling blue-bg" href="#" data-toggle="dropdown" [attr.data-id]="works.WorksSupportId"
+                                                (click)="onXuLyClick(works.WorksSupportId)" *ngIf="isAdmin || works.IsCanProcessWorkFlow"><i class="fa fa-edit"></i> Xử lý <i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                            <div class="dropdown-menu dropdown-menu-handling" style="padding: 15px; padding-bottom: 10px;">
+                                                <form>
+                                                    <select (change)="clearValidateProcessStep()" class="form-control" required [(ngModel)]="selectedStepID" (ngModelChange)="getStepUser(works.WorksSupportId)">
+                                                       <option value="">---Chọn bước xử lý kế tiếp---</option>
+                                                        <option id="{{step.NextWorksSupportStepId}}" *ngFor="let step of listWorksFlow" [value]="step.NextWorksSupportStepId">
+                                            {{step.WorksSupportStepName}}</option>
+                                                    </select>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-user" aria-hidden="true"></i></span>
+                                                        <select #SelectedUserProcess (change)="validateProcessStep(mustChooseNextStepUser, SelectedUserProcess.value)" class="form-control"
+                                                            [required]="mustChooseNextStepUser" [(ngModel)]="selectedUser" [disabled]="selectedStepID===''">
+                                                       <option value="">---Chọn người xử lý---</option>
+                                                            <option id="{{user.FullName}}" *ngFor="let user of listUser" [value]="user.UserName">
+                                                            {{user.FullName}}</option>
+                                                        </select>
+
+                                                    </div>
+                                                    <div class="input-group" style="margin-top:-10px; font-size:12.5px;">
+                                                        <span class="alert-danger" *ngIf="ErrorStepUser?.length >0">
+                                                        {{ErrorStepUser}}
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <textarea class="form-control" placeholder="Ghi chú..." [disabled]="selectedStepID===''" [(ngModel)]="Note"></textarea>
+                                                    </div>
+                                                    <button (click)="onProcessClicked(works.WorksSupportId)" type="button" class="btn blue-bg" [disabled]="selectedStepID===''">Xử lý</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="noRowBottom" class="bottom">
+                            <div class="dataTables_length" id="dataTable_length">
+                                <label>
+                                                <div class="custom-select">Hiển thị: 
+                                                    <select class="form-control" [(ngModel)]="size" (ngModelChange)="onPageSizeChange()">
+                                                        <option value=10>10</option>
+                                                        <option value=20>20</option>
+                                                        <option value=50>50</option>
+                                                    </select> dòng / trang
+                                                </div>
+                                            </label>
+                            </div>
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+                                    <li *ngIf="pager.currentPage !== 1">
+                                        <a (click)="onPageChange(pager.currentPage - 1)"><i class="fa fa-angle-double-left" aria-hidden="true"></i></a>
+                                    </li>
+                                    <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                                        <a (click)="onPageChange(page)">{{page}}</a>
+                                    </li>
+                                    <li *ngIf="pager.currentPage !== pager.totalPages">
+                                        <a (click)="onPageChange(pager.currentPage + 1)"><i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modal-add-works-group-related">
+                <div class="modal-dialog modal-lg popupTab" role="document">
+                    <div class="modal-content">
+                        <div class="titleProject">
+                            <h2 class="modal-title">
+                                <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm công việc liên quan
+                            </h2>
+                        </div>
+                        <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                        <div class="modal-body tab-scroll" style="padding: 20px;">
+                            <div class="row row-short">
+
+                                <div class="col-lg-2 col-xs-12">
+                                    <select class="form-control" [(ngModel)]="selectedProjectInvoleID">
+                                            <option value="" selected >--Chọn dự án--</option>
+                                                       <option id="{{project.ProjectId}}" *ngFor="let project of lstProjectInvole" [value]="project.ProjectId">
+                                            {{project.ProjectName}}</option>
+                                                    </select>
+                                </div>
+                                <div class="col-lg-4 col-xs-12 frm-by-name-works">
+                                    <div class="input-group" style="width: 100%">
+                                        <input type="text" class="input-group form-control" [(ngModel)]="searchInvoleKeyword" placeholder="Tìm kiếm..." style="width: 65%">
+                                        <select class="form-control" style="width: 35%" [(ngModel)]="searchTypeProjectInvole">
+                                                       <option value="1">Tên công việc</option>
+                                                       <option value="2">Người thực hiện</option>
+                                                    </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="row row-short">
+                                        <div class="col-lg-4 col-xs-12 dtmformdate">
+                                            <div class="input-group">
+                                                <form-datepicker #dataPickerFrom placeholder="Từ ngày..." id="txtInvoleFromDates" [(model)]=txtInvoleFromDates></form-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-xs-12 dtmtodate">
+                                            <div class="input-group">
+                                                <form-datepicker #dataPickerTo id="txtInvoleToDates" placeholder="Đến ngày..." [(model)]=txtInvoleToDates></form-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-xs-12 btn-search-works-related">
+                                            <button type="button" class="btn btn btn-primary check-abc" (click)="SearchInvole()"> <i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="lstDetailGroup table-works-related">
+                                <table class="table-hover" id="dataTable" style="width:100%">
+                                    <thead>
+                                        <th valign="middle" width="5%">
+                                            <input type="checkbox" class="custom-checkbox" id="checkAll" name="all" [checked]="isAllChecked()" (change)="checkAll($event)"
+                                            />
+                                            <label for="checkAll"></label>
+                                        </th>
+                                        <th valign="middle" width="35%" align="left">Tên công việc</th>
+                                        <th valign="middle" width="20%">Dự án</th>
+                                        <th valign="middle" width="20%">Ngày bắt đầu</th>
+                                        <th valign="middle" width="20%">Ngày kết thúc</th>
+
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngIf="listInvolee===null || listInvole.length===0">
+                                            <td colspan="5" class="text-center">
+                                                Không có công việc liên quan
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let works of listInvole">
+                                            <td valign="middle" align="center">
+                                                <input type="checkbox" class="custom-checkbox" id="{{works.WorksId}}" [(ngModel)]="works.state" [disabled]="disableCheckBoxInvolve(works.WorksId)">
+                                                <label [attr.for]="works.WorksId"></label>
+                                            </td>
+                                            <td valign="middle" align="left">{{works.WorksName}}</td>
+                                            <td valign="middle">{{works.ProjectName}}</td>
+                                            <td valign="middle" align="center">{{stringAsDate(works.StartDate)}}</td>
+                                            <td valign="middle" align="center">{{stringAsDate(works.EndDate)}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-group text-right btnActioninfo">
+                                <button class="btn btn-eoffice green-bg" id="save" type="button" (click)="onSaveWorkInvole()"><i aria-hidden="true" class="fa fa-plus-square"></i> Thêm</button>
+                                <button class="btn btn-eoffice white-bg " id="cancel" type="button" data-dismiss="modal"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalAdd" aria-hidden="true">
+                <div class="modal-dialog modal-lg popupTab" role="document">
+                    <div class="modal-content">
+                        <div class="titleProject">
+                            <h2 class="modal-title">
+                                <i class="fa fa-plus-square" aria-hidden="true"></i> Thêm công việc cần hỗ trợ check
+                            </h2>
+                        </div>
+                        <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                        <div class="modal-body tab-scroll" style="padding: 20px;">
+                            <ul class="nav nav-tabs tabs-page" role="tablist">
+                                <li role="presentation" (click)="changeInforTab()" [class.active]="IsInformationTab"><a href="#tab-works-info" aria-controls="tab-works-info" role="tab" data-toggle="tab">Thông tin</a></li>
+                                <li role="presentation" (click)="changeInforTab()" [class.active]="!IsInformationTab"><a href="#tab-works-group-related" aria-controls="tab-works-group-related" role="tab" data-toggle="tab">Công việc liên quan</a></li>
+                            </ul>
+                            <div class="tab-content tabs-page">
+                                <div role="tabpanel" [class.active]="IsInformationTab" class="tab-pane" id="tab-works-info">
+                                    <div class="fg-table">
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Tên công việc: <span style="color:red">*</span></label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <input (keyup)="validationPopupWork('name')" type="text" class="form-control" required [(ngModel)]="WorksSupportName" />
+                                                <span class="alert-danger" *ngIf="ErrorWorksSupportName?.length >0">
+                                                      {{ErrorWorksSupportName}}
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Độ ưu tiên: <span style="color:red">*</span></label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <select (change)="validationPopupWork('sel')" class="form-control" required [(ngModel)]="selectedPriority">
+                                                    <option value="" disabled selected hidden>--Chọn độ ưu tiên--</option>
+                                                    <option id="{{priority.WorksSupportPriorityId}}" *ngFor="let priority of listPriority" [value]="priority.WorksSupportPriorityId">
+                                                    {{priority.WorksSupportPriorityName}}
+                                                    </option>
+                                                    </select>
+                                                <span class="alert-danger" *ngIf="ErrorSelPrioriry?.length >0">
+                                                      {{ErrorSelPrioriry}}
+                                                    </span>
+                                            </div>
+                                            <div class="dpColum lbl-width text-right">
+                                                <label>Ngày dự kiến hoàn thành: </label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <form-datepicker #dateRangePickerAdd minDate={{MinDate}} id="txtExpecDates" [(model)]=ExpectedCompletedDate></form-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Nội dung: <span style="color:red">*</span></label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <textarea (keyup)="validationPopupWork('content')" type="text" class="form-control txtDesc" rows="7" required [(ngModel)]="Content"></textarea>
+                                                <span class="alert-danger" *ngIf="ErrorContent?.length >0">
+                                                      {{ErrorContent}}
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Đính kèm: </label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <form-filesUpload #uploadAdd (onFileUploaded)="onFileUploaded($event)" (onFileRemoved)="onFileRemoved($event)"></form-filesUpload>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" [class.active]="!IsInformationTab" id="tab-works-group-related">
+                                    <div class="row row-short">
+                                        <button data-toggle="modal" (click)="onAddWorksInvoleClick()" type="button" class="btn-eof blue-bg modal-add-works-group-related"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    </div>
+                                    <div class="lstDetailGroup table-works-related">
+                                        <table class="table-hover" id="dataTable" style="width:100%">
+                                            <thead>
+                                                <th valign="middle" width="35%" align="left">Tên công việc</th>
+                                                <th valign="middle" width="20%">Ngày bắt đầu</th>
+                                                <th valign="middle" width="20%">Ngày kết thúc</th>
+                                                <th valign="middle" width="20%">Tiến độ</th>
+                                                <th valign="middle" width="5%"></th>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngIf="selectedListInvole==null || selectedListInvole.length===0">
+                                                    <td colspan="5" class="text-center">
+                                                        Không có công việc liên quan
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let works of selectedListInvole">
+                                                    <td valign="middle" align="left">{{works.WorksName}}</td>
+                                                    <td valign="middle" align="center">{{stringAsDate(works.StartDate)}}</td>
+                                                    <td valign="middle" align="center">{{stringAsDate(works.EndDate)}}</td>
+                                                    <td valign="middle">
+                                                        <div class="progress">
+                                                            <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="works.Currentprogress" aria-valuemin="0" aria-valuemax="100"
+                                                                [ngStyle]="{'width': works.Currentprogress + '%'}">
+                                                                <span class="sr-only">{{works.CurrentProgress}}% hoàn thành</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td valign="middle">
+                                                        <button class="btn-eof red-bg" type="button" (click)="removeWorkInvole(works.WorksId)"><i class="fa fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-group text-right btnActioninfo">
+                                <button class="btn btn-eoffice green-bg" id="save" (click)="onAddWorks($event)" type="button"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                                <button class="btn btn-eoffice white-bg " id="cancel" type="button" data-dismiss="modal"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalEdit">
+                <div class="modal-dialog modal-lg popupTab" role="document">
+                    <div class="modal-content">
+                        <div class="titleProject">
+                            <h2 class="modal-title">
+                                <i class="fa fa-pencil-square" aria-hidden="true"></i> Cập nhật công việc cần hỗ trợ
+                            </h2>
+                        </div>
+                        <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                        <div class="modal-body tab-scroll" style="padding: 20px;">
+                            <ul class="nav nav-tabs tabs-page" role="tablist">
+                                <li role="presentation" (click)="changeInforTab()" [class.active]="IsInformationTab"><a href="#tab-works-info-edit" aria-controls="tab-works-info-edit" role="tab" data-toggle="tab">Thông tin</a></li>
+                                <li role="presentation" (click)="changeInforTab()" [class.active]="!IsInformationTab"><a href="#tab-works-group-related-edit" aria-controls="tab-works-group-related-edit" role="tab"
+                                        data-toggle="tab">Công việc liên quan</a></li>
+                            </ul>
+                            <div class="tab-content tabs-page">
+                                <div role="tabpanel" class="tab-pane" id="tab-works-info-edit" [class.active]="IsInformationTab">
+                                    <div class="fg-table">
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Tên công việc: </label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <input type="text" (keyup)="validationPopupWork('name')" class="form-control" required [(ngModel)]="WorksSupportName" />
+                                                <span class="alert-danger" *ngIf="ErrorWorksSupportName?.length >0">
+                                                      {{ErrorWorksSupportName}}
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Độ ưu tiên:</label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <select (change)="validationPopupWork('sel')" class="form-control" required [(ngModel)]="selectedPriority">
+                                                        <option value="" disabled selected hidden>--Chọn độ ưu tiên--</option>
+                                                       <option id="{{priority.WorksSupportPriorityId}}" *ngFor="let priority of listPriority" [value]="priority.WorksSupportPriorityId">
+                                                    {{priority.WorksSupportPriorityName}}
+                                                    </option>
+                                                    </select>
+                                                <span class="alert-danger" *ngIf="ErrorSelPrioriry?.length >0">
+                                                      {{ErrorSelPrioriry}}
+                                                </span>
+                                            </div>
+                                            <div class="dpColum lbl-width text-right">
+                                                <label>Ngày dự kiến hoàn thành: </label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <form-datepicker #dateRangePickerEdit startDate={{ExpectedCompletedDate}} minDate={{MinDate}} [(model)]=ExpectedCompletedDate></form-datepicker>
+
+                                            </div>
+                                        </div>
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Nội dung: </label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <textarea rows="7" type="text" [disabled]="isAdmin===false && detailPermisstion?.IsCanEditContent===false" (keyup)="validationPopupWork('content')"
+                                                    class="form-control txtDesc " required [(ngModel)]="Content"></textarea>
+                                                <span class="alert-danger" *ngIf="ErrorContent?.length >0">
+                                                      {{ErrorContent}}
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="dptable">
+                                            <div class="dpColum lbl-width">
+                                                <label>Đính kèm: </label>
+                                            </div>
+                                            <div class="dpColum">
+                                                <form-filesUpload *ngIf="isAdmin || detailPermisstion?.IsCanAddAttachment" #uploadEdit (onFileUploaded)="onFileUploaded($event)"
+                                                    (onFileRemoved)="onFileRemoved($event)"></form-filesUpload>
+                                                <div class="frmAddFile" *ngIf="fileAttachment.length>0">
+                                                    <div class="itemFileDefaul" *ngFor="let file of fileAttachment">
+                                                        <div class="btn-add-file  iconFileUpload" (click)="onDownload(file.FileId)">
+                                                            <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                            <span class="txtNameFile">{{file.FileName}}</span>
+                                                        </div>
+                                                        <a class="btn btn-delete" *ngIf="isAdmin || detailPermisstion?.IsCanAddAttachment" (click)="onDeleteUploadedFile(file.AttachmentId)">
+                                                                            <i aria-hidden="true" class="fa fa-times-circle-o"></i>
+                                                                </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="tab-works-group-related-edit" [class.active]="!IsInformationTab">
+                                    <div class="row row-short">
+                                        <button data-toggle="modal" (click)="onAddWorksInvoleClick()" type="button" class="btn-eof blue-bg modal-add-works-group-related"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                    </div>
+                                    <div class="lstDetailGroup table-works-related">
+                                        <table class="table-hover" id="dataTable" style="width:100%">
+                                            <thead>
+                                                <th valign="middle" width="35%" align="left">Tên công việc</th>
+                                                <th valign="middle" width="20%">Ngày bắt đầu</th>
+                                                <th valign="middle" width="20%">Ngày kết thúc</th>
+                                                <th valign="middle" width="20%">Tiến độ</th>
+                                                <th valign="middle" width="5%"></th>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngIf="selectedListInvole==null || selectedListInvole.length===0">
+                                                    <td colspan="5" class="text-center">
+                                                        Không có công việc liên quan
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let works of selectedListInvole">
+                                                    <td valign="middle" align="left">{{works.WorksName}}</td>
+                                                    <td valign="middle" align="center">{{stringAsDate(works.StartDate)}}</td>
+                                                    <td valign="middle" align="center">{{stringAsDate(works.EndDate)}}</td>
+                                                    <td valign="middle">
+                                                        <div class="progress">
+                                                            <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="works.CurrentProcess" aria-valuemin="0" aria-valuemax="100"
+                                                                [ngStyle]="{'width': works.CurrentProcess + '%'}">
+                                                                <span class="sr-only">{{works.CurrentProcess}}% hoàn thành</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td valign="middle">
+                                                        <button class="btn-eof red-bg" type="button" (click)="removeWorkInvole(works.WorksId)"><i class="fa fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-group text-right btnActioninfo">
+                                <button (click)="onEditWorks($event)" class="btn btn-eoffice green-bg" id="save" type="submit"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                                <button class="btn btn-eoffice white-bg " id="cancel" type="button" data-dismiss="modal"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDelete">
+                <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                        <div>
+                            <h2 class="modal-title text-center">
+                                Bạn có chắc chắn muốn xóa?
+                            </h2>
+                        </div>
+                        <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                        <div class="modal-body">
+                            <!-- <ul class="list-lg">
+                                <li>{{selectedDeletedName}}</li>
+                            </ul> -->
+                        </div>
+                        <div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-eoffice red-bg" (click)="onDeleteWorks()"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</button>
+                                <button type="button" class="btn btn-eoffice white-bg m-right-10" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> {{i18n.common.form.cancelDel}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Popup add worksGroup-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUpdateWorkGroup" data-backdrop="static">
+    <div class="modal-dialog modal-lg popupTab" role="document">
+        <div class="modal-content">
+            <div class="titleProject">
+                <h2 class="modal-title">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i> Thông tin nhóm công việc cần hổ trợ
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body contentPopup">
+                <div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" id="changeTagInfo" [class.active]=IsClickTab (click)="onClickMemberTab()">
+                            <a href="#tabAddWorkgroup" aria-controls="tabAddWorkgroup" role="tab" data-toggle="tab">Thông tin</a>
+                        </li>
+                        <li role="presentation" id="changeTagMember" [class.active]=!IsClickTab (click)="onClickMemberTab()">
+                            <a href="#member" aria-controls="member" role="tab" data-toggle="tab">Thành viên ({{NumberMemberOfWorkGroup}})</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-scroll">
+                        <error-new-essage></error-new-essage>
+                        <!-- tab project-->
+                        <div role="tabpanel" class="tab-pane active" id="tabAddWorkgroup" [class.active]=IsClickTab>
+                            <div class="fg-table">
+                                <!-- row 1-->
+                                <div class="dptable">
+                                    <div class="dpColum lbl-width">
+                                        <label>Tên nhóm công việc: <span style="color:red">*</span></label>
+                                    </div>
+                                    <div class="dpColum">
+                                        <input [disabled]="!RoleOfWorkGroup.IsCanEditWorksSupportGroup && !isAdmin" type="text" class="form-control" (keyup)="validationPopupWorkGroup()"
+                                            [(ngModel)]=WorksSupportGroupName required />
+                                        <span class="alert-danger" *ngIf="ErrorWorkGroupName?.length >0">
+                                          {{ErrorWorkGroupName}}
+                                        </span>
+                                    </div>
+                                    <div class="dpColum lbl-width text-right">
+                                        <label>Dự án: </label>
+                                    </div>
+                                    <div class="dpColum">
+                                        <input type="text" class="form-control " disabled placeholder="{{projectName}}" />
+                                    </div>
+                                </div>
+
+                                <!-- row 2-->
+                                <div class="dptable">
+                                    <div class="dpColum lbl-width">
+                                        <label>Mô tả: </label>
+                                    </div>
+                                    <div class="dpColum">
+                                        <textarea [disabled]="!RoleOfWorkGroup.IsCanEditWorksSupportGroup && !isAdmin" type="text" class="form-control txtDesc" rows="5"
+                                            [(ngModel)]=Description></textarea>
+                                        <span class="alert-danger" *ngIf="ErrorDescription?.length >0">
+                                          {{ErrorDescription}}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- row 3-->
+                                <div class="dptable">
+                                    <div class="dpColum lbl-width"></div>
+                                    <div class="dpColum">
+                                        <span class="btn btn-primary m-right-10" *ngIf="IconUrl != ''"> 
+                                            <i class="{{IconUrl}}"></i>                                     
+                                        </span>
+                                        <a *ngIf="RoleOfWorkGroup.IsCanEditWorksSupportGroup || isAdmin" class="btn-link" data-toggle="modal" data-target="#myIconModal"
+                                            (click)="onIconIsSelected()">
+                                            <i class="fa fa-caret-square-o-down" aria-hidden="true"></i> {{i18n.configurations.addOrUpdatePriority.selectIcon}}
+                                        </a>
+                                        <a *ngIf="!(RoleOfWorkGroup.IsCanEditWorksSupportGroup || isAdmin)" class="btn-link">
+                                            <i class="fa fa-caret-square-o-down" aria-hidden="true"></i> {{i18n.configurations.addOrUpdatePriority.selectIcon}}
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- tab member -->
+                        <div role="tabpanel" class="tab-pane" id="member" [class.active]=!IsClickTab>
+                            <div class="nav-control nav-inside">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="main-filter">
+                                            <div class="dpTable">
+                                                <div class="dpColum">
+                                                    <label>Xem theo: </label>
+                                                </div>
+                                                <div class="dpColum">
+                                                    <select class="form-control" (change)="selectShowRole()" [(ngModel)]=ShowRole>
+                                                                <option *ngFor="let role of LstShowRole" [attr.value]="role.roleId">{{role.roleName}}</option>                                                               
+                                                            </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 text-right">
+                                        <div class="main-buttons">
+                                            <div class="main-search m-right-10 active" id="searchButton">
+                                                <div class="input-group">
+                                                    <input type="text" [(ngModel)]=KeySearchMember #keySearch id="keySearchMemberGroup" class="form-control" placeholder="Nhập từ khóa tìm kiếm"
+                                                        aria-describedby="basic-addon2" (keyup)="findMemberWorkGroup(keySearch.value)">
+                                                    <span class="input-group-addon" id="searchAddon" (click)="findMemberWorkGroup(keySearch.value)"><button type="button" ><i class="fa fa-search" aria-hidden="true"></i></button></span>
+                                                </div>
+                                            </div>
+                                            <button *ngIf="RoleOfWorkGroup.IsCanEditWorksSupportGroup || isAdmin" type="button" (click)="showPopupSearchUser()" class="btn-eof blue-bg"
+                                                data-toggle="modal" data-target="#modalMember"><i class="fa fa-plus" aria-hidden="true"></i></button>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <!-- member is role-->
+                            <div class="member-group" *ngIf="!ShowIsDefault ">
+                                <div *ngFor="let role of LstShowMemberRole">
+                                    <h3 class="member-group-title" *ngIf="role.count > 0">{{role.WorksSupportMemberRoleName}} ({{role.count}}) </h3>
+                                    <div class="row">
+                                        <div *ngFor="let member of role.LstMember">
+                                            <div class="col-lg-2 col-sm-3 col-xs-6" *ngIf="member.IsDeleted == 0">
+                                                <div class="member-item">
+                                                    <div class="btn-detail">
+                                                        <span class="btn-detail-right"><i class="fa fa-trash-o" aria-hidden="true"  (click)="removeWorkGroupMember(member.UserName)"></i></span>
+                                                    </div>
+                                                    <div class="avatar-circle ">
+                                                        <img src="http://eofficecnd.nc.com/album/{{member.DefaultPictureUrl}}" *ngIf="member.DefaultPictureUrl !== null" alt="{{member.FullName}}">
+                                                        <img src="app/resources/images/no-avatar.gif" *ngIf="member.DefaultPictureUrl === null" alt="{{member.FullName}}">
+                                                    </div>
+                                                    <div class="member-info">
+                                                        <span class="btn-link member-name">{{member.FullName}}</span>
+                                                        <span class="member-department">{{member.DepartmentName}}</span>
+                                                    </div>
+                                                    <select [disabled]="!RoleOfWorkGroup.IsCanEditWorksSupportGroup && !isAdmin" class="form-control" #memberRoleAll (change)="changeMemberRole(memberRoleAll.value, member.UserName, member.WorksSupportMemberRoleId, memberRoleAll.text)">                                                            
+                                                             <option *ngFor="let obj of LstMemberRole"  
+                                                              value={{obj.WorksSupportMemberRoleId}} [attr.selected]="obj.WorksSupportMemberRoleId == member.WorksSupportMemberRoleId ? true : null" >  
+                                                              {{obj.WorksSupportMemberRoleName}}
+                                                             </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- member is default-->
+                            <div class="member-list" *ngIf="ShowIsDefault">
+                                <div class="member-group " *ngFor="let workGroup of LstShowMemberDefault">
+                                    <div *ngIf="workGroup.count > 0">
+                                        <h3 class="member-group-title">{{workGroup.Title}} ({{workGroup.count}}): </h3>
+                                        <div class="row">
+                                            <div *ngFor="let member of workGroup.LstMember">
+                                                <div class="col-lg-2 col-sm-3 col-xs-6 " *ngIf="member.IsDeleted == 0">
+                                                    <div class="member-item">
+                                                        <div class="btn-detail">
+
+                                                            <span class="btn-detail-right"><i class="fa fa-trash-o" aria-hidden="true"  (click)="removeWorkGroupMember(member.UserName)"></i></span>
+                                                        </div>
+                                                        <div class="avatar-circle">
+                                                            <img src="http://eofficecnd.nc.com/album/{{member.DefaultPictureUrl}}" *ngIf="member.DefaultPictureUrl !== null" alt="{{member.FullName}}">
+                                                            <img src="app/resources/images/no-avatar.gif" *ngIf="member.DefaultPictureUrl === null" alt="{{member.FullName}}">
+                                                        </div>
+                                                        <div class="member-info">
+                                                            <span class="member-name">{{member.FullName}}</span>
+                                                            <span class="member-department">{{member.DepartmentName}}</span>
+                                                        </div>
+                                                        <select [disabled]="!RoleOfWorkGroup.IsCanEditWorksSupportGroup && !isAdmin" class="form-control" #memberRoleAll (change)="changeMemberRole(memberRoleAll.value, member.UserName, member.WorksSupportMemberRoleId, memberRoleAll.text)">                                                            
+                                                             <option *ngFor="let obj of LstMemberRole"  
+                                                              value={{obj.WorksSupportMemberRoleId}} [attr.selected]="obj.WorksSupportMemberRoleId == member.WorksSupportMemberRoleId ? true : null" >  
+                                                              {{obj.WorksSupportMemberRoleName}}
+                                                             </option>
+                                                    </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="SearchMemberWorkGroup" class='col-xs-12 text-center show-error'>Không có kết quả cho từ khóa này!</div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- button save anh close -->
+            <div class="modal-footer">
+                <div class="text-right btnActioninfo">
+                    <!-- information save button -->
+                    <button *ngIf="RoleOfWorkGroup.IsCanEditWorksSupportGroup || isAdmin" (click)="onEditOrAddWorkGroup()" class="btn btn-eoffice green-bg"
+                        id="btnSave" type="button"><i aria-hidden="true" class="fa fa-floppy-o"></i> Lưu</button>
+                    <button *ngIf="RoleOfWorkGroup.IsCanEditWorksSupportGroup || isAdmin" class="btn btn-eoffice white-bg" data-dismiss="modal"
+                        id="cancel" type="button"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- popup workGroup member-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalMember" data-backdrop="static">
+    <div class="modal-dialog modal-lg popupTab" role="document" id="popupProjectWorkGroup">
+        <div class="modal-content member-add">
+            <div class="titleProject">
+                <h2 class="modal-title">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i> Thêm thành viên nhóm công việc
+                </h2>
+            </div>
+            <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            <div class="modal-body">
+                <div class="member-add-top">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="row row-short">
+                                <div class="col-lg-4">
+                                    <div id="imaginary_container">
+                                        <div class="input-group stylish-input-group">
+                                            <input type="text" [(ngModel)]=SearchProjectMemberToAdd (keyup)="findMemberInProjectMember(keyName.value)" class="form-control"
+                                                placeholder="Nhập nội dung tìm kiếm" #keyName>
+                                            <span class="input-group-addon">
+                                                        <button type="submit" (click)="findMemberInProjectMember(keyName.value)">
+                                                            <span class="fa fa-search"></span>
+                                            </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 text-right">
+                            <div class="frmbtn-group">
+                                <div class="btnGroupSystem">
+                                    <input type="checkbox" class="custom-checkbox" id="lstAllMemberWork" [(ngModel)]=IsCheckAll (click)="selectUserWorkGroup($event)">
+                                    <label for="lstAllMemberWork">Chọn tất cả</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="member-list tab-scroll">
+                    <div class="member-group">
+                        <div class="row">
+                            <div *ngFor="let obj of LstSearchProjectMember">
+                                <div class="col-lg-2 col-sm-3 col-xs-6 " style="cursor: pointer" *ngIf="obj.IsActived === 0">
+                                    <div class="member-item " (click)="clickUser(obj.UserName)" [class.selected]="obj.MemberUserName !== null">
+                                        <div class="btn-detail">
+                                            <span class="btn-detail-right">
+                                                    <i aria-hidden="true" class="fa fa-circle-o" aria-hidden="true"  id ={{obj.UserName}} style="color: #0288d1;padding-left: 5px;padding-top: 3px;">                                  
+                                                    </i>
+                                                </span>
+                                        </div>
+                                        <div class="avatar-circle" *ngIf="obj.DefaultPictureUrl !== null">
+                                            <img src="http://eofficecnd.nc.com/album/{{obj.DefaultPictureUrl}}" alt="{{obj.FullName}}">
+                                        </div>
+                                        <div class="avatar-circle" *ngIf="obj.DefaultPictureUrl === null">
+                                            <img src="app/resources/images/no-avatar.gif" alt="{{obj.FullName}}">
+                                        </div>
+                                        <div class="member-info">
+                                            <span class="member-name">{{obj.FullName}}</span>
+                                            <span class="member-department">{{obj.DepartmentName}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="SearchMemberWorkGroupInfor" class='col-xs-12 text-center show-error'>Không có kết quả cho từ khóa này!</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group text-right btnActioninfo">
+                    <button (click)="addNewMemberWorkGroup($event)" class="btn btn-eoffice green-bg" id="save" type="button"><i aria-hidden="true" class="fa fa-plus-square"></i> Thêm</button>
+                    <button class="btn btn-eoffice white-bg " data-dismiss="modal" id="cancelmodalMember" type="button"><i aria-hidden="true" class="fa fa-times"></i> Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- popup of icon -->
+<div class="modal fade" id="myIconModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">Danh sách biểu tượng</h4>
+            </div>
+            <div class="modal-body tab-scroll">
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-address-book"></i> address-book</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-address-book-o"></i> address-book-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-address-card"></i> address-card</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-address-card-o"></i> address-card-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-bandcamp"></i> bandcamp</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-bath"></i> bath</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-bathtub"></i> bathtub</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-drivers-license"></i> drivers-license</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-drivers-license-o"></i> drivers-license-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-eercast"></i> eercast</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-envelope-open"></i> envelope-open</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-envelope-open-o"></i> envelope-open-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-etsy"></i> etsy</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-free-code-camp"></i> free-code-camp</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-grav"></i> grav</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-handshake-o"></i> handshake-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-id-badge"></i> id-badge</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-id-card"></i> id-card</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-id-card-o"></i> id-card-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-imdb"></i> imdb</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-linode"></i> linode</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-meetup"></i> meetup</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-microchip"></i> microchip</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-podcast"></i> podcast</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-quora"></i> quora</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-ravelry"></i> ravelry</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-s15"></i> s15</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-shower"></i> shower</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-snowflake-o"></i> snowflake-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-superpowers"></i> superpowers</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-telegram"></i> telegram</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer"></i> thermometer</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-0"></i> thermometer-0</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-1"></i> thermometer-1</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-2"></i> thermometer-2</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-3"></i> thermometer-3</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-4"></i> thermometer-4</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-empty"></i> thermo-empty</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-full"></i> thermo-full</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-half"></i> thermo-half</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-quarter"></i> thermo-quarter</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-thermometer-three-quarters"></i> thermo-three-quarters</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-times-rectangle"></i> times-rectangle</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-times-rectangle-o"></i> times-rectangle-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-user-circle"></i> user-circle</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-user-circle-o"></i> user-circle-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-user-o"></i> user-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-vcard"></i> vcard</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-vcard-o"></i> vcard-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-window-close"></i> window-close</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-window-close-o"></i> window-close-o</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-window-maximize"></i> window-maximize</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-window-minimize"></i> window-minimize</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-window-restore"></i> window-restore</li>
+
+                    <li class="fa-hover col-md-3 col-sm-4"><i class="fa fa-wpexplorer"></i> wpexplorer</li>
+
+                </ul>
+
+                <br>
+                <h5 class="subtitle">Web Application Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-adjust"></i> adjust
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-anchor"></i> anchor
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-archive"></i> archive
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows"></i> arrows
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows-h"></i> arrows-h
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows-v"></i> arrows-v
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-asterisk"></i> asterisk
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-ban"></i> ban
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bar-chart-o"></i> bar-chart-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-barcode"></i> barcode
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bars"></i> bars
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-beer"></i> beer
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bell"></i> bell
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bell-o"></i> bell-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bolt"></i> bolt
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-book"></i> book
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bookmark"></i> bookmark
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bookmark-o"></i> bookmark-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-briefcase"></i> briefcase
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bug"></i> bug
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-building-o"></i> building-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bullhorn"></i> bullhorn
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bullseye"></i> bullseye
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-calendar"></i> calendar
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-calendar-o"></i> calendar-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-camera"></i> camera
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-camera-retro"></i> camera-retro
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-down"></i> caret-square-o-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-left"></i> caret-square-o-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-right"></i> caret-square-o-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-up"></i> caret-square-o-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-certificate"></i> certificate
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check"></i> check
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check-circle"></i> check-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check-circle-o"></i> check-circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check-square"></i> check-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check-square-o"></i> check-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-circle"></i> circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-circle-o"></i> circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-clock-o"></i> clock-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cloud"></i> cloud
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cloud-download"></i> cloud-download
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cloud-upload"></i> cloud-upload
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-code"></i> code
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-code-fork"></i> code-fork
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-coffee"></i> coffee
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cog"></i> cog
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cogs"></i> cogs
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-comment"></i> comment
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-comment-o"></i> comment-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-comments"></i> comments
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-comments-o"></i> comments-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-compass"></i> compass
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-credit-card"></i> credit-card
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-crop"></i> crop
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-crosshairs"></i> crosshairs
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cutlery"></i> cutlery
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dashboard"></i> dashboard
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-desktop"></i> desktop
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dot-circle-o"></i> dot-circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-download"></i> download
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-edit"></i> edit
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-ellipsis-h"></i> ellipsis-h
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-ellipsis-v"></i> ellipsis-v
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-envelope"></i> envelope
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-envelope-o"></i> envelope-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-eraser"></i> eraser
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-exchange"></i> exchange
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-exclamation"></i> exclamation
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-exclamation-circle"></i> exclamation-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-exclamation-triangle"></i> exclamation-triangle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-external-link"></i> external-link
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-external-link-square"></i> external-link-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-eye"></i> eye
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-eye-slash"></i> eye-slash
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-female"></i> female
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-fighter-jet"></i> fighter-jet
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-film"></i> film
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-filter"></i> filter
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-fire"></i> fire
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-fire-extinguisher"></i> fire-extinguisher
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-flag"></i> flag
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-flag-checkered"></i> flag-checkered
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-flag-o"></i> flag-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-flash"></i> flash
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-flask"></i> flask
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-folder"></i> folder
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-folder-o"></i> folder-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-folder-open"></i> folder-open
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-folder-open-o"></i> folder-open-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-frown-o"></i> frown-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gamepad"></i> gamepad
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gavel"></i> gavel
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gear"></i> gear
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gears"></i> gears
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gift"></i> gift
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-glass"></i> glass
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-globe"></i> globe
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-group"></i> group
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-hdd-o"></i> hdd-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-headphones"></i> headphones
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-heart"></i> heart
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-heart-o"></i> heart-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-home"></i> home
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-inbox"></i> inbox
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-info"></i> info
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-info-circle"></i> info-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-key"></i> key
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-keyboard-o"></i> keyboard-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-laptop"></i> laptop
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-leaf"></i> leaf
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-legal"></i> legal
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-lemon-o"></i> lemon-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-level-down"></i> level-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-level-up"></i> level-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-lightbulb-o"></i> lightbulb-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-location-arrow"></i> location-arrow
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-lock"></i> lock
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-magic"></i> magic
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-magnet"></i> magnet
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-mail-forward"></i> mail-forward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-mail-reply"></i> mail-reply
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-mail-reply-all"></i> mail-reply-all
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-male"></i> male
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-map-marker"></i> map-marker
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-meh-o"></i> meh-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-microphone"></i> microphone
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-microphone-slash"></i> microphone-slash
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-minus"></i> minus
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-minus-circle"></i> minus-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-minus-square"></i> minus-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-minus-square-o"></i> minus-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-mobile"></i> mobile
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-mobile-phone"></i> mobile-phone
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-money"></i> money
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-moon-o"></i> moon-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-music"></i> music
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pencil"></i> pencil
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pencil-square"></i> pencil-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pencil-square-o"></i> pencil-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-phone"></i> phone
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-phone-square"></i> phone-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-picture-o"></i> picture-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plane"></i> plane
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus"></i> plus
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus-circle"></i> plus-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus-square"></i> plus-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus-square-o"></i> plus-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-power-off"></i> power-off
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-print"></i> print
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-puzzle-piece"></i> puzzle-piece
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-qrcode"></i> qrcode
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-question"></i> question
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-question-circle"></i> question-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-quote-left"></i> quote-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-quote-right"></i> quote-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-random"></i> random
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-refresh"></i> refresh
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-reply"></i> reply
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-reply-all"></i> reply-all
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-retweet"></i> retweet
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-road"></i> road
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rocket"></i> rocket
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rss"></i> rss
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rss-square"></i> rss-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-search"></i> search
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-search-minus"></i> search-minus
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-search-plus"></i> search-plus
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-share"></i> share
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-share-square"></i> share-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-share-square-o"></i> share-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-shield"></i> shield
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-shopping-cart"></i> shopping-cart
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sign-in"></i> sign-in
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sign-out"></i> sign-out
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-signal"></i> signal
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sitemap"></i> sitemap
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-smile-o"></i> smile-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort"></i> sort
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-alpha-asc"></i> sort-alpha-asc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-alpha-desc"></i> sort-alpha-desc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-amount-asc"></i> sort-amount-asc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-amount-desc"></i> sort-amount-desc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-asc"></i> sort-asc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-desc"></i> sort-desc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-down"></i> sort-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-numeric-asc"></i> sort-numeric-asc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-numeric-desc"></i> sort-numeric-desc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sort-up"></i> sort-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-spinner"></i> spinner
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-square"></i> square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-square-o"></i> square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-star"></i> star
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-star-half"></i> star-half
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-star-half-empty"></i> star-half-empty
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-star-half-full"></i> star-half-full
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-star-half-o"></i> star-half-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-star-o"></i> star-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-subscript"></i> subscript
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-suitcase"></i> suitcase
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-sun-o"></i> sun-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-superscript"></i> superscript
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tablet"></i> tablet
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tachometer"></i> tachometer
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tag"></i> tag
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tags"></i> tags
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tasks"></i> tasks
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-terminal"></i> terminal
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-thumb-tack"></i> thumb-tack
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-thumbs-down"></i> thumbs-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-thumbs-o-down"></i> thumbs-o-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-thumbs-o-up"></i> thumbs-o-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-thumbs-up"></i> thumbs-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-ticket"></i> ticket
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-times"></i> times
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-times-circle"></i> times-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-times-circle-o"></i> times-circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tint"></i> tint
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-down"></i> toggle-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-left"></i> toggle-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-right"></i> toggle-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-up"></i> toggle-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-trash-o"></i> trash-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-trophy"></i> trophy
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-truck"></i> truck
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-umbrella"></i> umbrella
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-unlock"></i> unlock
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-unlock-alt"></i> unlock-alt
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-unsorted"></i> unsorted
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-upload"></i> upload
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-user"></i> user
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-users"></i> users
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-video-camera"></i> video-camera
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-volume-down"></i> volume-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-volume-off"></i> volume-off
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-volume-up"></i> volume-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-warning"></i> warning
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-wheelchair"></i> wheelchair
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-wrench"></i> wrench
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Form Control Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check-square"></i> check-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-check-square-o"></i> check-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-circle"></i> circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-circle-o"></i> circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dot-circle-o"></i> dot-circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-minus-square"></i> minus-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-minus-square-o"></i> minus-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus-square"></i> plus-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus-square-o"></i> plus-square-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-square"></i> square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-square-o"></i> square-o
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Currency Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bitcoin"></i> bitcoin
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-btc"></i> btc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cny"></i> cny
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dollar"></i> dollar
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-eur"></i> eur
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-euro"></i> euro
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gbp"></i> gbp
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-inr"></i> inr
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-jpy"></i> jpy
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-krw"></i> krw
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-money"></i> money
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rmb"></i> rmb
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rouble"></i> rouble
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rub"></i> rub
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-ruble"></i> ruble
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rupee"></i> rupee
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-try"></i> try
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-turkish-lira"></i> turkish-lira
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-usd"></i> usd
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-won"></i> won
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-yen"></i> yen
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Text Editor Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-align-center"></i> align-center
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-align-justify"></i> align-justify
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-align-left"></i> align-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-align-right"></i> align-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bold"></i> bold
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chain"></i> chain
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chain-broken"></i> chain-broken
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-clipboard"></i> clipboard
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-columns"></i> columns
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-copy"></i> copy
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-cut"></i> cut
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dedent"></i> dedent
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-eraser"></i> eraser
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-file"></i> file
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-file-o"></i> file-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-file-text"></i> file-text
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-file-text-o"></i> file-text-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-files-o"></i> files-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-floppy-o"></i> floppy-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-font"></i> font
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-indent"></i> indent
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-italic"></i> italic
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-link"></i> link
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-list"></i> list
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-list-alt"></i> list-alt
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-list-ol"></i> list-ol
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-list-ul"></i> list-ul
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-outdent"></i> outdent
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-paperclip"></i> paperclip
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-paste"></i> paste
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-repeat"></i> repeat
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rotate-left"></i> rotate-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-rotate-right"></i> rotate-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-save"></i> save
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-scissors"></i> scissors
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-strikethrough"></i> strikethrough
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-table"></i> table
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-text-height"></i> text-height
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-text-width"></i> text-width
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-th"></i> th
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-th-large"></i> th-large
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-th-list"></i> th-list
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-underline"></i> underline
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-undo"></i> undo
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-unlink"></i> unlink
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Directional Icons</h5>
+                <ul class="row the-icons">
+
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-double-down"></i> angle-double-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-double-left"></i> angle-double-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-double-right"></i> angle-double-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-double-up"></i> angle-double-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-down"></i> angle-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-left"></i> angle-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-right"></i> angle-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-angle-up"></i> angle-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-down"></i> arrow-circle-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-left"></i> arrow-circle-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-o-down"></i> arrow-circle-o-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-o-left"></i> arrow-circle-o-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-o-right"></i> arrow-circle-o-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-o-up"></i> arrow-circle-o-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-right"></i> arrow-circle-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-circle-up"></i> arrow-circle-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-down"></i> arrow-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-left"></i> arrow-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-right"></i> arrow-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrow-up"></i> arrow-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows"></i> arrows
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows-alt"></i> arrows-alt
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows-h"></i> arrows-h
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows-v"></i> arrows-v
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-down"></i> caret-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-left"></i> caret-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-right"></i> caret-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-down"></i> caret-square-o-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-left"></i> caret-square-o-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-right"></i> caret-square-o-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-square-o-up"></i> caret-square-o-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-caret-up"></i> caret-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-circle-down"></i> chevron-circle-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-circle-left"></i> chevron-circle-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-circle-right"></i> chevron-circle-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-circle-up"></i> chevron-circle-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-down"></i> chevron-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-left"></i> chevron-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-right"></i> chevron-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-chevron-up"></i> chevron-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-hand-o-down"></i> hand-o-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-hand-o-left"></i> hand-o-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-hand-o-right"></i> hand-o-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-hand-o-up"></i> hand-o-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-long-arrow-down"></i> long-arrow-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-long-arrow-left"></i> long-arrow-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-long-arrow-right"></i> long-arrow-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-long-arrow-up"></i> long-arrow-up
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-down"></i> toggle-down
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-left"></i> toggle-left
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-right"></i> toggle-right
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-toggle-up"></i> toggle-up
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Video Player Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-arrows-alt"></i> arrows-alt
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-backward"></i> backward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-compress"></i> compress
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-eject"></i> eject
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-expand"></i> expand
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-fast-backward"></i> fast-backward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-fast-forward"></i> fast-forward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-forward"></i> forward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pause"></i> pause
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-play"></i> play
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-play-circle"></i> play-circle
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-play-circle-o"></i> play-circle-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-step-backward"></i> step-backward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-step-forward"></i> step-forward
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-stop"></i> stop
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-youtube-play"></i> youtube-play
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Brand Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-adn"></i> adn
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-android"></i> android
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-apple"></i> apple
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bitbucket"></i> bitbucket
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bitbucket-square"></i> bitbucket-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-bitcoin"></i> bitcoin
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-btc"></i> btc
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-css3"></i> css3
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dribbble"></i> dribbble
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-dropbox"></i> dropbox
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-facebook"></i> facebook
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-facebook-square"></i> facebook-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-flickr"></i> flickr
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-foursquare"></i> foursquare
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-github"></i> github
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-github-alt"></i> github-alt
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-github-square"></i> github-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-gittip"></i> gittip
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-google-plus"></i> google-plus
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-google-plus-square"></i> google-plus-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-html5"></i> html5
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-instagram"></i> instagram
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-linkedin"></i> linkedin
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-linkedin-square"></i> linkedin-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-linux"></i> linux
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-maxcdn"></i> maxcdn
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pagelines"></i> pagelines
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pinterest"></i> pinterest
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-pinterest-square"></i> pinterest-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-renren"></i> renren
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-skype"></i> skype
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-stack-exchange"></i> stack-exchange
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-stack-overflow"></i> stack-overflow
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-trello"></i> trello
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tumblr"></i> tumblr
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-tumblr-square"></i> tumblr-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-twitter"></i> twitter
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-twitter-square"></i> twitter-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-vimeo-square"></i> vimeo-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-vk"></i> vk
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-weibo"></i> weibo
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-windows"></i> windows
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-xing"></i> xing
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-xing-square"></i> xing-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-youtube"></i> youtube
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-youtube-play"></i> youtube-play
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-youtube-square"></i> youtube-square
+                    </li>
+                </ul>
+                <br>
+                <h5 class="subtitle">Medical Icons</h5>
+                <ul class="row the-icons">
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-ambulance"></i> ambulance
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-h-square"></i> h-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-hospital-o"></i> hospital-o
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-medkit"></i> medkit
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-plus-square"></i> plus-square
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-stethoscope"></i> stethoscope
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-user-md"></i> user-md
+                    </li>
+                    <li class="fa-hover col-md-3 col-sm-4">
+                        <i class="fa fa-wheelchair"></i> wheelchair
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Đóng</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--Show popup erorr  -->
+<div class="modal fade model-erorr" role="dialog" id="modalErorr" data-backdrop="static">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center">Thông Báo</h2>
+                <button type="button"   class="close close-modal" data-dismiss="modal" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+            </div>
+            <!-- loi ngay thang nam-->
+            <div class="modal-body" style="font-size:13px;">
+                <p>Ngày tìm kiếm không hợp lệ!!</p>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button"   class="btn btn-default centering text-center" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Đóng</button>
+            </div>
+        </div>
+
+    </div>
+</div>

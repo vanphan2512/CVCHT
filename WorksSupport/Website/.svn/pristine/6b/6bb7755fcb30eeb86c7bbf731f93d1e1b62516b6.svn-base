@@ -1,0 +1,106 @@
+System.register(["angular2/core", "angular2/common", "angular2/http", "angular2/router", "./authenticatedLayout", "./unauthenticatedLayout", "../../helpers/configHelper", "../../services/authService", "../../event", "./directives/common/loadingIndicator", "../../models/ui"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, common_1, http_1, router_1, authenticatedLayout_1, unauthenticatedLayout_1, configHelper_1, authService_1, event_1, loadingIndicator_1, ui_1, routes, DefaultLayout;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (common_1_1) {
+                common_1 = common_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (authenticatedLayout_1_1) {
+                authenticatedLayout_1 = authenticatedLayout_1_1;
+            },
+            function (unauthenticatedLayout_1_1) {
+                unauthenticatedLayout_1 = unauthenticatedLayout_1_1;
+            },
+            function (configHelper_1_1) {
+                configHelper_1 = configHelper_1_1;
+            },
+            function (authService_1_1) {
+                authService_1 = authService_1_1;
+            },
+            function (event_1_1) {
+                event_1 = event_1_1;
+            },
+            function (loadingIndicator_1_1) {
+                loadingIndicator_1 = loadingIndicator_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            }
+        ],
+        execute: function () {
+            routes = configHelper_1.default.getRoutes();
+            DefaultLayout = (function (_super) {
+                __extends(DefaultLayout, _super);
+                function DefaultLayout(injector, http, router) {
+                    var _this = _super.call(this, http) || this;
+                    _this.isAuthenticated = false;
+                    _this.router = router;
+                    _this.onInitialized();
+                    return _this;
+                }
+                // Innitial application.
+                DefaultLayout.prototype.onInitialized = function () {
+                    var self = this;
+                    var appState = window.ioc.resolve("IApplicationState");
+                    if (!!appState) {
+                        appState.registerEvents();
+                    }
+                    this.registerEvent(event_1.AuthenticatedEvent.AuthenticationChanged, function (authenticated) {
+                        self.isAuthenticated = authenticated;
+                    });
+                    var profile = authService_1.default.getUserProfile();
+                    if (authService_1.default.isAuthenticated(profile)) {
+                        this.isAuthenticated = true;
+                    }
+                };
+                return DefaultLayout;
+            }(ui_1.BaseApplication));
+            DefaultLayout = __decorate([
+                core_1.Component({
+                    selector: "default-layout",
+                    templateUrl: "app/common/layouts/default/layout.html",
+                    directives: [
+                        common_1.CORE_DIRECTIVES,
+                        authenticatedLayout_1.DefaultAuthenticatedLayout,
+                        unauthenticatedLayout_1.DefaultUnauthenticatedLayout,
+                        loadingIndicator_1.LoadingIndicator,
+                    ]
+                }),
+                router_1.RouteConfig(routes),
+                __metadata("design:paramtypes", [core_1.Injector, http_1.Http, router_1.Router])
+            ], DefaultLayout);
+            exports_1("DefaultLayout", DefaultLayout);
+        }
+    };
+});
+//# sourceMappingURL=layout.js.map

@@ -1,0 +1,194 @@
+// JavaScript Document
+
+var isIE8 = false,
+  isIE9 = false,
+  supportTransition = true,
+  isMobile = false,
+  isIEMobile = false,
+  $body = $("body");
+
+var flag = false;
+$(function () {
+   $(document).on('show.bs.modal', '.modal', function (event) {
+      var zIndex = 1040 + (10 * $('.modal:visible').length);
+      $(this).css('z-index', zIndex);
+      setTimeout(function() {
+          $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+      }, 0);
+  });
+  
+  $(document).on("mouseover", "#searchButton", function () {
+    $(this).addClass("active");
+    $(".txtInputSearch").focus();
+  });
+   $(document).on("click","#searchButton",function(e){
+    e.stopPropagation();
+  })
+  $(document).on("click",function(){
+    $("#searchButton").removeClass("active");
+  })
+
+  $(document).on("keypress", "#priorityName", function (e) {
+    if (e.which == 13) {
+        $('#searchAddon').trigger('click');
+    }
+  });
+  $(document).on("keypress", "#statusName", function (e) {
+    if (e.which == 13) {
+        $('#searchAddon').trigger('click');
+    }
+  });
+  $(document).on("keypress", "#memberName", function (e) {
+    if (e.which == 13) {
+        $('#searchAddon').trigger('click');
+    }
+  });
+  $(document).on("keypress", "#qualitiName", function (e) {
+    if (e.which == 13) {
+        $('#searchAddon').trigger('click');
+    }
+  });
+  $(document).on("keypress", "#worksTypeName", function (e) {
+    if (e.which == 13) {
+        $('#searchAddon').trigger('click');
+    }
+  });
+});
+ 
+var WorksSupport = function () {
+
+  var runInit = function () {
+     
+    $("#myTab a").click(function (e) {
+      $(this).tab('show');
+      e.stopPropagation();
+    });
+
+    $("#searchButton").hover(function () {
+      $(this).addClass('active');
+    });
+    $("#searchButton").focusout(function () {
+      $(this).removeClass('active');
+
+    });
+  };
+  var runCollapse = function () {
+    (function () {
+      $(".accord-info .panel").on("show.bs.collapse hide.bs.collapse", function (e) {
+        if (e.type == 'show') {
+          $(this).addClass('active');
+        } else {
+          $(this).removeClass('active');
+        }
+      });
+
+    }).call(this);
+  };
+  var runTooltips = function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  };
+  var runPopovers = function () {
+    $('[data-toggle="popover"]').popover()
+  };
+  return {
+    init: function () {
+      //runInit();
+      runCollapse();
+      runTooltips();
+      runPopovers();
+    }
+  };
+  
+}();
+
+$(function(){
+  // setTimeout(function(){ $('.dropdown-toggle').dropdown();},3000);
+  $('.dropdown-toggle').dropdown();
+//   setTimeout(function(){
+//     $ ("#txtDate").datetimepicker();},2000);
+
+//     $('#txtdates').datepicker({
+//     format: 'mm/dd/yyyy',
+//     startDate: '-3d'
+// });
+
+$(document).on("click","#test",function(){
+  $.ajax({
+    type:"POST",
+    url:"",
+    data:JSON.stringify({}),
+    contentType:"json",
+    dataType:"application/json;charset:utf-8",
+    success:function(rs){
+
+    },
+    error:function(rs){
+
+    }
+
+  })
+});
+//  document.getElementById('{{obj.DepartmentId}}').addEventListener('click', function (e) {
+
+// var img = document.createElement('img');
+
+// img.setAttribute('src', 'http://blog.stackoverflow.com/wp-content/uploads/stackoverflow-logo-300.png');
+
+// e.target.appendChild(img);
+// });
+});
+$(document).ready(function(){
+ 
+            $('#button').click(function(){
+                var content = '<h1>Nội dung nè</h1>';
+                $('#content').html(content);
+            });
+        });
+$(function(){
+  $(document).on("click",".img-thumbnail",function(){
+    alert($(this).next().find("h3").html())
+  });
+
+  // $(document).ready(function(){
+  //   $(".dropdown-item works").click(function(){
+  //     // var name = $(".dropdown-item").value;
+  //     // document.getElementById("btnsearch").value = name;
+  //     alert("thong bao");
+  //   });
+  // });
+ $(document).on("click",".dropdownWorkInvole",function(){
+    var name = $(this).text();
+    var typeSearch = $(".dropdownWorkInvole").attr('data-value');
+   var search = document.getElementById("names");
+  //  $("#names").attr("span",typeSearch);
+   search.innerHTML = name;
+ })
+});
+setTimeout($(document).on("click", '.dropdown .dropdown-menu dropdown-menu-right', function (e) {
+  e.stopPropagation();
+}),3000);
+
+//     $(document).on("click",".addWorksInvole",function(){
+//       document.getElementById("login").setAttribute("class", "modal-open"); 
+// }
+// $(document).on("click",".addWorksInvole",function(){
+//        document.getElementById("login").setAttribute("class =", "modal-open"); 
+// })
+
+$(function(){
+  $(document).on("click",".addWorksInvole",function(){
+    debugger;
+    $("#login").addClass("modal-open");
+  });
+});
+function Controller($scope) {
+    $scope.checkbox = 1;
+    
+    $scope.$watch(function(){
+        return $scope.checkbox;
+    }, function(){
+        $scope.checkbox = Number($scope.checkbox);
+        console.log($scope.checkbox, typeof $scope.checkbox);
+    },true);
+}
+

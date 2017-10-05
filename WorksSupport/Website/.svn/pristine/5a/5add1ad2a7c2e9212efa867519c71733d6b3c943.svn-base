@@ -1,0 +1,59 @@
+<div class="container-fluid">
+        
+    <div class="row">
+        <nav class="navbar navbar-default" id="top-bar">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                        aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                      </button>
+                    <a id="top-logo" class="navbar-brand" href="#" title="eOffice"><img src="app/resources/themes/nc/images/logo.png"></a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" *ngIf="isAuthenticated">
+                     <ul class="nav navbar-nav">
+                        <!-- <li><a href="loai-du-an">Nghiệp Vụ</a></li> -->
+                        <!-- <li><a href="cong-viec">Công việc</a></li> -->
+                        <!-- <li><a href="do-uu-tien" class="active">Khai báo</a></li> -->
+                        <!-- <li><a href="bao-cao">Báo cáo</a></li> -->
+                    </ul> 
+                    <ul class="nav navbar-nav navbar-right" *ngIf="isAuthenticated">
+                        <user-quick-profile-info [displayMode]=ProfileDisplayMode.AvatarAndName></user-quick-profile-info>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+        <div role="main" *ngIf="!isAuthenticated">
+            <router-outlet></router-outlet>
+        </div>
+        <div class="main-content" role="main" *ngIf="isAuthenticated">
+            <menu-sidebar ></menu-sidebar>
+            <router-outlet></router-outlet>
+        </div>
+        
+        <div id="footer" class="row row-reset">
+            <p class="col-lg-6 text-left footer-left" style="margin-bottom: 0">
+                <a href="#" title="eOffice"><img src="app/resources/themes/nc/images/nhatcuong-sw-logo.png"></a>
+                Phát triển bởi Nhật Cường Software
+            </p>
+            <p class="col-lg-6 text-right" style="margin-bottom: 0;vertical-align: middle;line-height: 23px">© 2017 eOffice</p>
+        </div>
+    </div>
+</div>
+<script>
+    if(isAuthenticated){
+        $("body").addClass("login");
+    }
+    else{
+        $("body").removeClass("login");
+    }
+</script>
+<div>

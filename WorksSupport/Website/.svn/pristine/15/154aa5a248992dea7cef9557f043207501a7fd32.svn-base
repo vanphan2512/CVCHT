@@ -1,0 +1,76 @@
+System.register(["angular2/core", "../../models/ui", "./input", "../../enum"], function (exports_1, context_1) {
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, ui_1, input_1, enum_1, FormCurrency;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (input_1_1) {
+                input_1 = input_1_1;
+            },
+            function (enum_1_1) {
+                enum_1 = enum_1_1;
+            }
+        ],
+        execute: function () {
+            FormCurrency = (function (_super) {
+                __extends(FormCurrency, _super);
+                function FormCurrency() {
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    _this.ValueType = enum_1.InputValueType;
+                    _this.model = "";
+                    _this.modelChange = new core_1.EventEmitter();
+                    _this.options = {
+                        mask: "999,999,999,999,999"
+                    };
+                    return _this;
+                }
+                FormCurrency.prototype.onChanged = function (item) {
+                    this.modelChange.next(item);
+                };
+                return FormCurrency;
+            }(ui_1.BaseControl));
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Object)
+            ], FormCurrency.prototype, "model", void 0);
+            __decorate([
+                core_1.Output(),
+                __metadata("design:type", core_1.EventEmitter)
+            ], FormCurrency.prototype, "modelChange", void 0);
+            FormCurrency = __decorate([
+                core_1.Component({
+                    selector: "form-currency",
+                    template: "<form-input [type]=ValueType.Currency [model]=model (modelChange)=onChanged($event) [options]=options></form-input>",
+                    directives: [input_1.FormInput]
+                })
+            ], FormCurrency);
+            exports_1("FormCurrency", FormCurrency);
+        }
+    };
+});
+//# sourceMappingURL=currency.js.map

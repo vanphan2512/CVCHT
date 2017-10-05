@@ -1,0 +1,150 @@
+System.register(["angular2/core", "angular2/router", "../../../common/models/ui", "./membersModel", "../_share/services/memberService", "../../../common/directive", "./updateModel", "../_share/config/route"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, router_1, ui_1, membersModel_1, membersModel_2, memberService_1, directive_1, updateModel_1, route_1;
+    var Members;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (ui_1_1) {
+                ui_1 = ui_1_1;
+            },
+            function (membersModel_1_1) {
+                membersModel_1 = membersModel_1_1;
+                membersModel_2 = membersModel_1_1;
+            },
+            function (memberService_1_1) {
+                memberService_1 = memberService_1_1;
+            },
+            function (directive_1_1) {
+                directive_1 = directive_1_1;
+            },
+            function (updateModel_1_1) {
+                updateModel_1 = updateModel_1_1;
+            },
+            function (route_1_1) {
+                route_1 = route_1_1;
+            }],
+        execute: function() {
+            Members = (function (_super) {
+                __extends(Members, _super);
+                function Members(router) {
+                    _super.call(this);
+                    this.actions = [];
+                    this.selectedValue = [];
+                    var self = this;
+                    self.router = router;
+                    self.model = new membersModel_1.MembersModel(self.i18nHelper);
+                    self.loadMembers();
+                }
+                Members.prototype.onAddNewMemberClicked = function () {
+                    //this.router.navigate([route.priority.addPriority.name]); 
+                    var grid = this.gridComponent.grid.row.add({
+                        "WorksSupportMemberRoleId": "0",
+                        "IconUrl": "fa fa-edit"
+                    }).draw();
+                    //this.router.navigate([route.priorities.addRole.name]);
+                };
+                // Delete Member
+                Members.prototype.onShowPopupDelete = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    this.selectedValue = new Array();
+                    var lstId = [];
+                    var grid = this.gridComponent.grid.rows('.selected').data();
+                    for (var i = 0; i < grid.length; i++) {
+                        this.selectedValue.push({ id: grid[i]["WorksSupportMemberRoleId"], name: grid[i]["WorksSupportMemberRoleName"] });
+                        lstId.push(grid[i]["WorksSupportMemberRoleId"]);
+                    }
+                    this.objDelete = new membersModel_2.DeleteModel(lstId.toString(), "administrator");
+                };
+                Members.prototype.onDeleteMembers = function (event) {
+                    var $ = window.jQuery;
+                    var self = this;
+                    memberService_1.default.delete(this.objDelete).then(function (event) {
+                        self.router.navigate([route_1.default.member.members.name]);
+                        $('#modal').modal('hide');
+                        $('.modal-backdrop').modal('hide');
+                        //Call delete function..!
+                    });
+                };
+                Members.prototype.onEditMemberClicked = function (event) {
+                    // this.router.navigate([route.role.editRole.name, { id: event.item.id }]);
+                };
+                Members.prototype.loadMembers = function () {
+                    var self = this;
+                    memberService_1.default.getMembers().then(function (items) {
+                        self.model.importMembers(items);
+                    });
+                };
+                // Get data by status : 1/0
+                Members.prototype.onStatusChange = function (event) {
+                    var self = this;
+                    var $ = window.jQuery;
+                    var currentIsDelete = event.currentTarget.value;
+                    // get data of dropdownlist.
+                    memberService_1.default.getMemberBy('', currentIsDelete, 0, 10).then(function (items) {
+                        self.model.importMembers(items);
+                    });
+                    // check status is delete to show delete button.
+                    if (currentIsDelete == "1") {
+                        $("#btnDeletePopup").css("display", "none");
+                    }
+                    else {
+                        $("#btnDeletePopup").css("display", "inline-block");
+                    }
+                };
+                // Search data by name
+                Members.prototype.SearchByKey = function (event) {
+                    var $ = window.jQuery;
+                    var memberName = $('#memberName').val();
+                    var self = this;
+                    memberService_1.default.getMemberBy(memberName, 0, 0, 10).then(function (items) {
+                        self.model.importMembers(items);
+                    });
+                };
+                Members.prototype.onToggleSelectChanged = function (event) {
+                    var self = this;
+                    var model = new updateModel_1.UpdateMemberModel();
+                    model.import(event.item);
+                    memberService_1.default.update(model).then(function (event) {
+                        self.router.navigate([route_1.default.member.members.name]);
+                    });
+                };
+                __decorate([
+                    core_1.ViewChild(directive_1.Grid), 
+                    __metadata('design:type', directive_1.Grid)
+                ], Members.prototype, "gridComponent", void 0);
+                Members = __decorate([
+                    core_1.Component({
+                        templateUrl: "app/modules/configurations/member/members.html",
+                        directives: [directive_1.Grid, directive_1.PageActions, directive_1.Page]
+                    }), 
+                    __metadata('design:paramtypes', [router_1.Router])
+                ], Members);
+                return Members;
+            }(ui_1.BasePage));
+            exports_1("Members", Members);
+        }
+    }
+});
+//# sourceMappingURL=members.js.map

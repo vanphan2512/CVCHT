@@ -1,0 +1,53 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var WorksTypesModel, DeleteModel;
+    return {
+        setters:[],
+        execute: function() {
+            WorksTypesModel = (function () {
+                function WorksTypesModel(resourceHelper) {
+                    this.options = {};
+                    this.eventKey = "worksType_ondatasource_changed";
+                    this.actions = [];
+                    this.options = {
+                        columns: [
+                            { field: "WorksSupportTypeId", title: resourceHelper.resolve("configurations.worksType.grid.index"), type: 'id', index: 0 },
+                            { field: "OrderIndex", title: resourceHelper.resolve("configurations.worksType.grid.index"), type: 'rownumber', index: 1, width: "10%", className: "text-center" },
+                            { field: "WorksSupportTypeName", title: resourceHelper.resolve("configurations.worksType.grid.name"), type: 'text', index: 2, width: "20%" },
+                            { field: "Description", title: resourceHelper.resolve("configurations.worksType.grid.description"), type: 'text', index: 3 },
+                            // { field: "IconUrl", title: resourceHelper.resolve("configurations.worksType.grid.iconUrl") , type: 'icon', index: 4, content: "<i class=\"fa fa-coffee\" aria-hidden=\"true\"></i>", className:"text-center" ,width: "10%"},
+                            { field: "IconUrl", title: resourceHelper.resolve("configurations.worksType.grid.iconUrl"), type: 'icon', index: 4, content: "<a class=\"modalIcon\" href=\"#\" data-toggle=\"modal\" data-target=\"#myIconModal\"><i class='fa fa-edit' aria-hidden=\"true\"></i></a>", className: "text-center" },
+                            { field: "IsSystem", title: resourceHelper.resolve("configurations.worksType.grid.isSystem"), type: 'checkbox', index: 5, width: "5%", className: "text-center" },
+                            { field: "IsActived", title: resourceHelper.resolve("configurations.worksType.grid.isActive"), type: 'toggle', index: 6, width: "5%", className: "text-center" },
+                        ],
+                        data: [],
+                        enableEdit: false,
+                        enableDelete: false,
+                        ajaxUrl: "http://nc.erp.workssupport.com/api/v1/worksType/save"
+                    };
+                }
+                WorksTypesModel.prototype.addPageAction = function (action) {
+                    this.actions.push(action);
+                };
+                WorksTypesModel.prototype.importWorksTypes = function (items) {
+                    var eventManager = window.ioc.resolve("IEventManager");
+                    eventManager.publish(this.eventKey, items);
+                };
+                return WorksTypesModel;
+            }());
+            exports_1("WorksTypesModel", WorksTypesModel);
+            DeleteModel = (function () {
+                function DeleteModel(id, user) {
+                    this.Id = String.empty;
+                    this.User = String.empty;
+                    this.Id = id;
+                    this.User = user;
+                }
+                return DeleteModel;
+            }());
+            exports_1("DeleteModel", DeleteModel);
+        }
+    }
+});
+//# sourceMappingURL=worksTypesModel.js.map

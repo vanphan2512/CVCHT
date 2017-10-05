@@ -1,0 +1,33 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var IoCBuilder;
+    return {
+        setters:[],
+        execute: function() {
+            IoCBuilder = (function () {
+                function IoCBuilder() {
+                }
+                // will check again
+                IoCBuilder.createTrainsent = function (registration) {
+                    if (!!registration.instanceFn) {
+                        return registration.instanceFn();
+                    }
+                    registration.instanceFn = function () { return registration.instanceOf(); };
+                    return registration.instanceFn();
+                };
+                IoCBuilder.createSingleton = function (registration) {
+                    if (!!registration.instance) {
+                        return registration.instance;
+                    }
+                    var instance = new registration.instanceOf();
+                    registration.instance = instance;
+                    return instance;
+                };
+                return IoCBuilder;
+            }());
+            exports_1("IoCBuilder", IoCBuilder);
+        }
+    }
+});
+//# sourceMappingURL=iocBuilder.js.map

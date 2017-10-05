@@ -1,0 +1,53 @@
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var QualitiesModel, DeleteModel;
+    return {
+        setters:[],
+        execute: function() {
+            QualitiesModel = (function () {
+                function QualitiesModel(resourceHelper) {
+                    this.options = {};
+                    this.eventKey = "quality_ondatasource_changed";
+                    this.actions = [];
+                    this.options = {
+                        columns: [
+                            { field: "WorksSupportQualityId", title: resourceHelper.resolve("configurations.quality.grid.index"), type: 'id', index: 0 },
+                            { field: "OrderIndex", title: resourceHelper.resolve("configurations.quality.grid.index"), type: 'text', index: 1, width: "10%", className: "text-center" },
+                            { field: "WorksSupportQualityName", title: resourceHelper.resolve("configurations.quality.grid.name"), type: 'text', index: 2 },
+                            { field: "Description", title: resourceHelper.resolve("configurations.quality.grid.description"), type: 'text', index: 3 },
+                            // { field: "IconUrl", title: resourceHelper.resolve("configurations.quality.grid.iconUrl"), type: 'icon', index: 4, content: "<i class=\"fa fa-coffee\" aria-hidden=\"true\"></i>", className:"text-center" ,width: "10%" },
+                            //{ field: "IconUrl", title: resourceHelper.resolve("configurations.quality.grid.iconUrl") , type: 'icon', index: 4, content: "<a class=\"modalIcon\" href=\"#\" data-toggle=\"modal\" data-target=\"#myIconModal\"><i class='fa fa-edit' aria-hidden=\"true\"></i></a>", className:"text-center" },
+                            { field: "IsSystem", title: resourceHelper.resolve("configurations.quality.grid.isSystem"), type: 'checkbox', index: 5, width: "5%", className: "text-center" },
+                            { field: "IsActived", title: resourceHelper.resolve("configurations.quality.grid.isActive"), type: 'toggle', index: 6, width: "5%", className: "text-center" }
+                        ],
+                        data: [],
+                        enableEdit: false,
+                        enableDelete: false,
+                        ajaxUrl: "http://nc.erp.workssupport.com/api/v1/Qualities/save"
+                    };
+                }
+                QualitiesModel.prototype.addPageAction = function (action) {
+                    this.actions.push(action);
+                };
+                QualitiesModel.prototype.importQualities = function (items) {
+                    var eventManager = window.ioc.resolve("IEventManager");
+                    eventManager.publish(this.eventKey, items);
+                };
+                return QualitiesModel;
+            }());
+            exports_1("QualitiesModel", QualitiesModel);
+            DeleteModel = (function () {
+                function DeleteModel(id, User) {
+                    this.Id = String.empty;
+                    this.User = String.empty;
+                    this.Id = id;
+                    this.User = User;
+                }
+                return DeleteModel;
+            }());
+            exports_1("DeleteModel", DeleteModel);
+        }
+    }
+});
+//# sourceMappingURL=qualitiesModel.js.map
