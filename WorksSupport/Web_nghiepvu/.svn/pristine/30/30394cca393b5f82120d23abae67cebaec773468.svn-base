@@ -1,0 +1,6 @@
+<div class="input-group date datetimepicker">
+    <input class="form-control" id="{{id}}" #datePicker  (blur)="model = datePicker.value"  type="text" placeholder="{{placeholder}}" [disabled]="disabled" [(ngModel)]=model  />
+    <span class="input-group-btn">
+        <button class="btn dark-bg" type="button "><i class="fa fa-calendar" aria-hidden="true"></i></button>
+    </span>
+</div>
