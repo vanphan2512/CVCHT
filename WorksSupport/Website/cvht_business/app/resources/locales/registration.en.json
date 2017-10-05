@@ -1,0 +1,11 @@
+{
+    "signin": {
+        "title": "Đăng Nhập",
+        "userName": "Tên đăng nhập",
+        "userNameRequired": "Tên đăng nhập không được bỏ trống",
+        "password": "Mật khẩu",
+        "pwdRequired": "Mật khẩu không được bỏ trống",
+        "invalidEmailOrPwd": "Invalid email or password",
+        "invalidUserNameOrPassword": "Tên đăng nhập hoặc mật khẩu không đúng"
+    }
+}
