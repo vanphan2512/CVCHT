@@ -1,0 +1,22 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var PageAction;
+    return {
+        setters: [],
+        execute: function () {
+            PageAction = (function () {
+                function PageAction(id, key, handler) {
+                    this.key = String.empty;
+                    this.id = String.empty;
+                    this.id = id;
+                    this.key = key;
+                    this.handler = handler;
+                }
+                return PageAction;
+            }());
+            exports_1("PageAction", PageAction);
+        }
+    };
+});
+//# sourceMappingURL=pageAction.js.map
