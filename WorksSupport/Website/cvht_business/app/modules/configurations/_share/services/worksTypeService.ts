@@ -1,0 +1,90 @@
+import configHelper from "../../../../common/helpers/configHelper";
+import { Promise } from "../../../../common/models/promise";
+let worksTypeService = {
+    getWorksTypes: getWorksTypes,
+    create: create,
+    update: update,
+    delete: remove,
+    get: get,
+    getWorkTypeBy: getWorkTypeBy,
+    createPermission: createPermission,
+    copyPermission: copyPermission,
+    getWorksTypesActived : getWorksTypesActived
+};
+export default worksTypeService;
+function getWorksTypes(): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes");
+    return connector.get(url);
+}
+
+function getWorksTypesActived(): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/worksTypeActived");
+    return connector.get(url);
+}
+
+// Get data by Id
+function get(id: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}{2}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/", id);
+    return connector.get(url);
+}
+// Create new
+function create(role: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/insertBy");
+    return connector.post(url, role);
+}
+
+// Update data
+function update(model: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}",
+        configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/insertBy");
+    return connector.post(url, model);
+}
+// Remove data
+function remove(deleteModel: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}/{1}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/Del");
+    return connector.post(url, deleteModel);
+}
+// Get data by keyWords, isDeleted, pageIndex, PageSize
+function getWorkTypeBy(keyWord: any, isDelete: number, pageIndex: number, pageSize: number): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    // cunstructer param to search.
+    let keySearch = "?Keywords=" + keyWord;
+    let isDel = "&IsDeleted=" + isDelete;
+    let index = "&PageIndex=" + pageIndex;
+    let size = "&PageSize=" + pageSize;
+
+    let url = String.format("{0}{1}{2}{3}{4}{5}"
+        , configHelper.getAppConfig().api.baseUrl
+        , "v2/workssupporttypes/Search"
+        , keySearch
+        , isDel
+        , index
+        , size);
+    return connector.get(url);
+}
+
+// Save/Update Permission
+function createPermission(strJsonPermission: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/SaveOrUpdatePermission");
+    return connector.post(url, JSON.stringify(strJsonPermission));
+}
+
+
+/**
+ * Copy Permission from workTypeId to another workstypeId
+ * 
+ * @param {*} model 
+ * @returns {Promise} 
+ */
+function copyPermission(model: any): Promise {
+    let connector = window.ioc.resolve("IConnector");
+    let url = String.format("{0}{1}", configHelper.getAppConfig().api.baseUrl, "v2/workssupporttypes/copyPermission");
+    return connector.post(url, model);
+}

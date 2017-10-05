@@ -1,0 +1,7 @@
+<ul class="nav nav-tabs nav-justified" id="sub-nav">
+    <li role="presentation" *ngFor="let item of items; let i = index">
+        <a [routerLink]="[item.url]">
+        <i class="{{item.class}}" aria-hidden="true">
+        </i>{{item.text}}</a>
+    </li>
+</ul>
